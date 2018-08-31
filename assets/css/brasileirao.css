@@ -1,0 +1,77 @@
+body{
+    background-image: url("../images/fundo.jpg");
+}
+
+.bug{
+    margin-top: 61px;
+}
+
+.mensagem_gerencia{
+    background-color: white;
+    text-align: center;
+    padding: 5px 0 0 0;
+    min-height: 109px;
+}
+
+.mensagem_rodada_comeca{
+    background-color: green;
+    color: white;
+    text-align: center;
+    padding: 5px 0 0 0;
+}
+
+.mensagem_rodada_termina{
+    background-color: red;
+    color: white;
+    text-align: center;
+    padding: 5px 0 0 0;
+}
+
+.titulo_conteudo{
+    padding: 5px 0;
+    background-color: blue;
+    color: white;
+    text-align: center;
+    text-decoration: underline;
+    margin-top: 10px;
+}
+
+th, td{
+    text-align: center;
+}
+
+@media(min-width: 1366px){
+    .titulo_conteudo{
+        padding: 5px 0;
+        background-color: blue;
+        color: white;
+        text-align: center;
+        text-decoration: underline;
+        font-size: 17px;
+    }
+}
+
+.a{
+    height: 20px;
+}
+
+.blue{
+    background-color: blue;
+}
+
+.orange{
+    background-color: orange;
+}
+
+.black{
+    background-color: black;
+}
+
+.pink{
+    background-color: pink;
+}
+
+.white{
+    background-color: white;
+    padding: 10px 0;
+}

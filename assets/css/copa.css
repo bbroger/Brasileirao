@@ -1,0 +1,139 @@
+.copa_bronze{
+    background-color: #d6812b;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.copa_prata{
+    background-color: #c0c0c0;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.copa_ouro{
+    background-color: #ffd700;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.copa_liga{
+    background-color: rgb(236, 236, 255);
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.btn_pesquisa_copa{
+    display: block;
+    margin: 0 auto;
+    width: 200px;
+}
+
+.titulo_procura_copa{
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.img_perfil_copa{
+    max-width: 70px;
+    max-height: 70px;
+}
+
+.user_copa{
+    margin: 0;
+    font-size: 9px;
+}
+
+.oitavas{
+    background-color: #ffd790;
+}
+
+.quartas{
+    background-color: #ffd760;
+}
+
+.semi{
+    background-color: #ffd730;
+}
+
+.final{
+    background-color: #ffd700;
+}
+
+.descricao_copa{
+    font-size: 15px;
+}
+
+@media(max-width: 767px){
+    .img_user_copa{
+        width: 90px;
+    }
+
+    .titulo_user_copa{
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .valor_part_copa{
+        font-weight: bold;
+    }
+}
+
+@media(min-width: 768px) AND (max-width: 1023px){
+    .img_user_copa{
+        width: 100px;
+    }
+
+    .titulo_user_copa{
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .valor_part_copa{
+        font-weight: bold;
+    }
+}
+
+@media(min-width: 1024px) AND (max-width: 1365px){
+    .img_user_copa{
+        width: 120px;
+    }
+
+    .titulo_user_copa{
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .valor_part_copa{
+        font-weight: bold;
+    }
+}
+
+@media(min-width: 1366px){
+    .img_user_copa{
+        width: 150px;
+    }
+
+    .titulo_user_copa{
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .valor_part_copa{
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .part_copa{
+        font-size: 20px;
+    }
+
+    .user_copa{
+        margin: 0;
+        font-size: 13px;
+    }
+
+    .descricao_copa{
+        font-size: 20px;
+    }
+}

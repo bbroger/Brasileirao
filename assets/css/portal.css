@@ -1,0 +1,275 @@
+.copa_bronze{
+    background-color: #d6812b;
+    border: 1px solid #ccc;
+}
+
+.copa_prata{
+    background-color: #c0c0c0;
+    border: 1px solid #ccc;
+}
+
+.copa_ouro{
+    background-color: #ffd700;
+    border: 1px solid #ccc;
+}
+
+.copa_liga{
+    background-color: rgb(236, 236, 255);
+    border: 1px solid #ccc;
+}
+
+.perfil{
+    background-color: #E6E6FA;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.detalhe_rodada{
+    background-color: white;
+    text-align: center;
+    padding: 10px 0
+}
+
+.desafios{
+    background-color: white;
+    text-align: center;
+}
+
+.desafio_individual{
+    height: 250px;
+    border: 1px solid#ccc;
+}
+
+.desafio_dupla{
+    height: 300px;
+    border: 1px solid#ccc;
+}
+
+.placar{
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 20px;
+}
+
+.aguard_desafio_dupla{
+    margin-top: 130px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+@media(max-width: 767px){
+    .img_copa{
+        width: 120px;
+    }
+
+    .descricao_copa{
+        font-size: 15px;
+        text-align: center;
+        padding: 5px 0;
+    }
+    
+    .liga_descricao_copa{
+        font-size: 13px;
+        text-align: center;
+        padding: 5px 0;
+    }
+
+    .btn_copa{
+        font-size: 12px;
+    }
+
+    .img_perfil{
+        max-height: 200px;
+        max-width: 330px;
+        margin: 0 auto;
+    }
+
+    .titulo_perfil{
+        font-weight: bold;
+        font-size: 25px;
+    }
+
+    .img_desafio{
+        max-height: 100px;
+        max-width: 80px;
+        margin: 25px auto;
+    }
+
+    .dados_desafio{
+        text-align: center;
+        font-size: 8px;
+        font-weight: bold;
+    }
+
+    .vs_desafio{
+        margin-top: 40px;
+        font-weight: bold;
+        font-size: 25px;
+    }
+
+    .btn_desafio_individual{
+        margin-top: 60px;
+    }
+
+}
+
+@media(min-width: 768px) AND (max-width: 1023px){
+    .img_copa{
+        width: 90px;
+    }
+
+    .descricao_copa{
+        font-size: 12px;
+        text-align: center;
+        padding: 5px 0;
+        min-height: 70px;
+    }
+    
+    .liga_descricao_copa{
+        font-size: 10px;
+        text-align: center;
+        padding: 5px 0;
+    }
+
+    .btn_copa{
+        font-size: 9px;
+    }
+
+    .img_perfil{
+        max-height: 250px;
+        max-width: 330px;
+        margin: 0 auto;
+    }
+
+    .titulo_perfil{
+        font-weight: bold;
+        font-size: 35px;
+    }
+
+    .img_desafio{
+        max-height: 100px;
+        max-width: 120px;
+        margin: 25px auto;
+    }
+
+    .dados_desafio{
+        text-align: center;
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+    .vs_desafio{
+        margin-top: 40px;
+        font-weight: bold;
+        font-size: 25px;
+    }
+
+    .btn_desafio_individual{
+        margin-top: 60px;
+    }
+}
+
+@media(min-width: 1024px) AND (max-width: 1365px){
+    .img_copa{
+        width: 125px
+    }
+    
+    .descricao_copa{
+        font-size: 15px;
+        text-align: center;
+        padding: 5px 0;
+        min-height: 86px;
+    }
+    
+    .liga_descricao_copa{
+        font-size: 15px;
+        text-align: center;
+        padding: 5px 0;
+    }
+
+    .img_perfil{
+        max-height: 250px;
+        max-width: 225px;
+        margin: 0 auto;
+    }
+
+    .titulo_perfil{
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    .img_desafio{
+        max-height: 120px;
+        max-width: 150px;
+        margin: 20px auto;
+    }
+
+    .dados_desafio{
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .vs_desafio{
+        margin-top: 40px;
+        font-weight: bold;
+        font-size: 28px;
+    }
+
+    .btn_desafio_individual{
+        margin-top: 70px;
+    }
+}
+
+@media(min-width: 1366px){
+    .img_copa{
+        width: 180px
+    }
+
+    .descricao_copa{
+        font-size: 23px;
+        text-align: center;
+        padding: 5px 0;
+    }
+    
+    .liga_descricao_copa{
+        font-size: 20px;
+        text-align: center;
+        padding: 5px 0;
+    }
+
+    .btn_copa{
+        font-size: 17px;
+    }
+
+    .img_perfil{
+        max-height: 270px;
+        max-width: 330px;
+        margin: 0 auto;
+    }
+
+    .titulo_perfil{
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    .img_desafio{
+        max-height: 120px;
+        max-width: 190px;
+        margin: 20px auto;
+    }
+
+    .dados_desafio{
+        text-align: center;
+        font-size: 15px;
+    }
+
+    .vs_desafio{
+        margin-top: 70px;
+        font-weight: bold;
+        font-size: 25px;
+    }
+
+    .btn_desafio_individual{
+        margin-top: 60px;
+    }
+}

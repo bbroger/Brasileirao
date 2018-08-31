@@ -1,0 +1,52 @@
+.col_user_liga{
+    text-align: center;
+    padding: 5px 0;
+    min-height: 204px;
+    border: 1px solid #ccc;
+}
+
+.entre_liga{
+    margin-top: 60px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.nome_liga{
+    font-weight: bold;
+}
+
+.nome_liga_pesquisa{
+    margin-top: 50px;
+}
+
+@media(max-width: 767px){
+    .img_liga{
+        max-height: 128px;
+        max-width: 128px;
+    }
+}
+
+@media(min-width: 768px) AND (max-width: 1023px){
+    .img_liga{
+        max-height: 128px;
+        max-width: 128px;
+    }
+}
+
+@media(min-width: 1024px) AND (max-width: 1365px){
+    .img_liga{
+        max-height: 128px;
+        max-width: 128px;
+    }
+}
+
+@media(min-width: 1366px){
+    .img_liga{
+        max-height: 200px;
+        max-width: 200px;
+    }
+
+    .nome_liga{
+        font-size: 20px;
+    }
+}

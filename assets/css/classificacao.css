@@ -1,0 +1,217 @@
+.img_acesso_liga{
+    margin: 0 auto;
+    display: block;
+    max-height: 128px;
+    max-width: 128px;
+}
+
+.btn_acesso_liga{
+    display: block;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+.titulo_mural{
+    text-align: center;
+    font-weight: bold;
+    background-color: yellow;
+}
+
+.result_mural{
+    text-align: center;
+}
+
+.final_copa_capitalista{
+    background-color: #d6812b;
+}
+
+.final_copa_desafiante{
+    background-color: #c0c0c0;
+}
+
+.final_copa_lendarios{
+    background-color: #ffd700;
+}
+
+.destaque{
+    background-color: blue;
+    color: white;
+}
+
+.img_classificacao_acesso{
+    max-width: 70px;
+    max-height: 50px;
+}
+
+.valor_classificacao_acesso{
+    margin: 25px 0;
+}
+
+@media(max-width: 767px){
+    .nome_acesso_liga{
+        font-weight: bold;
+        font-size: 25px;
+        padding-top: 40px;
+        text-align: center;
+    }
+
+    .img_final_liga{
+        max-width: 200px;
+        max-height: 200px;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .user_final_copa_liga{
+        text-align: center;
+        padding-top: 10px;
+        font-weight: bold;
+        font-size: 20px;
+    }
+    
+    .titulo_destaque{
+        font-weight: bold;
+        font-size: 25px;
+        text-align: center;
+    }
+    
+    .img_destaque{
+        max-width: 150px;
+        max-height: 150px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .user_destaque{
+        text-align: center;
+        font-size: 15px;
+    }
+}
+
+@media(min-width: 768px) AND (max-width: 1023px){
+    .nome_acesso_liga{
+        font-weight: bold;
+        font-size: 25px;
+        padding-top: 40px;
+        text-align: center;
+    }
+
+    .result_mural{
+        text-align: center;
+        font-size: 11px;
+    }
+
+    .img_final_liga{
+        max-width: 200px;
+        max-height: 200px;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .user_final_copa_liga{
+        text-align: center;
+        padding-top: 10px;
+        font-weight: bold;
+        font-size: 30px;
+    }
+    
+    .titulo_destaque{
+        font-weight: bold;
+        font-size: 25px;
+        text-align: center;
+    }
+    
+    .img_destaque{
+        max-width: 150px;
+        max-height: 150px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .user_destaque{
+        text-align: center;
+        font-size: 20px;
+    }
+}
+
+@media(min-width: 1024px) AND (max-width: 1365px){
+    .nome_acesso_liga{
+        font-weight: bold;
+        font-size: 35px;
+        padding-top: 35px;
+        text-align: center;
+    }
+    
+    .img_final_liga{
+        max-width: 150px;
+        max-height: 150px;
+        margin: 5px auto;
+        display: block;
+    }
+
+    .user_final_copa_liga{
+        text-align: center;
+        margin-top: 40px;
+        font-weight: bold;
+        font-size: 15px;
+    }
+    
+    .titulo_destaque{
+        font-weight: bold;
+        font-size: 25px;
+        text-align: center;
+    }
+    
+    .img_destaque{
+        max-width: 250px;
+        max-height: 200px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .user_destaque{
+        text-align: center;
+        font-size: 20px;
+    }
+}
+
+@media(min-width: 1366px){
+    .nome_acesso_liga{
+        font-weight: bold;
+        font-size: 50px;
+        padding-top: 20px;
+        text-align: center;
+    }
+    
+    .img_final_liga{
+        max-width: 170px;
+        max-height: 170px;
+        margin: 5px auto;
+        display: block;
+    }
+
+    .user_final_copa_liga{
+        text-align: center;
+        margin-top: 40px;
+        font-weight: bold;
+        font-size: 25px;
+    }
+    
+    .titulo_destaque{
+        font-weight: bold;
+        font-size: 25px;
+        text-align: center;
+    }
+    
+    .img_destaque{
+        max-width: 250px;
+        max-height: 200px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .user_destaque{
+        text-align: center;
+        font-size: 20px;
+    }
+}

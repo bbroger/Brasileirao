@@ -1,0 +1,173 @@
+.dados_palpites{
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.procura_palpite{
+    padding: 10px;
+}
+
+.nav_palpite{
+    background-color: blue;
+    color: white;
+    padding: 5px 0;
+}
+
+.margin_palpite{
+    margin-top: 24px;
+}
+
+.margin_palpite_input{
+    margin: 15px 0 0 0;
+}
+
+.img_palpite{
+    width: 50px;
+    height: 50px;
+}
+
+.input_palpite{
+    width: 30px;
+    text-align: center;
+    color: black;
+    font-size: 15px;
+}
+
+.nome_palpite{
+    font-weight: bolder;
+}
+
+.gols_times_palpites{
+    margin: 0;
+}
+
+.table_palpites{
+    min-width: 800px;
+}
+
+.america-mg, .chapecoense, .palmeiras{
+    background-color: green;
+    color: white;
+}
+
+.atletico-mg, .corinthians, .ceara, .vasco, .botafogo{
+    background-color: black;
+    color: white;
+}
+
+.atletico-pr, .flamengo, .sport, .vitoria{
+    background-color: red;
+    color: black;
+}
+
+.bahia{
+    background-color: white;
+    color: blue;
+}
+
+.cruzeiro, .gremio{
+    background-color: blue;
+    color: white;
+}
+
+.internacional{
+    background-color: red;
+    color: white;
+}
+
+.parana, .sao-paulo{
+    background-color: white;
+    color: red;
+}
+
+.santos{
+    background-color: white;
+    color: black;
+}
+
+
+
+.fluminense{
+    background-color: white;
+    color: green;
+}
+
+@media(max-width: 767px){
+    .dados_palpites_titulo{
+        text-align: center;
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    .dados_palpites_valor{
+        text-align: center;
+        font-size: 20px;
+    }
+}
+
+@media(min-width: 768px) AND (max-width: 1023px){
+    .table_palpites{
+        min-width: 1024px;
+    }
+
+    .dados_palpites_titulo{
+        text-align: center;
+        font-weight: bold;
+        font-size: 25px;
+    }
+
+    .dados_palpites_valor{
+        text-align: center;
+        font-size: 20px;
+    }
+}
+
+@media(min-width: 1024px) AND (max-width: 1365px){
+    .dados_palpites_titulo{
+        text-align: center;
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    .dados_palpites_valor{
+        text-align: center;
+        font-size: 20px;
+    }
+}
+
+@media(min-width: 1366px){
+    .dados_palpites_titulo{
+        text-align: center;
+        font-weight: bold;
+        font-size: 35px;
+    }
+
+    .dados_palpites_valor{
+        text-align: center;
+        font-size: 25px;
+    }
+
+    .margin_palpite{
+        margin-top: 35px;
+        font-size: 20px;
+    }
+
+    .margin_palpite_input{
+        margin: 30px 0 0 0;
+    }
+
+    .img_palpite{
+        width: 80px;
+        height: 80px;
+    }
+
+    .input_palpite{
+        width: 33px;
+        height: 34px;
+        text-align: center;
+        border: 2px solid #ccc;
+        color: black;
+        font-size: 18px;
+    }
+}
+
