@@ -207,7 +207,7 @@ class Gerencia extends CI_Controller {
             //$hoje->add(new DateInterval("P2D"));
             $nova_data = new DateTime($horario);
 
-            if ($hoje > $nova_data) {
+            if ($nova_data < $hoje || $nova_data->format("Y") != $hoje->format("Y")) {
                 return false;
             } else {
                 return true;

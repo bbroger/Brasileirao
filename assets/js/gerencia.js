@@ -144,7 +144,7 @@ $("#gerenciar_rodada").submit(function (e) {
         if (!data.isValid()) {
             error_color("#data_partida_" + i);
             valid = false;
-        } else if (data.diff(moment(), "seconds") < 0) {
+        } else if (data.diff(moment(), "seconds") < 0 || data.format("YYYY") != moment().format("YYYY")) {
             error_color("#data_partida_" + i);
             valid = false;
         }
