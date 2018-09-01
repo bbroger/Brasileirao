@@ -55,13 +55,13 @@
             </div>
             <div class="row">
                 <div class="col-md-12 white">
-                    <p class="text-center" id="info_rodada"><b></b></p>
+                    <p class="text-center"><b id="info_rodada"></b></p>
                     <div class="table-responsive">
-                        <form action="<?php echo base_url("Palpites/enviar_palpites/$rodada");?>" method="Post">
+                        <form id="form_palpites" action="<?php echo base_url("Palpites/enviar_palpites/$rodada");?>" method="Post" autocomplete="off">
                             <table class="table table-bordered table_palpites">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th><a href="#" id="focus_palpite">#</a></th>
                                         <th colspan="3">Rodada <?php echo $rodada;?></th>
                                         <th>Aposta</th>
                                         <th>Pontos</th>
@@ -80,9 +80,9 @@
                                         <td id="img_mandante_<?php echo $i;?>"></td>
                                         <td>
                                             <p class="margin_palpite_input">
-                                                <input value="<?php echo set_value("palpite_mandante_$i")?>" type="text" class="input_palpite clear_input" name="palpite_mandante_<?php echo $i;?>" id="palpite_mandante_<?php echo $i;?>"> 
+                                                <input value="<?php echo set_value("palpite_mandante_$i");?>" type="text" class="input_palpite clear_input" name="palpite_mandante_<?php echo $i;?>" id="palpite_mandante_<?php echo $i;?>"> 
                                                 x
-                                                <input value="<?php echo set_value("palpite_visitante_$i")?>" type="text" class="input_palpite clear_input" name="palpite_visitante_<?php echo $i;?>" id="palpite_visitante_<?php echo $i;?>">
+                                                <input value="<?php echo set_value("palpite_visitante_$i");?>" type="text" class="input_palpite clear_input" name="palpite_visitante_<?php echo $i;?>" id="palpite_visitante_<?php echo $i;?>">
                                             </p>
                                             <p class="gols_times">
                                                 <span id="gol_mandante_<?php echo $i;?>"></span>
@@ -91,7 +91,7 @@
                                             </p>
                                         </td>
                                         <td id="img_visitante_<?php echo $i;?>"></td>
-                                        <td><p class="margin_palpite">M$ <input value="<?php echo set_value("aposta_partida_$i")?>" type="text" class="input_palpite clear_input" name="aposta_partida_<?php echo $i;?>" id="aposta_partida_<?php echo $i;?>"></p></td>
+                                        <td><p class="margin_palpite">M$ <input value="<?php echo set_value("aposta_partida_$i");?>" type="text" class="input_palpite clear_input" name="aposta_partida_<?php echo $i;?>" id="aposta_partida_<?php echo $i;?>"></p></td>
                                         <td><p class="margin_palpite" id="pontos_partida_<?php echo $i;?>"></p></td>
                                         <td><p class="margin_palpite" id="lucro_partida_<?php echo $i;?>"></p></td>
                                         <td><p class="margin_palpite" id="data_partida_<?php echo $i;?>"></p></td>
@@ -102,7 +102,14 @@
     }
 ?>
                                     <tr>
-                                        <td colspan="2"><input type="submit" class="btn btn-success" value="Palpitar"></td>
+                                        <td colspan="2"><input id="btn_palpitar" type="submit" class="btn btn-success" value=""></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><b id="total_mangos_palpites"></b></td>
+                                        <td><b id="total_pontos_palpites"></b></td>
+                                        <td><b id="total_lucro_palpites"></b></td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                 </tbody>
                             </table>

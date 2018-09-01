@@ -1,83 +1,164 @@
-$("#rodadas_cadastradas").change(function (){
+$("#rodadas_cadastradas").change(function () {
     consultar_rodada($(this).val());
 });
 
-$("#anterior_rodada, #proximo_rodada").click(function (){
-    var rodada= $(this).val();
+$("#anterior_rodada, #proximo_rodada").click(function () {
+    var rodada = $(this).val();
     consultar_rodada(rodada);
 });
 
-function consultar_rodada(rodada, form= null) {
-    console.log(form);
-    if (!$.isNumeric(rodada) || Math.floor(rodada) != rodada) {
-        rodada = 1;
-    }
+function consultar_rodada(rodada, form = 0) {
     $.ajax({
-        url: ajax("Palpites/palpites_usuario/" + rodada),
+        url: url_js("Palpites/palpites_usuario/" + rodada),
         type: "Post",
         dataType: "json"
     }).done(function (data) {
+        console.log(data);
         if (data.existe_rodada === 1) {
-            $("#info_rodada").html("Rodada " + rodada + " | Inicio: " + moment(data.inicio).format("DD/MM HH:mm") + " | Fim: " + moment(data.fim).format("DD/MM HH:mm"));
+            $("#info_rodada").html("Rodada " + rodada + " | Inicio: " + moment(data.inicio).format("ddd DD/MM HH:mm") + " | Fim: " + moment(data.fim).format("ddd DD/MM HH:mm"));
             $("table > tbody > tr").removeClass();
-            $(".clear_input").val("");
-            $("#clear_table").show();
-            
-            $.each(data.palpites_completo, function (i, item) {
-                $("#img_mandante_"+item.cad_partida).html("<img src='"+ajax("assets/images/times/"+item.cad_time_mandante_id+".png")+"' class='img_palpite'><br><span class='nome_palpite'>"+item.cad_time_mandante+"</span>");
-                insere_input("palpite_mandante", item.cad_partida, item.pap_gol_mandante, item.cad_data);
-                insere_input("palpite_visitante", item.cad_partida, item.pap_gol_visitante, item.cad_data);
-                $("#gol_mandante_"+item.cad_partida).html(verif_valor(item.cad_time_mandante_gol));
-                $("#gol_visitante_"+item.cad_partida).html(verif_valor(item.cad_time_visitante_gol));
-                $("#img_visitante_"+item.cad_partida).html("<img src='"+ajax("assets/images/times/"+item.cad_time_visitante_id+".png")+"' class='img_palpite'><br><span class='nome_palpite'>"+item.cad_time_visitante+"</span>");
-                insere_input("aposta_partida", item.cad_partida, item.pap_aposta, item.cad_data);
-                $("#pontos_partida_"+item.cad_partida).html(item.pap_pontos);
-                $("#lucro_partida_"+item.cad_partida).html("M$ "+item.pap_lucro);
-                $("#data_partida_"+item.cad_partida).html(configura_data(item.cad_data));
-                $("#local_partida_"+item.cad_partida).html(item.cad_local);
-                $("table > tbody > tr:eq("+(item.cad_partida-1)+")").addClass(item.cad_time_mandante_id);
+            if(form === 0){
+                $(".clear_input").val("");
+            }
+            var tapostas=0, tpontos=0, tlucro=0;
+            $.each(data.detalhes_rodada, function (i, item) {
+                if (data.usuario_palpitou === 1) {
+                    insere_input("palpite_mandante", item.cad_partida, data['palpites'][i]['pap_gol_mandante'], item.cad_data, form);
+                    insere_input("palpite_visitante", item.cad_partida, data['palpites'][i]['pap_gol_visitante'], item.cad_data, form);
+                    insere_input("aposta_partida", item.cad_partida, data['palpites'][i]['pap_aposta'], item.cad_data, form);
+                    tapostas+= ($.isNumeric(parseInt(data['palpites'][i]['pap_aposta']))) ? parseInt(data['palpites'][i]['pap_aposta']) : 0;
+                    $("#pontos_partida_" + item.cad_partida).html(data['palpites'][i]['pap_pontos']);
+                    tpontos+= parseInt(data['palpites'][i]['pap_pontos']);
+                    $("#lucro_partida_" + item.cad_partida).html("M$ " + data['palpites'][i]['pap_lucro']);
+                    tlucro+= parseInt(data['palpites'][i]['pap_lucro']);
+                } else {
+                    insere_input("palpite_mandante", item.cad_partida, null, item.cad_data, form);
+                    insere_input("palpite_visitante", item.cad_partida, null, item.cad_data, form);
+                    insere_input("aposta_partida", item.cad_partida, null, item.cad_data, form);
+                    $("#pontos_partida_" + item.cad_partida).html(0);
+                    $("#lucro_partida_" + item.cad_partida).html("M$ 0");
+                }
+                $("#img_mandante_" + item.cad_partida).html("<img src='" + url_js("assets/images/times/" + item.cad_time_mandante_var + ".png") + "' class='img_palpite'><br><span class='nome_palpite'>" + item.cad_time_mandante + "</span>");
+                $("#gol_mandante_" + item.cad_partida).html(verif_valor(item.cad_time_mandante_gol));
+                $("#gol_visitante_" + item.cad_partida).html(verif_valor(item.cad_time_visitante_gol));
+                $("#img_visitante_" + item.cad_partida).html("<img src='" + url_js("assets/images/times/" + item.cad_time_visitante_var + ".png") + "' class='img_palpite'><br><span class='nome_palpite'>" + item.cad_time_visitante + "</span>");
+                $("#data_partida_" + item.cad_partida).html(configura_data(item.cad_data));
+                $("#local_partida_" + item.cad_partida).html(item.cad_local);
+                $("table > tbody > tr:eq(" + (item.cad_partida - 1) + ")").css({"background-color": data['detalhes_times'][item.cad_time_mandante_var]['first_color'], "color": data['detalhes_times'][item.cad_time_mandante_var]['second_color']});
             });
+            
+            if(data.usuario_palpitou){
+                $("#btn_palpitar").val("Atualizar");
+            } else{
+                $("#btn_palpitar").val("Palpitar");
+            }
+            
+            if(!autoriza_palpite(data.fim)){
+                $("#btn_palpitar").prop("disabled", true);
+            }
+            
+            $("#total_mangos_palpites").html("Total M$ "+tapostas);
+            $("#total_pontos_palpites").html("Total "+tpontos);
+            $("#total_lucro_palpites").html("Total M$ "+tlucro);
+            $("#clear_table").show();
         } else {
-            $("#info_rodada").html("Rodada "+rodada+" não cadastrada");
+            $("#info_rodada").html(data.msg);
             $("#clear_table").hide();
         }
         $("#rodadas_cadastradas").val(rodada);
-        var anterior= (rodada > 1 && rodada <=38) ? rodada-1 : rodada;
-        var proximo= (rodada > 0 && rodada <=37) ? parseInt(rodada) + 1 : rodada;
+        var anterior = (rodada > 1 && rodada <= 38) ? rodada - 1 : rodada;
+        var proximo = (rodada > 0 && rodada <= 37) ? parseInt(rodada) + 1 : rodada;
         $("#anterior_rodada").val(anterior);
         $("#proximo_rodada").val(proximo);
     }).fail(function (data) {
+        $("#clear_table").hide();
+        $("#info_rodada").html("Houve um erro ao trazer os dados da rodada. Por favor tente mais tarde");
+        $("#rodadas_cadastradas").val(rodada);
+        var anterior = (rodada > 1 && rodada <= 38) ? rodada - 1 : rodada;
+        var proximo = (rodada > 0 && rodada <= 37) ? parseInt(rodada) + 1 : rodada;
+        $("#anterior_rodada").val(anterior);
+        $("#proximo_rodada").val(proximo);
     });
 }
 
-function insere_input(id, partida, valor, data){
-    if(autoriza_palpite(data)){
-        if($("#"+id+"_"+partida).val() == ""){
-            $("#"+id+"_"+partida).val(verif_valor(valor));
+function insere_input(id, partida, valor, data, form) {
+    if (autoriza_palpite(data)) {
+        if (form === 0) {
+            $("#" + id + "_" + partida).val(verif_valor(valor)).prop("disabled", false);
         }
-    } else{
-        if($("#"+id+"_"+partida).val() == ""){
-            $("#"+id+"_"+partida).val(verif_valor(valor)).prop("disabled", true);
+    } else {
+        if (valor == null) {
+            $("#" + id + "_" + partida).val("X").prop("disabled", true).css("color", "red");
+        } else {
+            $("#" + id + "_" + partida).val(valor).prop("disabled", true).css("color", "blue");
         }
     }
 }
 
-function verif_valor(valor){
-    if(valor == null){
+function verif_valor(valor) {
+    if (valor == null) {
         return "";
-    } else{
+    } else {
         return valor;
     }
 }
 
-function configura_data(data){
-    return moment(data).format("DD/MM H:mm");
+function configura_data(data) {
+    return moment(data).format("ddd DD/MM H:mm");
 }
 
-function autoriza_palpite(data){
-    if(moment().diff(data, "seconds") <= 0){
+function autoriza_palpite(data) {
+    if (moment().diff(data, "seconds") <= 0) {
         return true;
-    } else{
+    } else {
         return false;
     }
 }
+
+var str_p= "";
+var str_a= "";
+for(var i=1; i <= 10; i++){
+    str_p+= "#palpite_mandante_"+i+", #palpite_visitante_"+i+", ";
+    str_a+= "#aposta_partida_"+i+", ";
+}
+
+$("#form_palpites").submit(function (e){
+    e.preventDefault();
+    
+    success_color(".input_palpite");
+    
+    var data;
+    var valor;
+    var valid= true;
+    for (var i = 1; i <= 10; i++) {
+        
+            valor= $("#palpite_mandante_"+i).val();
+            if(!$.isNumeric(valor) || Math.floor(valor) != valor){
+                if(valor != "X"){
+                    error_color("#palpite_mandante_"+i);
+                    valid= false;
+                }
+            }
+            valor= $("#palpite_visitante_"+i).val();
+            if(!$.isNumeric(valor) || Math.floor(valor) != valor){
+                if(valor != "X"){
+                    error_color("#palpite_visitante_"+i);
+                    valid= false;
+                }
+            }
+            valor= $("#aposta_partida_"+i).val();
+            if(valor && !$.isNumeric(valor) || Math.floor(valor) != valor){
+                if(valor != "X"){
+                    error_color("#aposta_partida_"+i);
+                    valid= false;
+                }
+            }
+    }
+    
+    if (valid === true) {
+        $(this)[0].submit();
+    } else{
+        $("#focus_msg").focus();
+        $("#msg").html("Ops, existe um erro nos seus palpites. Insira apenas números e é obrigatório inserir os gols nas partidas que não começaram. Desce lá e veja onde errou ;)");
+    }
+});

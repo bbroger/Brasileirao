@@ -43,7 +43,9 @@ class Gerencia_model extends CI_Model {
         $tras_times= $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         foreach ($tras_times as $key=> $value) {
-            $times[$value["tim_var"]]= $value["tim_nome"];
+            $times[$value["tim_var"]]['nome']= $value["tim_nome"];
+            $times[$value["tim_var"]]['first_color']= $value["tim_first_color"];
+            $times[$value["tim_var"]]['second_color']= $value["tim_second_color"];
         }
         
         return $times;
@@ -64,6 +66,7 @@ class Gerencia_model extends CI_Model {
         $stmt->execute();
         
         $tras_rodada= $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt= null;
         
         return $tras_rodada;
     }
@@ -80,12 +83,15 @@ class Gerencia_model extends CI_Model {
         $stmt->execute();
         
         $tras_rodadas= $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt= null;
         $rodadas = array();
         
         if($tras_rodadas){
             foreach ($tras_rodadas AS $key=>$value){
                 $rodadas[$value["cad_rodada"]]["inicio"]= $value["inicio"];
-                $rodadas[$value["cad_rodada"]]["fim"]= $value["fim"];
+                $data_fim= new DateTime($value['fim']);
+                $data_fim->add(new DateInterval("PT2H10M"));
+                $rodadas[$value["cad_rodada"]]["fim"]= $data_fim->format("Y-m-d H:i:s");
                 $data_string= new DateTime($value["inicio"]);
                 $rodadas[$value["cad_rodada"]]["inicio_string"]= $data_string->format("d/m H:i");
             }
@@ -120,6 +126,7 @@ class Gerencia_model extends CI_Model {
             $stmt->bindValue(10, 1);
             $stmt->execute();
         }
+        $stmt= null;
     }
     
     /**
@@ -149,6 +156,7 @@ class Gerencia_model extends CI_Model {
             $stmt->bindValue(9, $key);
             $stmt->execute();
         }
+        $stmt= null;
     }
     
     /**
@@ -161,8 +169,8 @@ class Gerencia_model extends CI_Model {
      * @return void
      */
     public function salvar_resul_palpites($rodada, $partida, $palpites){
-        $sql= "UPDATE pap_palpites SET pap_cc= ?, pap_ct= ?, pap_cf= ?, pap_pontos= ?, pap_lucro= ?, pap_saldo "
-                . "WHERE pap_user_id= ? AND pap_rodada= ? AND pap_partida= ? AND YEAR(pap_created) = ".date('Y');
+        $sql= "UPDATE pap_palpites SET pap_cc= ?, pap_ct= ?, pap_cf= ?, pap_pontos= ?, pap_lucro= ?, pap_saldo=? "
+                . "WHERE pap_id_palpite= ?";
         $stmt= $this->con->prepare($sql);
         foreach ($palpites as $key => $value) {
             $stmt->bindValue(1, $value["cc"]);
@@ -172,10 +180,9 @@ class Gerencia_model extends CI_Model {
             $stmt->bindValue(5, $value["lucro"]);
             $stmt->bindValue(6, $value["saldo"]);
             $stmt->bindValue(7, $key);
-            $stmt->bindValue(8, $rodada);
-            $stmt->bindValue(9, $partida);
             $stmt->execute();
         }
+        $stmt= null;
     }
     
     /**
@@ -196,5 +203,6 @@ class Gerencia_model extends CI_Model {
         $stmt->bindValue(3, $rodada);
         $stmt->bindValue(4, $partida);
         $stmt->execute();
+        $stmt= null;
     }
 }

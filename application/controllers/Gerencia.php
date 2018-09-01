@@ -34,20 +34,24 @@ class Gerencia extends CI_Controller {
         parent::__construct();
 
         $this->load->model('Gerencia_model');
-        $this->times = $this->Gerencia_model->todos_times();
+        $times = $this->Gerencia_model->todos_times();
+        foreach ($times as $key => $value) {
+            $novo[$key]= $value['nome'];
+        }
+        $this->times= $novo;
         $this->rodadas_cadastradas = $this->Gerencia_model->rodadas_cadastradas();
     }
 
     /**
      * Confere se a rodada é um numero e está entre 1 e 38. Também confere se está no array
      * 
-     * @uses array $rodadas_cadastradas             Para consultar se a rodada existe nas rodadas cadastradas.
-     * @used-by Gerencia::rodada()                  Confere a rodada para receber um numero
-     * @used-by Gerencia::manipular_detalhes_rodada()        Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
-     * @used-by Gerencia::verifica_adiou_rodada()   Confere a rodada para ver se ja existe a rodada cadastrado.
-     * @used-by Gerencia::consultar_rodada()        Confere a rodada para receber um numero
-     * @used-by Gerencia::enviar_resultado()        Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
-     * @param int $recebe_rodada                    Recebe um numero para verificar se é rodada do bolao                 
+     * @uses array $rodadas_cadastradas                 Para consultar se a rodada existe nas rodadas cadastradas.
+     * @used-by Gerencia::rodada()                      Confere a rodada para receber um numero
+     * @used-by Gerencia::manipular_detalhes_rodada()   Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
+     * @used-by Gerencia::verifica_adiou_rodada()       Confere a rodada para ver se ja existe a rodada cadastrado.
+     * @used-by Gerencia::consultar_rodada()            Confere a rodada para receber um numero
+     * @used-by Gerencia::enviar_resultado()            Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
+     * @param int $recebe_rodada                        Recebe um numero para verificar se é rodada do bolao                 
      * @return array
      */
     private function confere_rodada($recebe_rodada) {
@@ -77,7 +81,6 @@ class Gerencia extends CI_Controller {
      * Inicializa a pagina sem parametros.
      * 
      * @uses Gerencia::rodada();    Para carregar a view
-     * 
      * @return void
      */
     public function index() {
@@ -171,10 +174,10 @@ class Gerencia extends CI_Controller {
     /**
      * Verifica se o time que foi enviado, está entre os 20 times da serie A.
      * 
-     * @uses array $times                           Lista dos 20 times
+     * @uses array $times                                    Lista dos 20 times
      * @used-by Gerencia::valida_detalhes_rodada()           Usado para validar os times.
-     * @paren string $time                          Recebe o time para validar
-     * @return bool                                 Se o time existir na lista retorna true
+     * @paren string $time                                   Recebe o time para validar
+     * @return bool                                          Se o time existir na lista retorna true
      */
     public function time_check($time) {
         if (array_key_exists($time, $this->times)) {
@@ -188,8 +191,8 @@ class Gerencia extends CI_Controller {
      * Verifica se o horário da partida está correto.
      * 
      * @used-by Gerencia::valida_detalhes_rodada()           Vai verificar a data da partida
-     * @paren string $horario                       Pode receber formato BR ou do banco.
-     * @return bool                                 Se conseguiu converter a data do banco, retorna true
+     * @paren string $horario                               Pode receber formato BR ou do banco.
+     * @return bool                                         Se conseguiu converter a data do banco, retorna true
      */
     public function data_check($horario) {
         if ($horario == null) {
@@ -352,17 +355,17 @@ class Gerencia extends CI_Controller {
     /**
      * Alem de salvar o resultado da partida, irá ver se existe palpites para fazer o calculo.
      * 
-     * @uses Palpites_model                         Irá pegar todos os palpites para ver se existe naquela partida
-     * @uses Gerencia_model::salvar_gols_partida()  Salva os gols da partida
-     * @param int $rodada                           Rodada que está sendo enviado os gols
-     * @param int $partida                          Partida que está sendo enviado os gols
-     * @param int $gol_mandante                     Gol mandante da partida enviada
-     * @param int $gol_visitante                    Gol visitante da partida enviada
+     * @uses Palpites_model::todos_palpites_partidas()      Irá pegar todos os palpites para ver se existe naquela partida
+     * @uses Gerencia_model::salvar_gols_partida()          Salva os gols da partida
+     * @param int $rodada                                   Rodada que está sendo enviado os gols
+     * @param int $partida                                  Partida que está sendo enviado os gols
+     * @param int $gol_mandante                             Gol mandante da partida enviada
+     * @param int $gol_visitante                            Gol visitante da partida enviada
      * @return void
      */
     private function calcula_palpites($rodada, $partida, $gol_mandante, $gol_visitante) {
-        //$this->load->model('Palpites_model');
-        $tras_palpites = false;
+        $this->load->model('Palpites_model');
+        $tras_palpites = $this->Palpites_model->todos_palpites_partidas($rodada, $partida);
 
         if ($tras_palpites) {
             $this->calcula_pontos_partida($rodada, $partida, $gol_mandante, $gol_visitante, $tras_palpites);
@@ -435,12 +438,12 @@ class Gerencia extends CI_Controller {
                 $saldo = ($value["pap_aposta"]) ? $value["pap_aposta"] + $lucro : 0;
             }
 
-            $palpites[$value["pap_user_id"]]["cc"] = $cc;
-            $palpites[$value["pap_user_id"]]["ct"] = $ct;
-            $palpites[$value["pap_user_id"]]["cf"] = $cf;
-            $palpites[$value["pap_user_id"]]["pontos"] = $pontos;
-            $palpites[$value["pap_user_id"]]["lucro"] = $lucro;
-            $palpites[$value["pap_user_id"]]["saldo"] = $saldo;
+            $palpites[$value["pap_id_palpite"]]["cc"] = $cc;
+            $palpites[$value["pap_id_palpite"]]["ct"] = $ct;
+            $palpites[$value["pap_id_palpite"]]["cf"] = $cf;
+            $palpites[$value["pap_id_palpite"]]["pontos"] = $pontos;
+            $palpites[$value["pap_id_palpite"]]["lucro"] = $lucro;
+            $palpites[$value["pap_id_palpite"]]["saldo"] = $saldo;
         }
 
         $this->Gerencia_model->salvar_resul_palpites($rodada, $partida, $palpites);

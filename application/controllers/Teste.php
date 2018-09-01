@@ -5,13 +5,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Teste extends CI_Controller {
 
     public function index() {
-        $ar= array();
+        $arr['s']['teste']= 3;
+        $arr['s']['palpitou']= 'sim';
+        $arr['r']['teste']= 5;
+        $arr['r']['palpitou'] = 'nao';
         
-        if((count($ar) == 0)){
-            echo 1;
-        } else{
-            echo 2;
-        }
+        var_dump(array_values($arr));
     }
 
 }

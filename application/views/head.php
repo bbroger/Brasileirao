@@ -11,7 +11,7 @@
         <script src="<?php echo base_url("assets/js/moments.js");?>"></script>
         <script src="<?php echo base_url("assets/js/brasileirao.js");?>"></script>
         <script>
-            function ajax(onde) {
+            function url_js(onde) {
                 var url = "<?php echo base_url(); ?>";
                 return url + onde;
             }

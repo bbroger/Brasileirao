@@ -32,7 +32,7 @@ function consultar_rodada(rodada, form = 0) {
     }
     success_color(".input_times_gerencia, .input_date_gerencia, .gol_gerencia");
     $.ajax({
-        url: ajax("Gerencia/consultar_rodada/" + rodada),
+        url: url_js("Gerencia/consultar_rodada/" + rodada),
         type: "Post",
         dataType: "json"
     }).done(function (data) {
@@ -74,7 +74,7 @@ function consultar_rodada(rodada, form = 0) {
             $("#btn_gerenciar_rodada").val("Cadastrar");
         }
 
-        $("#gerenciar_rodada").prop("action", ajax("Gerencia/manipular_detalhes_rodada/" + rodada));
+        $("#gerenciar_rodada").prop("action", url_js("Gerencia/manipular_detalhes_rodada/" + rodada));
         $("#rodadas_cadastradas").val(rodada);
         var anterior = (rodada > 1 && rodada <= 38) ? rodada - 1 : rodada;
         var proximo = (rodada > 0 && rodada <= 37) ? parseInt(rodada) + 1 : rodada;
@@ -108,7 +108,7 @@ $("#btn_partida_1, #btn_partida_2, #btn_partida_3, #btn_partida_4, #btn_partida_
         error_color("#gol_visitante_" + partida);
     } else {
         $.ajax({
-            url: ajax("Gerencia/enviar_resultado/" + rodada),
+            url: url_js("Gerencia/enviar_resultado/" + rodada),
             type: "Post",
             data: {gol_mandante: gol_mandante, gol_visitante: gol_visitante, partida: partida},
             dataType: "json"
