@@ -1,5 +1,5 @@
 $("#rodadas_cadastradas").change(function () {
-    $("#msg").html("<a href='#' id='oi'></a>");
+    $("#msg").html("");
     var rodada = $(this).val();
     var confere = confere_form_gerencia();
     if (confere) {
@@ -13,7 +13,7 @@ $("#rodadas_cadastradas").change(function () {
 });
 
 $("#anterior_rodada, #proximo_rodada").click(function () {
-    $("#msg").html("<a href='#' id='oi'></a>");
+    $("#msg").html("");
     var rodada = $(this).val();
     var confere = confere_form_gerencia();
     if (confere) {
@@ -144,7 +144,10 @@ $("#gerenciar_rodada").submit(function (e) {
         if (!data.isValid()) {
             error_color("#data_partida_" + i);
             valid = false;
-        } else if (data.diff(moment(), "seconds") < 0 || data.format("YYYY") != moment().format("YYYY")) {
+        } else if (data.format("YYYY") != moment().format("YYYY")) {
+            error_color("#data_partida_" + i);
+            valid = false;
+        } else if(data.diff(moment(), "seconds") < 0 && $("#btn_gerenciar_rodada").val() == "Cadastrar") {
             error_color("#data_partida_" + i);
             valid = false;
         }

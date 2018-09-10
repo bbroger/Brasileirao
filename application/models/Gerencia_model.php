@@ -75,7 +75,7 @@ class Gerencia_model extends CI_Model {
      * Vai consultar o inicio e fim de cada rodada.
      * 
      * @used-by Gerencia    Usando no __construct para carregar todas as rodadas cadastradas
-     * @return array|bool
+     * @return array
      */
     public function rodadas_cadastradas(){
         $sql= "SELECT cad_rodada, min(cad_data) AS inicio, max(cad_data) AS fim FROM cad_cadastrar_rodadas WHERE cad_adiou = 'nao' AND YEAR(cad_created) = ".date('Y')." GROUP BY cad_rodada";
@@ -90,7 +90,7 @@ class Gerencia_model extends CI_Model {
             foreach ($tras_rodadas AS $key=>$value){
                 $rodadas[$value["cad_rodada"]]["inicio"]= $value["inicio"];
                 $data_fim= new DateTime($value['fim']);
-                $data_fim->add(new DateInterval("PT2H10M"));
+                $data_fim->add(new DateInterval("PT2H"));
                 $rodadas[$value["cad_rodada"]]["fim"]= $data_fim->format("Y-m-d H:i:s");
                 $data_string= new DateTime($value["inicio"]);
                 $rodadas[$value["cad_rodada"]]["inicio_string"]= $data_string->format("d/m H:i");

@@ -27,43 +27,15 @@ class Palpites extends CI_Controller {
         parent::__construct();
         $this->load->model("Palpites_model");
         $this->load->model("Gerencia_model");
+        $this->load->library('Adm_lib');
+        
         $this->rodadas_cadastradas = $this->Gerencia_model->rodadas_cadastradas();
-    }
-    
-    /**
-     * Confere se a rodada é um numero e está entre 1 e 38. Também confere se está no array
-     * 
-     * @uses array $rodadas_cadastradas                 Para consultar se a rodada existe nas rodadas cadastradas.
-     * @param int $recebe_rodada                        Recebe um numero para verificar se é rodada do bolao                 
-     * @return array
-     */
-    private function confere_rodada($recebe_rodada) {
-        $confere_rodada['existe_rodadas_cadastradas'] = true;
-        if ($recebe_rodada == null || !is_numeric($recebe_rodada) || $recebe_rodada <= 0 || $recebe_rodada > 38) {
-            $confere_rodada['status'] = false;
-            $confere_rodada['rodada'] = 1;
-        } else {
-            $confere_rodada['status'] = true;
-            $confere_rodada['rodada'] = (int) $recebe_rodada;
-        }
-        if (count($this->rodadas_cadastradas) == 0) {
-            $confere_rodada['existe_rodadas_cadastradas'] = false;
-            $confere_rodada['existe'] = false;
-        } else {
-            if (array_key_exists($recebe_rodada, $this->rodadas_cadastradas)) {
-                $confere_rodada['existe'] = true;
-            } else {
-                $confere_rodada['existe'] = false;
-            }
-        }
-
-        return $confere_rodada;
     }
     
     /**
      * Inicializa a pagina sem parametros.
      * 
-     * @uses Palpites::rodada();    Para carregar a view
+     * @uses Palpites::rodada()    Para carregar a view
      * @return void
      */
     public function index() {
@@ -73,14 +45,14 @@ class Palpites extends CI_Controller {
     /**
      * Esse metodo irá montar a view passando parametros.
      * 
-     * @uses Palpites::confere_rodada()         Para montar a view, confere a rodada para retornar no formato válido.
+     * @uses Adm_lib::confere_rodada()          Para montar a view, confere a rodada para retornar no formato válido.
      * @param int       $recebe_rodada          Recebe uma rodada para consultar os dados e montar a view
      * @param string    $msg                    Envia uma mensagem a ser mostrada como parametro
      * @param string    $form                   Vai ser enviado como parametro da view para informar o Jquery que existiu uma requisição
      * @return void
      */
     public function rodada($recebe_rodada = null, $msg = null, $form = 0) {
-        $confere_rodada = $this->confere_rodada($recebe_rodada);
+        $confere_rodada = $this->adm_lib->confere_rodada($recebe_rodada);
         
         switch ($msg) {
             case 'completo':
@@ -108,7 +80,7 @@ class Palpites extends CI_Controller {
     /**
      * Aqui irá trazer os palpites do usuario e os detalhes da rodada.
      * 
-     * @uses Palpites::confere_rodada()             Confere a rodada para poder trazer os palpites corretamente.
+     * @uses Adm_lib::confere_rodada()              Confere a rodada para poder trazer os palpites corretamente.
      * @uses Palpites_model::palpites_usuario()     Irá trazer os palpites do usuario da rodada solicitado
      * @uses Gerencia_model::consultar_rodada()     Irá trazer os dados da rodada solicitada
      * @uses Palpites::rodadas_cadastradas          Se a rodada existe, irá consultar esse array para pegar inicio e fim
@@ -116,7 +88,7 @@ class Palpites extends CI_Controller {
      * @return json
      */
     public function palpites_usuario($recebe_rodada = null) {
-        $confere_rodada = $this->confere_rodada($recebe_rodada);
+        $confere_rodada = $this->adm_lib->confere_rodada($recebe_rodada);
         
         if ($confere_rodada['status']) {
             if($confere_rodada['existe']){
@@ -157,14 +129,14 @@ class Palpites extends CI_Controller {
     /**
      * Esse método irá receber a rodada e verificará se exite pelo menos uma partida que não começou para palpitar.
      * 
-     * @uses Palpites::confere_rodada()             Confere a rodada para poder trazer os palpites corretamente.
+     * @uses Adm_lib::confere_rodada()              Confere a rodada para poder trazer os palpites corretamente.
      * @uses Palpites_model::palpites_usuarios()    Tras os palpites existentes por que se uma partida nao tiver autorizado, vai salvar null mesmo o usuario palpitar anteriormente
      * @uses Palpites::autoriza_palpites()          Antes de salvar, esse método irá verificar se existe pelo menos uma partida que não tenha começado
      * @uses Palpites::rodada()                     Se não tem nenhuma partida que nao tenha começado, avisa o usuario que nao foi palpitado pois ja começaram todas as partidas
      * @param type $recebe_rodada
      */
     public function enviar_palpites($recebe_rodada = null) {
-        $confere_rodada = $this->confere_rodada($recebe_rodada);
+        $confere_rodada = $this->adm_lib->confere_rodada($recebe_rodada);
         
         if (!$confere_rodada['status'] || !$confere_rodada['existe']) {
             $msg = "Palpite não enviado. Rodada invalida ou não cadastrada";
@@ -232,11 +204,13 @@ class Palpites extends CI_Controller {
                     $palpites[$i]["gol_mandante"]= (int) $this->input->post("palpite_mandante_".$i);
                     $palpites[$i]["gol_visitante"]= (int) $this->input->post("palpite_visitante_".$i);
                     $palpites[$i]["aposta"]= ($this->input->post("aposta_partida_".$i)) ? (int) $this->input->post("aposta_partida_".$i) : null;
+                    $palpites[$i]["saldo"]= ($this->input->post("aposta_partida_".$i)) ? (int) -$this->input->post("aposta_partida_".$i) : 0;
                     $palpites[$i]["palpitou"]= 'sim';
                 } else{
                     $palpites[$i]["gol_mandante"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_gol_mandante'] : null);
                     $palpites[$i]["gol_visitante"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_gol_visitante'] : null);
                     $palpites[$i]["aposta"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_aposta'] : null);
+                    $palpites[$i]["saldo"]= (array_key_exists($i-1, $palpites_existentes) ? -$palpites_existentes[$i-1]['pap_aposta'] : 0);
                     $palpites[$i]["palpitou"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_palpitou'] : 'nao');
                     if(array_key_exists($i-1, $palpites_existentes) && $palpites_existentes[$i-1]['pap_palpitou'] == 'nao'){
                         $completo= 'incompleto';

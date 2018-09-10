@@ -82,8 +82,8 @@ class Palpites_model extends CI_Model {
      */
     public function salvar_palpites($user_id, $rodada, $palpites) {
         $this->invalidar_palpites_antigos($user_id, $rodada);
-        $sql = "INSERT INTO pap_palpites (pap_user_id, pap_rodada, pap_partida, pap_gol_mandante, pap_gol_visitante, pap_aposta, pap_palpitou) "
-                . "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO pap_palpites (pap_user_id, pap_rodada, pap_partida, pap_gol_mandante, pap_gol_visitante, pap_aposta, pap_saldo, pap_palpitou) "
+                . "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->con->prepare($sql);
         foreach ($palpites as $key => $value) {
             $stmt->bindValue(1, $user_id);
@@ -92,10 +92,12 @@ class Palpites_model extends CI_Model {
             $stmt->bindValue(4, $value["gol_mandante"]);
             $stmt->bindValue(5, $value["gol_visitante"]);
             $stmt->bindValue(6, $value["aposta"]);
-            $stmt->bindValue(7, $value["palpitou"]);
+            $stmt->bindValue(7, $value["saldo"]);
+            $stmt->bindValue(8, $value["palpitou"]);
             $stmt->execute();
             $stmt= null;
         }
+        $stmt= null;
     }
     
     private function invalidar_palpites_antigos($user_id, $rodada){

@@ -22,9 +22,16 @@ class Gerencia extends CI_Controller {
      * @var array
      */
     public $rodadas_cadastradas;
-
+    
     /**
-     * Carrega o Gerencia_model e salva nas variaveis todos os times e as rodadas cadastradas.
+     * Quando uma nova rodada for cadastrada, pega a rodada e será usada no check_date. Se a rodada ja existe e hoje for menor que a data nao terá problema
+     * 
+     * @var bool
+     */
+    private $manipular_rodada_solicitada;
+    
+    /**
+     * Carrega o Gerencia_model e Gerencia_lib salva nas variaveis todos os times e as rodadas cadastradas.
      * 
      * @uses Gerencia_model::todos_times()         Tras a lista de todos os times da serie A e salva no Gerencia::times
      * @uses Gerencia_model::rodadas_cadastradas() Tras todas as rodadas cadastradas e salva no Gerencia::rodadas_cadastradas
@@ -32,8 +39,10 @@ class Gerencia extends CI_Controller {
      */
     public function __construct() {
         parent::__construct();
-
+        
         $this->load->model('Gerencia_model');
+        $this->load->library('Adm_lib');
+        
         $times = $this->Gerencia_model->todos_times();
         foreach ($times as $key => $value) {
             $novo[$key]= $value['nome'];
@@ -43,44 +52,9 @@ class Gerencia extends CI_Controller {
     }
 
     /**
-     * Confere se a rodada é um numero e está entre 1 e 38. Também confere se está no array
-     * 
-     * @uses array $rodadas_cadastradas                 Para consultar se a rodada existe nas rodadas cadastradas.
-     * @used-by Gerencia::rodada()                      Confere a rodada para receber um numero
-     * @used-by Gerencia::manipular_detalhes_rodada()   Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
-     * @used-by Gerencia::verifica_adiou_rodada()       Confere a rodada para ver se ja existe a rodada cadastrado.
-     * @used-by Gerencia::consultar_rodada()            Confere a rodada para receber um numero
-     * @used-by Gerencia::enviar_resultado()            Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
-     * @param int $recebe_rodada                        Recebe um numero para verificar se é rodada do bolao                 
-     * @return array
-     */
-    private function confere_rodada($recebe_rodada) {
-        $confere_rodada['existe_rodadas_cadastradas'] = true;
-        if ($recebe_rodada == null || !is_numeric($recebe_rodada) || $recebe_rodada <= 0 || $recebe_rodada > 38) {
-            $confere_rodada['status'] = false;
-            $confere_rodada['rodada'] = 1;
-        } else {
-            $confere_rodada['status'] = true;
-            $confere_rodada['rodada'] = (int) $recebe_rodada;
-        }
-        if (count($this->rodadas_cadastradas) == 0) {
-            $confere_rodada['existe_rodadas_cadastradas'] = false;
-            $confere_rodada['existe'] = false;
-        } else {
-            if (array_key_exists($recebe_rodada, $this->rodadas_cadastradas)) {
-                $confere_rodada['existe'] = true;
-            } else {
-                $confere_rodada['existe'] = false;
-            }
-        }
-
-        return $confere_rodada;
-    }
-
-    /**
      * Inicializa a pagina sem parametros.
      * 
-     * @uses Gerencia::rodada();    Para carregar a view
+     * @uses Gerencia::rodada()   Para carregar a view
      * @return void
      */
     public function index() {
@@ -90,15 +64,15 @@ class Gerencia extends CI_Controller {
     /**
      * Esse metodo irá montar a view passando parametros.
      * 
-     * @uses Gerencia::confere_rodada()         Para montar a view, confere a rodada para retornar no formato válido.
+     * @uses Adm_lib::confere_rodada()                   Para montar a view, confere a rodada para retornar no formato válido.
      * @used-by Gerencia::valida_detalhes_rodada()       Se apresentar erros no form da rodada, é usado para montar a view e mostrar a msg de erro.
-     * @param int       $recebe_rodada          Recebe uma rodada para consultar os dados e montar a view
-     * @param string    $msg                    Envia uma mensagem a ser mostrada como parametro
-     * @param string    $form                   Vai ser enviado como parametro da view para informar o Jquery que existiu uma requisição
+     * @param int       $recebe_rodada                   Recebe uma rodada para consultar os dados e montar a view
+     * @param string    $msg                             Envia uma mensagem a ser mostrada como parametro
+     * @param string    $form                            Vai ser enviado como parametro da view para informar o Jquery que existiu uma requisição
      * @return void
      */
     public function rodada($recebe_rodada = null, $msg = null, $form = 0) {
-        $confere_rodada = $this->confere_rodada($recebe_rodada);
+        $confere_rodada = $this->adm_lib->confere_rodada($recebe_rodada);
         
         switch ($msg) {
             case 'new':
@@ -125,13 +99,14 @@ class Gerencia extends CI_Controller {
     /**
      * Vai verificar o tipo de açao para inserir/atualizar rodada.
      * 
-     * @uses Gerencia::confere_rodada()        Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
-     * @uses Gerencia::rodada()                Se apresentar erros no form da rodada, é usado para montar a view e mostrar a msg de erro.
-     * @param int $recebe_rodada               Recebe a rodada para ser cadastrado/atualizado         
+     * @uses Adm_lib::confere_rodada()              Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
+     * @uses Gerencia::manipular_rodada_solicitada  Salvo a rodada a ser manipulada para o horario usa-la. Caso a rodada exista nao tem problema a data ser menor que hoje
+     * @uses Gerencia::rodada()                     Se apresentar erros no form da rodada, é usado para montar a view e mostrar a msg de erro.
+     * @param int $recebe_rodada                    Recebe a rodada para ser cadastrado/atualizado         
      * @return void
      */
     public function manipular_detalhes_rodada($recebe_rodada = null) {
-        $confere_rodada = $this->confere_rodada($recebe_rodada);
+        $confere_rodada = $this->adm_lib->confere_rodada($recebe_rodada);
         if (!$confere_rodada['status']) {
             $msg = "Rodada " . $confere_rodada['rodada'] . " inválido";
             $this->rodada($confere_rodada['rodada'], $msg);
@@ -142,6 +117,7 @@ class Gerencia extends CI_Controller {
             $msg = "Rodada " . $confere_rodada['rodada'] . " não existe para ser atualizada";
             $this->rodada($confere_rodada['rodada'], $msg);
         } else {
+            $this->manipular_rodada_solicitada= $confere_rodada['existe'];
             $this->valida_detalhes_rodada($confere_rodada['rodada']);
         }
     }
@@ -190,7 +166,8 @@ class Gerencia extends CI_Controller {
     /**
      * Verifica se o horário da partida está correto.
      * 
-     * @used-by Gerencia::valida_detalhes_rodada()           Vai verificar a data da partida
+     * @uses Gerencia::manipular_rodada_solicitada          Se a rodada ja existir, nao tem problema a data ser menor que hoje.
+     * @used-by Gerencia::valida_detalhes_rodada()          Vai verificar a data da partida
      * @paren string $horario                               Pode receber formato BR ou do banco.
      * @return bool                                         Se conseguiu converter a data do banco, retorna true
      */
@@ -210,10 +187,12 @@ class Gerencia extends CI_Controller {
             //$hoje->add(new DateInterval("P2D"));
             $nova_data = new DateTime($horario);
 
-            if ($nova_data < $hoje || $nova_data->format("Y") != $hoje->format("Y")) {
+            if ($nova_data->format("Y") != $hoje->format("Y")) {
                 return false;
-            } else {
-                return true;
+            } else if($nova_data < $hoje && !$this->manipular_rodada_solicitada){
+                return false;
+            } else{
+                return true;;
             }
         } catch (Exception $ex) {
             return false;
@@ -225,8 +204,8 @@ class Gerencia extends CI_Controller {
      * 
      * @uses Gerencia::verifica_adiou_rodada()      Verifica se a data atual nao é maior que a data inicio da proxima rodada.
      * @uses Gerencia_model::salvar_nova_rodada()   Conecta e salva nova rodada no banco
-     * @uses Gerencia_model::atualizar_rodada()   Conecta e atualiza rodada no banco
-     * @used-by Gerencia::valida_detalhes_rodada()           Depois que validar, usa esse metodo para salvar
+     * @uses Gerencia_model::atualizar_rodada()     Conecta e atualiza rodada no banco
+     * @used-by Gerencia::valida_detalhes_rodada()  Depois que validar, usa esse metodo para salvar
      * @param int $rodada                           Recebe uma rodada
      * @param string $acao                          Uma string para ver se é uma nova rodada ou é para atualizar
      * @return void
@@ -255,12 +234,12 @@ class Gerencia extends CI_Controller {
      * Verifica se a data atual da partida é maior que a data inicio da proxima rodada. 
      * Se for, essa rodada será inserido como adiada e nao poderá usar essa data como fim dessa atual rodada.
      * 
-     * @uses Gerencia::confere_rodada()             Verifica se existes rodadas cadastradas para ver se a proxima rodada existe
+     * @uses Adm_lib::confere_rodada()              Verifica se existes rodadas cadastradas para ver se a proxima rodada existe
      * @used-by Gerencia::acao_valida()             Se a data da rodada for maior, retorna que adiou.
      * @return string                               Retorna sim ou nao para salvar no banco
      */
     private function verifica_adiou_rodada($rodada, $data) {
-        $confere_rodada = $this->confere_rodada($rodada);
+        $confere_rodada = $this->adm_lib->confere_rodada($rodada);
         if ($confere_rodada['existe_rodadas_cadastradas']) {
             $data_partida = new DateTime($data);
             if (array_key_exists($rodada - 1, $this->rodadas_cadastradas)) {
@@ -290,13 +269,13 @@ class Gerencia extends CI_Controller {
      * Quando clicado no link próximo/anterior ou escolher uma rodada no SELECT,
      * O Ajax irá consultar se a rodada escolhida existe. Caso exista retornara detalhes da rodada
      * 
-     * @uses Gerencia::confere_rodada()         Verifica a rodada para buscar os detalhes dela
+     * @uses Adm_lib::confere_rodada()          Verifica a rodada para buscar os detalhes dela
      * @uses Gerencia_model::consultar_rodada() Para buscar os detalhes da rodada 
      * @param int $recebe_rodada                Recebe uma rodada
      * @return json                             Todos os detalhes da rodada.
      */
     public function consultar_rodada($recebe_rodada) {
-        $confere_rodada = $this->confere_rodada($recebe_rodada);
+        $confere_rodada = $this->adm_lib->confere_rodada($recebe_rodada);
 
         $tras_rodada = $this->Gerencia_model->consultar_rodada($confere_rodada['rodada']);
         $existe_rodada = ($tras_rodada) ? 1 : 0;
@@ -319,13 +298,13 @@ class Gerencia extends CI_Controller {
      * Ao enviar o resultado de uma partida, essa requisiçao vai receber via post partida, e os gols.
      * Se a partida náo começou, não envirá o resultado.
      * 
-     * @uses Gerencia::confere_rodada()         Verifica a rodada para buscar os detalhes dela
+     * @uses Adm_lib::confere_rodada()          Verifica a rodada para buscar os detalhes dela
      * @uses Gerencia_model::consultar_rodada() Para buscar os detalhes da rodada 
      * @uses Gerencia::calcula_palpites()       Depois que conferiu a rodada, irá calcular os pontos das palpites
      * @return json                             Retornara se foi inserido ou nao
      */
     public function enviar_resultado($recebe_rodada = null) {
-        $confere_rodada = $this->confere_rodada($recebe_rodada);
+        $confere_rodada = $this->adm_lib->confere_rodada($recebe_rodada);
         
         if (!$confere_rodada['status']) {
             echo json_encode(array("inseriu" => 0, "msg" => "Erro ao enviar o resultado. Rodada inválida!"));
@@ -425,14 +404,17 @@ class Gerencia extends CI_Controller {
                 $cf = 1;
                 $pontos = 1;
                 $lucro = 0;
+                $saldo= ($value["pap_aposta"]) ? $value["pap_aposta"] : 0;
             } else if (($gol_mandante < $gol_visitante && $value["pap_gol_mandante"] < $value["pap_gol_visitante"])) {
                 $cf = 1;
                 $pontos = 1;
                 $lucro = 0;
+                $saldo= ($value["pap_aposta"]) ? $value["pap_aposta"] : 0;
             } else if (($gol_mandante == $gol_visitante && $value["pap_gol_mandante"] == $value["pap_gol_visitante"])) {
                 $cf = 1;
                 $pontos = 1;
                 $lucro = 0;
+                $saldo= ($value["pap_aposta"]) ? $value["pap_aposta"] : 0;
             } else {
                 $lucro = ($value["pap_aposta"]) ? -($value["pap_aposta"] * 25 / 100) : 0;
                 $saldo = ($value["pap_aposta"]) ? $value["pap_aposta"] + $lucro : 0;
