@@ -143,7 +143,6 @@ class Gerencia_model extends CI_Model {
                 . "WHERE cad_rodada= ? AND cad_partida= ? AND YEAR(cad_created) = ".date('Y');
         
         $stmt= $this->con->prepare($sql);
-        //var_dump($dados_rodada);exit;
         foreach($dados_rodada AS $key=>$value){
             $stmt->bindValue(1, $value["time_mandante"]);
             $stmt->bindValue(2, $value["time_visitante"]);

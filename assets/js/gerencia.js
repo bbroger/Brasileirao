@@ -1,7 +1,7 @@
 $("#rodadas_cadastradas").change(function () {
     $("#msg").html("<a href='#' id='oi'></a>");
     var rodada = $(this).val();
-    confere = confere_form_gerencia();
+    var confere = confere_form_gerencia();
     if (confere) {
         var passa = confirm("As alteraçoes não serão salvas. Quer sair dessa rodada?");
         if (passa) {
@@ -15,7 +15,7 @@ $("#rodadas_cadastradas").change(function () {
 $("#anterior_rodada, #proximo_rodada").click(function () {
     $("#msg").html("<a href='#' id='oi'></a>");
     var rodada = $(this).val();
-    confere = confere_form_gerencia();
+    var confere = confere_form_gerencia();
     if (confere) {
         var passa = confirm("As alteraçoes não serão salvas. Quer sair dessa rodada?");
         if (passa) {

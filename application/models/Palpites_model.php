@@ -27,7 +27,6 @@ class Palpites_model extends CI_Model {
 
         $this->load->library('ConnectionFactory');
         $this->con = $this->connectionfactory->getConnection();
-        //var_dump($this->palpites_usuario(1, 1));exit;
     }
     
     /**
@@ -47,7 +46,7 @@ class Palpites_model extends CI_Model {
         $stmt->execute();
 
         $tras_palpites = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+        $stmt= null;
         return $tras_palpites;
     }
     
@@ -69,7 +68,7 @@ class Palpites_model extends CI_Model {
         $stmt->execute();
 
         $tras_palpites = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+        $stmt= null;
         return $tras_palpites;
     }
     
@@ -95,6 +94,7 @@ class Palpites_model extends CI_Model {
             $stmt->bindValue(6, $value["aposta"]);
             $stmt->bindValue(7, $value["palpitou"]);
             $stmt->execute();
+            $stmt= null;
         }
     }
     
@@ -104,6 +104,7 @@ class Palpites_model extends CI_Model {
         $stmt->bindValue(1, $user_id);
         $stmt->bindValue(2, $rodada);
         $stmt->execute();
+        $stmt= null;
     }
 
 }
