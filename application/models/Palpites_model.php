@@ -38,11 +38,12 @@ class Palpites_model extends CI_Model {
      */
     public function palpites_usuario($user_id, $rodada) {
         $sql = "SELECT * FROM pap_palpites "
-                . "WHERE pap_user_id= ? AND pap_rodada= ? AND pap_valida= 'sim' AND YEAR(pap_created) = " . date('Y') . " "
+                . "WHERE pap_user_id= ? AND pap_rodada= ? AND pap_valida= 'sim' AND YEAR(pap_created) = ? "
                 . "ORDER BY pap_partida ASC LIMIT 10";
         $stmt = $this->con->prepare($sql);
         $stmt->bindValue(1, $user_id);
         $stmt->bindValue(2, $rodada);
+        $stmt->bindValue(3, date('Y'));
         $stmt->execute();
 
         $tras_palpites = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -60,11 +61,12 @@ class Palpites_model extends CI_Model {
      */
     public function todos_palpites_partidas($rodada, $partida) {
         $sql = "SELECT pap_id_palpite, pap_gol_mandante, pap_gol_visitante, pap_aposta FROM pap_palpites "
-                . "WHERE pap_rodada= ? AND pap_partida= ? AND pap_palpitou = 'sim' AND pap_valida= 'sim' AND YEAR(pap_created) = " . date('Y');
+                . "WHERE pap_rodada= ? AND pap_partida= ? AND pap_palpitou = 'sim' AND pap_valida= 'sim' AND YEAR(pap_created) = ?";
 
         $stmt = $this->con->prepare($sql);
         $stmt->bindValue(1, $rodada);
         $stmt->bindValue(2, $partida);
+        $stmt->bindValue(3, date('Y'));
         $stmt->execute();
 
         $tras_palpites = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -101,10 +103,11 @@ class Palpites_model extends CI_Model {
     }
     
     private function invalidar_palpites_antigos($user_id, $rodada){
-        $sql= "UPDATE pap_palpites SET pap_valida = 'nao' WHERE pap_user_id = ? AND pap_rodada= ? AND YEAR(pap_created) = " . date('Y');
+        $sql= "UPDATE pap_palpites SET pap_valida = 'nao' WHERE pap_user_id = ? AND pap_rodada= ? AND YEAR(pap_created) = ?";
         $stmt= $this->con->prepare($sql);
         $stmt->bindValue(1, $user_id);
         $stmt->bindValue(2, $rodada);
+        $stmt->bindValue(3, date('Y'));
         $stmt->execute();
         $stmt= null;
     }

@@ -3,9 +3,26 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Adm_lib {
+    
+    /**
+     * Carrega as funçoes do Codeigniter. Para usar faça $this->CI->...
+     * 
+     * @var object
+     */
     private $CI;
+    
+    /**
+     * Todas as rodadas cadastradas
+     * 
+     * @var array
+     */
     private $rodadas_cadastradas;
     
+    /**
+     * Carrega as funçoes do Codeigniter e o Gerencia_model para pegar rodadas cadastradas
+     * 
+     * @return void
+     */
     public function __construct() {
         $this->CI = & get_instance();
         $this->CI->load->model('Gerencia_model');
@@ -66,5 +83,43 @@ class Adm_lib {
         }
 
         return $confere_rodada;
+    }
+    
+    /**
+     * Retorna em tempo real todos os dados do usuario. OS mangos são atualizados em tempo real, descontando até mesmo o que ele apostou na rodada atual
+     * Inclusive os desafios e as inscriçoes das copas, tudo em tempo real.
+     * 
+     * @uses User_model::dados()                                        Tras os dados do usuario
+     * @uses Classificacao_model::total_consulta_classif_user()         Tras em tempo real o saldo do usuario (-aposta + lucro)
+     * @uses Desafios_model::total_dados_desafio_user()                 Tras o total de desafios aceitos/pendentes, desafiado/desafiador e quantos venceu.
+     * @uses Copa_model::total_dados_copa_oficial_user()                Tras o total de partic de copas oficiais, se existir os titulos, a rodada que venceu, o id_copa e o numero de inscritos.          
+     * @param int $id
+     * @return array
+     */
+    public function todos_dados_usuarios($id= null){
+        if($id == null){
+            $id= 1;
+        }
+        
+        $this->CI->load->model('User_model');
+        $dados_user= $this->CI->User_model->dados($id);
+        
+        $this->CI->load->model('Classificacao_model');
+        $dados_classif= $this->CI->Classificacao_model->total_consulta_classif_user($id);
+        
+        $this->CI->load->model('Desafios_model');
+        $dados_desafio= $this->CI->Desafios_model->total_dados_desafio_user($id);
+        
+        $this->CI->load->model('Copa_model');
+        $dados_copa= $this->CI->Copa_model->total_dados_copa_oficial_user($id);
+        
+        $arr= array(
+            $dados_user,
+            $dados_classif,
+            $dados_desafio,
+            $dados_copa['venceu']
+        );
+        
+        return $arr;
     }
 }

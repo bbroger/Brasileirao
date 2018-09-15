@@ -60,9 +60,10 @@ class Gerencia_model extends CI_Model {
      * @return array|bool
      */
     public function consultar_rodada($rodada){
-        $sql= "SELECT * FROM cad_cadastrar_rodadas WHERE cad_rodada= ? AND YEAR(cad_created) = ".date('Y');
+        $sql= "SELECT * FROM cad_cadastrar_rodadas WHERE cad_rodada= ? AND YEAR(cad_created)= ?";
         $stmt= $this->con->prepare($sql);
         $stmt->bindValue(1, $rodada);
+        $stmt->bindValue(2, date('Y'));
         $stmt->execute();
         
         $tras_rodada= $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -75,11 +76,14 @@ class Gerencia_model extends CI_Model {
      * Vai consultar o inicio e fim de cada rodada.
      * 
      * @used-by Gerencia    Usando no __construct para carregar todas as rodadas cadastradas
+     * @used-by Palpites
+     * @used-by Adm_lib
      * @return array
      */
     public function rodadas_cadastradas(){
-        $sql= "SELECT cad_rodada, min(cad_data) AS inicio, max(cad_data) AS fim FROM cad_cadastrar_rodadas WHERE cad_adiou = 'nao' AND YEAR(cad_created) = ".date('Y')." GROUP BY cad_rodada";
+        $sql= "SELECT cad_rodada, min(cad_data) AS inicio, max(cad_data) AS fim FROM cad_cadastrar_rodadas WHERE cad_adiou = 'nao' AND YEAR(cad_created)= ? GROUP BY cad_rodada";
         $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(1, date('Y'));
         $stmt->execute();
         
         $tras_rodadas= $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -140,7 +144,7 @@ class Gerencia_model extends CI_Model {
     public function atualizar_rodada($rodada, $dados_rodada){
         $sql= "UPDATE cad_cadastrar_rodadas SET "
                 . "cad_time_mandante= ?, cad_time_visitante= ?, cad_time_mandante_var= ?, cad_time_visitante_var= ?, cad_local= ?, cad_data= ?, cad_adiou= ? "
-                . "WHERE cad_rodada= ? AND cad_partida= ? AND YEAR(cad_created) = ".date('Y');
+                . "WHERE cad_rodada= ? AND cad_partida= ? AND YEAR(cad_created)= ?";
         
         $stmt= $this->con->prepare($sql);
         foreach($dados_rodada AS $key=>$value){
@@ -153,6 +157,7 @@ class Gerencia_model extends CI_Model {
             $stmt->bindValue(7, $value["adiou_partida"]);
             $stmt->bindValue(8, $rodada);
             $stmt->bindValue(9, $key);
+            $stmt->bindValue(10, date('Y'));
             $stmt->execute();
         }
         $stmt= null;
@@ -195,12 +200,13 @@ class Gerencia_model extends CI_Model {
      * @return void
      */
     public function salvar_gols_partida($rodada, $partida, $gol_mandante, $gol_visitante){
-        $sql= "UPDATE cad_cadastrar_rodadas SET cad_time_mandante_gol= ?, cad_time_visitante_gol= ? WHERE cad_rodada= ? AND cad_partida= ? AND YEAR(cad_created) = ".date('Y');
+        $sql= "UPDATE cad_cadastrar_rodadas SET cad_time_mandante_gol= ?, cad_time_visitante_gol= ? WHERE cad_rodada= ? AND cad_partida= ? AND YEAR(cad_created)= ?";
         $stmt= $this->con->prepare($sql);
         $stmt->bindValue(1, $gol_mandante);
         $stmt->bindValue(2, $gol_visitante);
         $stmt->bindValue(3, $rodada);
         $stmt->bindValue(4, $partida);
+        $stmt->bindValue(5, date('Y'));
         $stmt->execute();
         $stmt= null;
     }

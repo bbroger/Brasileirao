@@ -192,7 +192,7 @@ class Gerencia extends CI_Controller {
             } else if($nova_data < $hoje && !$this->manipular_rodada_solicitada){
                 return false;
             } else{
-                return true;;
+                return true;
             }
         } catch (Exception $ex) {
             return false;
