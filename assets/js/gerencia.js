@@ -36,7 +36,6 @@ function consultar_rodada(rodada, form = 0) {
         type: "Post",
         dataType: "json"
     }).done(function (data) {
-        console.log(data);
         if (data.existe_rodada === 1) {
             $("#info_rodada").html("Rodada " + rodada + " | Inicio: " + moment(data.inicio).format("ddd DD/MM HH:mm") + " | Fim: " + moment(data.fim).format("ddd DD/MM HH:mm"));
             $("#manipular").val("atualizar");
@@ -81,7 +80,8 @@ function consultar_rodada(rodada, form = 0) {
         $("#anterior_rodada").val(anterior);
         $("#proximo_rodada").val(proximo);
     }).fail(function (data) {
-        console.log(data);
+        $("#focus_msg").focus();
+        $("#msg").html("Erro ao trazer as partidas. Tente mais tarde.");
     });
 }
 

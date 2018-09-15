@@ -32,6 +32,7 @@ function consultar_rodada(rodada, form = 0) {
         type: "Post",
         dataType: "json"
     }).done(function (data) {
+        console.log(data);
         if (data.existe_rodada === 1) {
             $("#info_rodada").html("Rodada " + rodada + " | Inicio: " + moment(data.inicio).format("ddd DD/MM HH:mm") + " | Fim: " + moment(data.fim).format("ddd DD/MM HH:mm"));
             $("table > tbody > tr").removeClass();
@@ -75,7 +76,11 @@ function consultar_rodada(rodada, form = 0) {
                 $("#btn_palpitar").prop("disabled", true);
             }
 
-            $("#total_mangos_palpites").html("M$ " + tapostas);
+            if(form === 1){
+                $("#total_mangos_palpites").html("M$ " + tapostas);
+            } else{
+                $("#total_mangos_palpites").html("M$ " + tapostas);
+            }
             $("#total_pontos_palpites").html(" " + tpontos);
             $("#total_lucro_palpites").html("M$ " + tlucro);
             $("#clear_table").show();
@@ -142,6 +147,10 @@ for (var i = 1; i <= 10; i++) {
 }
 
 $(str_a.slice(0, -2)).keyup(function () {
+    soma_aposta();
+});
+
+function soma_aposta(){
     var val, total = 0;
     for (var i = 1; i <= 10; i++) {
         val = $("#aposta_partida_" + i).val();
@@ -151,14 +160,15 @@ $(str_a.slice(0, -2)).keyup(function () {
     }
 
     $("#total_mangos_palpites").html("M$ " + total);
-});
+    return total;
+}
 
 $("#form_palpites").submit(function (e) {
     e.preventDefault();
 
     success_color(".input_palpite");
 
-    var data;
+
     var valor;
     var valid = true;
     for (var i = 1; i <= 10; i++) {
@@ -186,9 +196,9 @@ $("#form_palpites").submit(function (e) {
         }
     }
 
-    if (valid === true) {
+    if (valid) {
         $(this)[0].submit();
-    } else {
+    } else{
         $("#focus_msg").focus();
         $("#msg").html("Ops, existe um erro nos seus palpites. Insira apenas números e é obrigatório inserir os gols nas partidas que não começaram. Desce lá e veja onde errou ;)");
     }

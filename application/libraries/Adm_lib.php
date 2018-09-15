@@ -55,10 +55,10 @@ class Adm_lib {
 
     /**
      * Confere se a rodada é um numero e está entre 1 e 38. Também confere se está no array
-     * 
-     * @uses array $rodadas_cadastradas                 Para consultar se a rodada existe nas rodadas cadastradas.
+     *
      * @used-by Gerencia
      * @used-by Palpites
+     * @uses array $rodadas_cadastradas                 Para consultar se a rodada existe nas rodadas cadastradas.
      * @param int $recebe_rodada                        Recebe um numero para verificar se é rodada do bolao                 
      * @return array
      */
@@ -89,6 +89,7 @@ class Adm_lib {
      * Retorna em tempo real todos os dados do usuario. OS mangos são atualizados em tempo real, descontando até mesmo o que ele apostou na rodada atual
      * Inclusive os desafios e as inscriçoes das copas, tudo em tempo real.
      * 
+     * @used-by Adm_lib::total_mangos_usuario()                         Irá pegar apenas os lucros e calcular o total de mangos que o usuario possui
      * @uses User_model::dados()                                        Tras os dados do usuario
      * @uses Classificacao_model::total_consulta_classif_user()         Tras em tempo real o saldo do usuario (-aposta + lucro)
      * @uses Desafios_model::total_dados_desafio_user()                 Tras o total de desafios aceitos/pendentes, desafiado/desafiador e quantos venceu.
@@ -114,12 +115,45 @@ class Adm_lib {
         $dados_copa= $this->CI->Copa_model->total_dados_copa_oficial_user($id);
         
         $arr= array(
-            $dados_user,
-            $dados_classif,
-            $dados_desafio,
-            $dados_copa['venceu']
+            'usuario'=>$dados_user,
+            'classif'=>$dados_classif,
+            'desafios'=>$dados_desafio,
+            'copas'=>$dados_copa
         );
         
         return $arr;
+    }
+    
+    /**
+     * Pega todos os lucros do usuario e soma para ter o total de mangos
+     * 
+     * @used-by Palpites                            No _construct, salva no atributo e será usado para validar novas apostas nos palpites
+     * @uses Adm_lib::todos_dados_usuario()         Irá pegar o lucro para somar.
+     * @param int $id
+     * @return type
+     */
+    public function total_mangos_usuario($id= null){
+        if($id == null){
+            $id= 1;
+        }
+        
+        $dados= $this->todos_dados_usuarios($id);
+        
+        $mangos_recebido= $dados['usuario']['use_mangos'];
+        $saldo_classif= ($dados['classif']) ? $dados['classif']['total_saldo'] : 0;
+        $saldo_desafios= $dados['desafios']['venceu'] * 2 - ($dados['desafios']['total_aceitos'] + $dados['desafios']['total_pendentes']);
+        $total_partic_copa= $dados['copas']['total'];
+        if($dados['copas']['venceu']){
+            $total_lucro_copa= 0;
+            foreach ($dados['copas']['venceu'] as $key => $value) {
+                $total_lucro_copa+= $value['inscritos'] * 3;
+            }
+        } else{
+            $total_lucro_copa= 0;
+        }
+        $saldo_copa= $total_lucro_copa - $total_partic_copa * 3;
+        $total_mangos= $mangos_recebido + $saldo_classif + $saldo_desafios + $saldo_copa;
+        
+        return $total_mangos;
     }
 }

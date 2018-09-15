@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-xs-12 col-sm-4 dados_palpites">
                     <p class="dados_palpites_titulo">Mangos atual</p>
-                    <p class="dados_palpites_valor">M$ 100</p>
+                    <p class="dados_palpites_valor">M$ <span id="mangos_user"><?php echo $mangos;?></span></p>
                 </div>
             </div>
             <div class="row">

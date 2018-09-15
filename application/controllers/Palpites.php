@@ -17,10 +17,25 @@ class Palpites extends CI_Controller {
     public $rodadas_cadastradas;
     
     /**
+     * Total de mangos em tempo real e da data atual.
+     * 
+     * @var float
+     */
+    public $mangos_total;
+    
+    /**
+     * Assim que o usuaro der o submit, será enviado a rodada para cá por que o methodo aposta_check pegara a rodada e verificará as partidas autorizadas e as apostas atuais
+     * 
+     * @var int
+     */
+    public $rodada_palpitada;
+    
+    /**
      * Carrega o Palpites_model e Gerencia_model. Também salva na variavel as rodadas cadastradas.
      * 
      * @uses Palpites_model                         Carrega o Palpites_model para utilizar na aplicação
      * @uses Gerencia_model::rodadas_cadastradas()  Tras todas as rodadas cadastradas e salva no Palpites::rodadas_cadastradas
+     * @uses Adm_lib::total_mangos_usuarios()       Irá servir para validar as apostas dos novos palpites
      * @return void
      */
     public function __construct() {
@@ -29,6 +44,7 @@ class Palpites extends CI_Controller {
         $this->load->model("Gerencia_model");
         $this->load->library('Adm_lib');
         
+        $this->mangos_total= $this->adm_lib->total_mangos_usuario();
         $this->rodadas_cadastradas = $this->Gerencia_model->rodadas_cadastradas();
     }
     
@@ -67,6 +83,7 @@ class Palpites extends CI_Controller {
         $dados = array(
             "rodada" => $confere_rodada['rodada'],
             "rodadas_cadastradas" => $this->rodadas_cadastradas,
+            "mangos"=> $this->mangos_total,
             "msg" => $msg,
             "form"=> $form
         );
@@ -102,6 +119,7 @@ class Palpites extends CI_Controller {
                     'rodada'=> $confere_rodada['rodada'],
                     'usuario_palpitou'=> $usuario_palpitou,
                     'palpites'=> $tras_palpites,
+                    'mangos'=> $this->mangos_total,
                     'detalhes_rodada'=> $tras_detalhes_rodada,
                     'detalhes_times'=> $tras_detalhes_times,
                     'inicio'=> $this->rodadas_cadastradas[$confere_rodada['rodada']]['inicio'],
@@ -131,6 +149,7 @@ class Palpites extends CI_Controller {
      * 
      * @uses Adm_lib::confere_rodada()              Confere a rodada para poder trazer os palpites corretamente.
      * @uses Palpites_model::palpites_usuarios()    Tras os palpites existentes por que se uma partida nao tiver autorizado, vai salvar null mesmo o usuario palpitar anteriormente
+     * @uses Palpites_model::salvar_palpites()      Depois que valida tudo, envia os palpites
      * @uses Palpites::autoriza_palpites()          Antes de salvar, esse método irá verificar se existe pelo menos uma partida que não tenha começado
      * @uses Palpites::rodada()                     Se não tem nenhuma partida que nao tenha começado, avisa o usuario que nao foi palpitado pois ja começaram todas as partidas
      * @param type $recebe_rodada
@@ -145,6 +164,7 @@ class Palpites extends CI_Controller {
             $palpites_autorizados = $this->autoriza_palpites($confere_rodada['rodada']);
 
             if (in_array('sim', $palpites_autorizados)) {
+                $this->rodada_palpitada= $confere_rodada['rodada'];
                 $palpites_existentes = $this->Palpites_model->palpites_usuario(1, $confere_rodada['rodada']);
                 $this->salvar_palpites($palpites_existentes, $palpites_autorizados, $confere_rodada['rodada']);
             } else {
@@ -181,9 +201,10 @@ class Palpites extends CI_Controller {
     /**
      * A função aqui é pegar as partidas que podem ser palpitadas e obrigar que o usuario palpite ela.
      * 
+     * @used-by Palpites::autoriza_palpites()           Depois que validou as datas que podem ser palpitadas, agora usará para pegar os palpites
      * @uses Palpites_model::salvar_palpites()          Irá salvar no banco os palpites permitidos da rodada.
      * @uses Palpites::rodada()                         Se tiver algum erro nos palpites, irá retornar com a mensagem.
-     * @used-by Palpites::autoriza_palpites()           Depois que validou as datas que podem ser palpitadas, agora usará para pegar os palpites
+     * @uses Palpites::aposta_check()                   Valida se o total de apostas é menos que o total de mangos que o usuario tem
      * @param array $palpites_existentes                Se existir, vai pegar os palpites anteriormente para colocar nas partidas nao autorizadas.
      * @param array $autoriza                           Está com todas as partidas que poderão ser palpitadas
      * @param int   $rodada                             Rodada que salvará os palpites
@@ -193,8 +214,9 @@ class Palpites extends CI_Controller {
         foreach ($autoriza as $key => $value) {
             $this->form_validation->set_rules("palpite_mandante_$key", "Mandante partida $key", "trim|integer|max_length[2]|required");
             $this->form_validation->set_rules("palpite_visitante_$key", "Visitante partida $key", "trim|required|integer|max_length[2]|required");
-            $this->form_validation->set_rules("aposta_partida_$key", "Aposta partida $key", "trim|integer|max_length[4]");
+            $this->form_validation->set_rules("aposta_partida_$key", "Aposta partida $key", "trim|integer|max_length[3]");
         }
+        $this->form_validation->set_rules("aposta", "Aposta", "callback_aposta_check");
         
         if($this->form_validation->run()){
             $completo= 'completo';
@@ -203,14 +225,16 @@ class Palpites extends CI_Controller {
                 if(array_key_exists($i, $autoriza)){
                     $palpites[$i]["gol_mandante"]= (int) $this->input->post("palpite_mandante_".$i);
                     $palpites[$i]["gol_visitante"]= (int) $this->input->post("palpite_visitante_".$i);
-                    $palpites[$i]["aposta"]= ($this->input->post("aposta_partida_".$i)) ? (int) $this->input->post("aposta_partida_".$i) : null;
-                    $palpites[$i]["saldo"]= ($this->input->post("aposta_partida_".$i)) ? (int) -$this->input->post("aposta_partida_".$i) : 0;
+                    $palpites[$i]["aposta"]= intval($this->input->post("aposta_partida_".$i));
+                    $palpites[$i]["lucro"]= 0;
+                    $palpites[$i]["saldo"]= ($this->input->post("aposta_partida_".$i)) ? -intval($this->input->post("aposta_partida_".$i)) : 0;
                     $palpites[$i]["palpitou"]= 'sim';
                 } else{
                     $palpites[$i]["gol_mandante"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_gol_mandante'] : null);
                     $palpites[$i]["gol_visitante"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_gol_visitante'] : null);
                     $palpites[$i]["aposta"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_aposta'] : null);
-                    $palpites[$i]["saldo"]= (array_key_exists($i-1, $palpites_existentes) ? -$palpites_existentes[$i-1]['pap_aposta'] : 0);
+                    $palpites[$i]["lucro"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_lucro'] : 0);
+                    $palpites[$i]["saldo"]= (array_key_exists($i-1, $palpites_existentes && $palpites_existentes[$i-1]['pap_lucro'] != 0) ? -$palpites_existentes[$i-1]['pap_aposta'] : $palpites_existentes[$i-1]['pap_lucro']);
                     $palpites[$i]["palpitou"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_palpitou'] : 'nao');
                     if(array_key_exists($i-1, $palpites_existentes) && $palpites_existentes[$i-1]['pap_palpitou'] == 'nao'){
                         $completo= 'incompleto';
@@ -224,6 +248,39 @@ class Palpites extends CI_Controller {
             $form= (validation_errors()) ? 1: 0;
             $this->rodada($rodada, validation_errors(), $form);
         }
+    }
+    
+    /**
+     * Se existir, pegará as apostas antigas e 'devolvera' ao usuario para receber as novas apostas e conferir se a aposta é maior que os mangos
+     * 
+     * @uses-by salvar_palpites()                       Assim que o palpite chegar, irá validar também o total apostado
+     * @uses Palpites_model::palpites_usuario()         Pega as apostas anteriores e devolve para o usuario, assim irá receber novas apostas.
+     * @uses Palpites::rodada_palpitada                 Pega a rodada que foi submetido para pegar as apostas da rodada palpitada.
+     * @uses Palpites::mangos_total                     Pega o mango atual do usuario e irá somar com a aposta da rodada anterior.
+     * @return boolean
+     */
+    public function aposta_check(){
+        $palpites_existentes = $this->Palpites_model->palpites_usuario(1, $this->rodada_palpitada);
+        
+        $total_aposta_atual= 0;
+        for($i= 1; $i<=10; $i++) {
+            $total_aposta_atual+= intval($this->input->post("aposta_partida_".$i));
+        }
+        
+        $total_aposta_anterior= 0;
+        if($palpites_existentes){
+            foreach ($palpites_existentes as $key => $value) {
+                $total_aposta_anterior+= $value['pap_aposta'];
+            }
+        }
+        
+        $total_mangos= $this->mangos_total + $total_aposta_anterior;
+        if($total_aposta_atual > $total_mangos){
+            $this->form_validation->set_message('aposta_check', "Não gaste mais do que você tem. Voce apostou M$ ".$total_aposta_atual." e possui M$ ".$total_mangos." no bolso. Não quer ficar devendo para o banco certo? Diminua sua aposta! :)");
+            return false;
+        }
+        
+        return true;
     }
 
 }

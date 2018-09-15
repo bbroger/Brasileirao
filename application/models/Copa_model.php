@@ -38,18 +38,21 @@ class Copa_model extends CI_Model {
      * @return array
      */
     public function total_dados_copa_oficial_user($id) {
-        $sql = "SELECT COUNT(cac_oitavas) AS total FROM cac_cadastrar_copas WHERE cac_id_copa != ? AND cac_oitavas= ? AND YEAR(cac_created)= ?";
+        $sql = "SELECT COUNT(cac_oitavas) AS total FROM cac_cadastrar_copas "
+                . "WHERE cac_id_copa != ? AND cac_oitavas= ? AND cac_quartas IS NULL AND cac_semi IS NULL AND cac_final IS NULL AND cac_campeao IS NULL AND YEAR(cac_created)= ?";
 
         $stmt = $this->con->prepare($sql);
         $stmt->bindValue(1, 1);
         $stmt->bindValue(2, $id);
         $stmt->bindValue(3, date('Y'));
         $stmt->execute();
-
-        $dados_copa['total'] = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $total= $stmt->fetch(PDO::FETCH_ASSOC);
+        $dados_copa['total'] = $total['total'];
         $dados_copa['venceu']= $this->total_titulos_oficial($id);
         
         $stmt = null;
+        
         return $dados_copa;
     }
     
@@ -94,7 +97,7 @@ class Copa_model extends CI_Model {
      * @return bool|array
      */
     public function total_inscritos($id_copa, $rodada, $id_liga= null){
-        $sql = "SELECT COUNT(cac_oitavas) AS inscritos FROM cac_cadastrar_copas WHERE cac_id_copa= ? AND cac_rodada= ? AND YEAR(cac_created)= ?";
+        $sql = "SELECT COUNT(DISTINCT cac_oitavas) AS inscritos FROM cac_cadastrar_copas WHERE cac_id_copa= ? AND cac_rodada= ? AND YEAR(cac_created)= ?";
         $stmt = $this->con->prepare($sql);
         $stmt->bindValue(1, $id_copa);
         $stmt->bindValue(2, $rodada);

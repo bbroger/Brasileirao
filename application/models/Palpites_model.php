@@ -32,8 +32,11 @@ class Palpites_model extends CI_Model {
     /**
      * Irá trazer os palpites do usuário da rodada solicitada e do ano atual.
      * 
-     * @param int $user_id          Irá selecionar os palpites do usuário informado
-     * @param int $rodada           Irá selecionar os palpites da rodada informado
+     * @used-by Palpites::palpites_usuario()    Levá para a view os palpites do usuario da rodada solicitada
+     * @used-by Palpites::enviar_palpites()     Ao enviar as partidas, consulta se ja foi palpitado antes e assim irá pegar as partidas que ja iniciou
+     * @used-by Palpites::aposta_check()        Irá somar todas as apostas e somar com o total de mangos, como se tivesse devolvendo as apostas para receber novas.        
+     * @param int $user_id                      Irá selecionar os palpites do usuário informado
+     * @param int $rodada                       Irá selecionar os palpites da rodada informado
      * @return array|bool
      */
     public function palpites_usuario($user_id, $rodada) {
@@ -47,6 +50,7 @@ class Palpites_model extends CI_Model {
         $stmt->execute();
 
         $tras_palpites = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
         $stmt= null;
         return $tras_palpites;
     }
@@ -77,15 +81,16 @@ class Palpites_model extends CI_Model {
     /**
      * Irá salvar os palpites dos usuarios. Mesmo se o usuario for atualizar ja existente, irá salvar os novos palpites e desconsiderar os antigos.
      * 
-     * @param int   $user_id          O ID do usuario para salvar na tabela pap_palpites
-     * @param int   $rodada           Rodada para gravar a rodada que está palpitando
-     * @param array $palpites         Esse array irá conter todos os palpites da rodada
+     * @used-by Palpites::enviar_palpites()     Depois que validou tudo, salva os palpites.    
+     * @param int   $user_id                    O ID do usuario para salvar na tabela pap_palpites
+     * @param int   $rodada                     Rodada para gravar a rodada que está palpitando
+     * @param array $palpites                   Esse array irá conter todos os palpites da rodada
      * @return void
      */
     public function salvar_palpites($user_id, $rodada, $palpites) {
         $this->invalidar_palpites_antigos($user_id, $rodada);
-        $sql = "INSERT INTO pap_palpites (pap_user_id, pap_rodada, pap_partida, pap_gol_mandante, pap_gol_visitante, pap_aposta, pap_saldo, pap_palpitou) "
-                . "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO pap_palpites (pap_user_id, pap_rodada, pap_partida, pap_gol_mandante, pap_gol_visitante, pap_aposta, pap_lucro, pap_saldo, pap_palpitou) "
+                . "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->con->prepare($sql);
         foreach ($palpites as $key => $value) {
             $stmt->bindValue(1, $user_id);
@@ -94,8 +99,9 @@ class Palpites_model extends CI_Model {
             $stmt->bindValue(4, $value["gol_mandante"]);
             $stmt->bindValue(5, $value["gol_visitante"]);
             $stmt->bindValue(6, $value["aposta"]);
-            $stmt->bindValue(7, $value["saldo"]);
-            $stmt->bindValue(8, $value["palpitou"]);
+            $stmt->bindValue(7, $value["lucro"]);
+            $stmt->bindValue(8, $value["saldo"]);
+            $stmt->bindValue(9, $value["palpitou"]);
             $stmt->execute();
             $stmt= null;
         }

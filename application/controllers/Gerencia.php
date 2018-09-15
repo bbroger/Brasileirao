@@ -64,8 +64,8 @@ class Gerencia extends CI_Controller {
     /**
      * Esse metodo irá montar a view passando parametros.
      * 
-     * @uses Adm_lib::confere_rodada()                   Para montar a view, confere a rodada para retornar no formato válido.
      * @used-by Gerencia::valida_detalhes_rodada()       Se apresentar erros no form da rodada, é usado para montar a view e mostrar a msg de erro.
+     * @uses Adm_lib::confere_rodada()                   Para montar a view, confere a rodada para retornar no formato válido.
      * @param int       $recebe_rodada                   Recebe uma rodada para consultar os dados e montar a view
      * @param string    $msg                             Envia uma mensagem a ser mostrada como parametro
      * @param string    $form                            Vai ser enviado como parametro da view para informar o Jquery que existiu uma requisição
@@ -99,10 +99,10 @@ class Gerencia extends CI_Controller {
     /**
      * Vai verificar o tipo de açao para inserir/atualizar rodada.
      * 
-     * @uses Adm_lib::confere_rodada()              Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
-     * @uses Gerencia::manipular_rodada_solicitada  Salvo a rodada a ser manipulada para o horario usa-la. Caso a rodada exista nao tem problema a data ser menor que hoje
-     * @uses Gerencia::rodada()                     Se apresentar erros no form da rodada, é usado para montar a view e mostrar a msg de erro.
-     * @param int $recebe_rodada                    Recebe a rodada para ser cadastrado/atualizado         
+     * @uses Adm_lib::confere_rodada()                  Confere a rodada para ver se é um numero válido e verifica se ja existe a rodada cadastrado.
+     * @uses Gerencia::manipular_rodada_solicitada()    Salvo a rodada a ser manipulada para o horario usa-la. Caso a rodada exista nao tem problema a data ser menor que hoje
+     * @uses Gerencia::rodada()                         Se apresentar erros no form da rodada, é usado para montar a view e mostrar a msg de erro.
+     * @param int $recebe_rodada                        Recebe a rodada para ser cadastrado/atualizado         
      * @return void
      */
     public function manipular_detalhes_rodada($recebe_rodada = null) {
@@ -125,9 +125,11 @@ class Gerencia extends CI_Controller {
     /**
      * Depois que verificou qual será a ação da rodada, valida os dados.
      * 
-     * @uses Gerencia::time_check()             Vai verificar se o time que foi submetido existe na lista dos times da serie A.
-     * @uses Gerencia::acao_rodada()            Depois que validou o FORM salva no banco
-     * @param int $rodada                       Recebe a rodada para salvar no banco
+     * @used-by Gerencia::manipular_detalhes_rodada()       Depois que validou a rodada, chama esse metodo para validar os detalhes dela
+     * @uses Gerencia::time_check()                         Vai verificar se o time que foi submetido existe na lista dos times da serie A.
+     * @uses Gerencia::data_check()                         Verifica se a data que foi enviado for maior que hoje e a rodada nao tiver sido cadastrada.
+     * @uses Gerencia::acao_rodada()                        Depois que validou o FORM salva no banco
+     * @param int $rodada                                   Recebe a rodada para salvar no banco
      * @return void
      */
     private function valida_detalhes_rodada($rodada) {
@@ -150,8 +152,8 @@ class Gerencia extends CI_Controller {
     /**
      * Verifica se o time que foi enviado, está entre os 20 times da serie A.
      * 
-     * @uses array $times                                    Lista dos 20 times
      * @used-by Gerencia::valida_detalhes_rodada()           Usado para validar os times.
+     * @uses array $times                                    Lista dos 20 times
      * @paren string $time                                   Recebe o time para validar
      * @return bool                                          Se o time existir na lista retorna true
      */
@@ -166,8 +168,8 @@ class Gerencia extends CI_Controller {
     /**
      * Verifica se o horário da partida está correto.
      * 
-     * @uses Gerencia::manipular_rodada_solicitada          Se a rodada ja existir, nao tem problema a data ser menor que hoje.
      * @used-by Gerencia::valida_detalhes_rodada()          Vai verificar a data da partida
+     * @uses Gerencia::manipular_rodada_solicitada          Se a rodada ja existir, nao tem problema a data ser menor que hoje.
      * @paren string $horario                               Pode receber formato BR ou do banco.
      * @return bool                                         Se conseguiu converter a data do banco, retorna true
      */
@@ -202,10 +204,10 @@ class Gerencia extends CI_Controller {
     /**
      * Depois que validou os dados da rodada, aqui salvará no banco
      * 
+     * @used-by Gerencia::valida_detalhes_rodada()  Depois que validar, usa esse metodo para salvar
      * @uses Gerencia::verifica_adiou_rodada()      Verifica se a data atual nao é maior que a data inicio da proxima rodada.
      * @uses Gerencia_model::salvar_nova_rodada()   Conecta e salva nova rodada no banco
      * @uses Gerencia_model::atualizar_rodada()     Conecta e atualiza rodada no banco
-     * @used-by Gerencia::valida_detalhes_rodada()  Depois que validar, usa esse metodo para salvar
      * @param int $rodada                           Recebe uma rodada
      * @param string $acao                          Uma string para ver se é uma nova rodada ou é para atualizar
      * @return void
@@ -234,8 +236,9 @@ class Gerencia extends CI_Controller {
      * Verifica se a data atual da partida é maior que a data inicio da proxima rodada. 
      * Se for, essa rodada será inserido como adiada e nao poderá usar essa data como fim dessa atual rodada.
      * 
-     * @uses Adm_lib::confere_rodada()              Verifica se existes rodadas cadastradas para ver se a proxima rodada existe
      * @used-by Gerencia::acao_valida()             Se a data da rodada for maior, retorna que adiou.
+     * @uses Adm_lib::confere_rodada()              Verifica se existes rodadas cadastradas para ver se a proxima rodada existe
+     * @uses Gerencia::rodadas_cadastradas          Verifica se existe a rodada anterior, atual e a proxima para ver se a data da partida atual nao é maior que a proxima e nem menor que a anterior
      * @return string                               Retorna sim ou nao para salvar no banco
      */
     private function verifica_adiou_rodada($rodada, $data) {
@@ -271,6 +274,7 @@ class Gerencia extends CI_Controller {
      * 
      * @uses Adm_lib::confere_rodada()          Verifica a rodada para buscar os detalhes dela
      * @uses Gerencia_model::consultar_rodada() Para buscar os detalhes da rodada 
+     * @uses Gerencia::rodadas_cadastradas      Se a rodada existe, pega o inicio e fim dela.
      * @param int $recebe_rodada                Recebe uma rodada
      * @return json                             Todos os detalhes da rodada.
      */
@@ -334,6 +338,7 @@ class Gerencia extends CI_Controller {
     /**
      * Alem de salvar o resultado da partida, irá ver se existe palpites para fazer o calculo.
      * 
+     * @used-by Gerencia::enviar_resultado()                Depois de validar a data, irá pegar todos os palpites do bolao
      * @uses Palpites_model::todos_palpites_partidas()      Irá pegar todos os palpites para ver se existe naquela partida
      * @uses Gerencia_model::salvar_gols_partida()          Salva os gols da partida
      * @param int $rodada                                   Rodada que está sendo enviado os gols
@@ -359,7 +364,9 @@ class Gerencia extends CI_Controller {
      * CT = Chute na Trave. Acertou o vencedor da partida e a diferença de gol ou Acertou o empate e a diferença de gol por + ou - 1.
      *  Exemplo: 2x1/3x2 ou 1x0 = diferença por 1; 4x1/5x2 ou 3x0 = diferença por 3; 2x2/3x3 ou 1x1 = diferença por +- 1; 0x0/1x1 = diferença por 1. Dá 50% do valor apostado
      * CF = Chute Fora. Acertou o resultado mas nao o vencedor exemplo: 2x0/4x1 ou 3x1; 0x0/2x2 ou 4x4. Nào ganha nem perde
+     * IMPORTANTE O saldo inicial será -aposta pois o usuario deu esse valor e está esperando um retorno. O retorno será o lucro.
      * 
+     * @used-by Gerencia::calcula_palpites()            Depois que carregou todos os palpites do bolao, se existir chama esse metodo para calcular.
      * @uses Gerencia_model::salvar_resul_palpites      Depois que fez o calculo dos pontos, irá salvar nos palpites de cada usuario.
      * @param int $rodada                               Rodada que salvará os pontos
      * @param int $partida                              Partida que está sendo enviado os gols
@@ -381,43 +388,37 @@ class Gerencia extends CI_Controller {
                 $cc = 1;
                 $pontos = 5;
                 $lucro = ($value["pap_aposta"]) ? $value["pap_aposta"] : 0;
-                $saldo = ($value["pap_aposta"]) ? $value["pap_aposta"] + $lucro : 0;
+                $saldo = ($value["pap_aposta"]) ? $lucro : 0;
             } else if ($gol_mandante > $gol_visitante && $value["pap_gol_mandante"] > $value["pap_gol_visitante"] && 
                     abs($gol_mandante - $gol_visitante) == abs($value["pap_gol_mandante"] - $value["pap_gol_visitante"])) {
                 $ct = 1;
                 $pontos = 3;
                 $lucro = ($value["pap_aposta"]) ? $value["pap_aposta"] * 50 / 100 : 0;
-                $saldo = ($value["pap_aposta"]) ? $value["pap_aposta"] + $lucro : 0;
+                $saldo = ($value["pap_aposta"]) ? $lucro : 0;
             } 
             else if ($gol_mandante < $gol_visitante && $value["pap_gol_mandante"] < $value["pap_gol_visitante"] && 
                     abs($gol_mandante - $gol_visitante) == abs($value["pap_gol_mandante"] - $value["pap_gol_visitante"])) {
                 $ct = 1;
                 $pontos = 3;
                 $lucro = ($value["pap_aposta"]) ? $value["pap_aposta"] * 50 / 100 : 0;
-                $saldo = ($value["pap_aposta"]) ? $value["pap_aposta"] + $lucro : 0;
+                $saldo = ($value["pap_aposta"]) ? $lucro : 0;
             } else if ($gol_mandante == $gol_visitante && abs($gol_mandante - $value["pap_gol_mandante"]) == 1 && abs($gol_visitante - $value["pap_gol_visitante"]) == 1) {
                 $ct = 1;
                 $pontos = 3;
                 $lucro = ($value["pap_aposta"]) ? $value["pap_aposta"] * 50 / 100 : 0;
-                $saldo = ($value["pap_aposta"]) ? $value["pap_aposta"] + $lucro : 0;
+                $saldo = ($value["pap_aposta"]) ? $lucro : 0;
             } else if (($gol_mandante > $gol_visitante && $value["pap_gol_mandante"] > $value["pap_gol_visitante"])) {
                 $cf = 1;
                 $pontos = 1;
-                $lucro = 0;
-                $saldo= ($value["pap_aposta"]) ? $value["pap_aposta"] : 0;
             } else if (($gol_mandante < $gol_visitante && $value["pap_gol_mandante"] < $value["pap_gol_visitante"])) {
                 $cf = 1;
                 $pontos = 1;
-                $lucro = 0;
-                $saldo= ($value["pap_aposta"]) ? $value["pap_aposta"] : 0;
             } else if (($gol_mandante == $gol_visitante && $value["pap_gol_mandante"] == $value["pap_gol_visitante"])) {
                 $cf = 1;
                 $pontos = 1;
-                $lucro = 0;
-                $saldo= ($value["pap_aposta"]) ? $value["pap_aposta"] : 0;
             } else {
                 $lucro = ($value["pap_aposta"]) ? -($value["pap_aposta"] * 25 / 100) : 0;
-                $saldo = ($value["pap_aposta"]) ? $value["pap_aposta"] + $lucro : 0;
+                $saldo = ($value["pap_aposta"]) ? $lucro : 0;
             }
 
             $palpites[$value["pap_id_palpite"]]["cc"] = $cc;
