@@ -234,9 +234,9 @@ class Palpites extends CI_Controller {
                     $palpites[$i]["gol_visitante"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_gol_visitante'] : null);
                     $palpites[$i]["aposta"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_aposta'] : null);
                     $palpites[$i]["lucro"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_lucro'] : 0);
-                    $palpites[$i]["saldo"]= (array_key_exists($i-1, $palpites_existentes && $palpites_existentes[$i-1]['pap_lucro'] != 0) ? -$palpites_existentes[$i-1]['pap_aposta'] : $palpites_existentes[$i-1]['pap_lucro']);
+                    $palpites[$i]["saldo"]= (array_key_exists($i-1, $palpites_existentes)) ? $palpites_existentes[$i-1]['pap_saldo'] : 0;
                     $palpites[$i]["palpitou"]= (array_key_exists($i-1, $palpites_existentes) ? $palpites_existentes[$i-1]['pap_palpitou'] : 'nao');
-                    if(array_key_exists($i-1, $palpites_existentes) && $palpites_existentes[$i-1]['pap_palpitou'] == 'nao'){
+                    if(!array_key_exists($i-1, $palpites_existentes) || (array_key_exists($i-1, $palpites_existentes) && $palpites_existentes[$i-1]['pap_palpitou'] == 'nao')){
                         $completo= 'incompleto';
                     }
                 }

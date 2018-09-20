@@ -32,6 +32,7 @@ class Adm_lib {
     /**
      * Tras a rodada atual. Se hoje é menor que a data fim significa que a rodada atual ainda nao terminou
      * 
+     * @used-by Portal                       Atraves da rodada atual, tras os dados do palpite
      * @uses array $rodadas_cadastradas      Para consultar se a rodada existe nas rodadas cadastradas.
      * @return bool|array
      */
@@ -45,6 +46,8 @@ class Adm_lib {
             $data_fim= new DateTime($value['fim']);
             if($hoje <= $data_fim){
                 return $key;
+            } else if($key == 38){
+                return 38;
             }
         }
         

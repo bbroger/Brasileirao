@@ -137,8 +137,19 @@
                 <div class="col-md-12">
                     <div class="row detalhe_rodada">
                         <div class="col-xs-12 col-sm-12 col-md-3">
+<?php
+    if($detalhes_palpites['palpites']){
+?>
+                            <p>Você já palpitou nessa rodada :D<br>
+                            <a href="<?php echo base_url("Palpites/rodada/$rodada_atual");?>"><button class="btn btn-success">Confira >>></button></a></p>
+<?php
+    } else{
+?>
                             <p>Voce ainda não palpitou<br>
-                            <button class="btn btn-danger">Palpitar</button></p>
+                            <a href="<?php echo base_url("Palpites/rodada/$rodada_atual");?>"><button class="btn btn-danger">Palpitar >>></button></a></p>
+<?php
+    }
+?>
                             <p>Mesa Quadrada FC<br>
                             <button class="btn btn-primary">Ir até lá</button></p>
                             <p>SDFASDFGFERSDFG<br>
@@ -149,61 +160,42 @@
                         <div class="col-xs-12 col-sm-9 col-md-7">
                             <div class="table-responsive">
                                 <table class="table table-condensed table-bordered">
+<?php
+    if($detalhes_palpites){
+?>
                                     <tr>
-                                        <th>Goodnato | rodada 1</th>
+                                        <th>Goodnato | rodada <?php echo $rodada_atual;?></th>
                                         <th>Local</th>
                                         <th>Horário</th>
                                     </tr>
+<?php
+        $detalhes_rodada= $detalhes_palpites['rodada'];
+        if($detalhes_palpites['palpites']){
+            $palpites= $detalhes_palpites['palpites'];
+            for($i=0; $i<10; $i++){
+?>
                                     <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
+                                        <td><?php echo $detalhes_rodada[$i]["cad_time_mandante"]." ".$palpites[$i]["pap_gol_mandante"]."x".$palpites[$i]["pap_gol_visitante"]." ".$detalhes_rodada[$i]["cad_time_visitante"]." M$".$palpites[$i]["pap_aposta"];?></td>
+                                        <td><?php echo $detalhes_rodada[$i]["cad_local"];?></td>
+                                        <td><?php $data=new DateTime($detalhes_rodada[$i]["cad_data"]); echo $data->format('d/m H:i')?></td>
                                     </tr>
+<?php
+            }
+        } else{
+            foreach ($detalhes_rodada as $value) {
+?>
                                     <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
+                                        <td><?php echo $value["cad_time_mandante"]." "."x"." ".$value["cad_time_visitante"];?></td>
+                                        <td><?php echo $value["cad_local"];?></td>
+                                        <td><?php $data=new DateTime($value["cad_data"]); echo $data->format('d/m H:i')?></td>
                                     </tr>
-                                    <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Chapecoense 3x2 Corinthians M$34.00</td>
-                                        <td>Arena Conda</td>
-                                        <td>30/12 14:30</td>
-                                    </tr>
+<?php
+            }
+        }
+    } else{
+        echo "<tr><td>Não existe nenhuma rodada cadastrada no bolão. Memorise seus palpites pois em breve iremos cadastrar :)</td></tr>";
+    }
+?>
                                 </table>
                             </div>
                         </div>

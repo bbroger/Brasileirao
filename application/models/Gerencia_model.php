@@ -54,6 +54,7 @@ class Gerencia_model extends CI_Model {
     /**
      * Vai consultar a rodada solicitada e trazer todos os dados dela.
      * 
+     * @used-by Portal::detalhes_palpites()         Pega os os detalhes da rodada para mostrar compactado no Portal
      * @used-by Gerencia::consultar_rodadas()       Pesquisa a rodada para trazer os detalhes da rodada solicitado
      * @used-by Gerencia::enviar_resultado()        Pesquisa a rodada para pegar a data inicio
      * @param int $rodada                           Rodada para ser consultado

@@ -32,6 +32,7 @@ class Palpites_model extends CI_Model {
     /**
      * Irá trazer os palpites do usuário da rodada solicitada e do ano atual.
      * 
+     * @used-by Portal::detalhes_palpites()     Pega os palpites para mostrar compactado no Portal
      * @used-by Palpites::palpites_usuario()    Levá para a view os palpites do usuario da rodada solicitada
      * @used-by Palpites::enviar_palpites()     Ao enviar as partidas, consulta se ja foi palpitado antes e assim irá pegar as partidas que ja iniciou
      * @used-by Palpites::aposta_check()        Irá somar todas as apostas e somar com o total de mangos, como se tivesse devolvendo as apostas para receber novas.        
