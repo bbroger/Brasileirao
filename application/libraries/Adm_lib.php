@@ -33,6 +33,7 @@ class Adm_lib {
      * Tras a rodada atual. Se hoje é menor que a data fim significa que a rodada atual ainda nao terminou
      * 
      * @used-by Portal                       Atraves da rodada atual, tras os dados do palpite
+     * @used-by Desafios                     Precisa para manipular os desafios da rodada atual
      * @uses array $rodadas_cadastradas      Para consultar se a rodada existe nas rodadas cadastradas.
      * @return bool|array
      */
@@ -131,6 +132,7 @@ class Adm_lib {
      * Pega todos os lucros do usuario e soma para ter o total de mangos
      * 
      * @used-by Palpites                            No _construct, salva no atributo e será usado para validar novas apostas nos palpites
+     * @used-by Desafios                            No _construct, pega o mango para caso ele desafiar ou aceitar, verificar se tem mangos suficiente
      * @uses Adm_lib::todos_dados_usuario()         Irá pegar o lucro para somar.
      * @param int $id
      * @return type

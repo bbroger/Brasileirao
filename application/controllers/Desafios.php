@@ -3,60 +3,60 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Carrega a class Desafios
+ * Carrega a Class Desafios
  * 
- * Enviar, atualizar, todo processo de desafios.
+ * Responsavel por cadastrar, calcular e atualizar os desafios
  */
 class Desafios extends CI_Controller {
-
-    /**
-     * Possuirá todas as rodadas cadastradas do bolao no ano atual contendo Data inicio e Data fim de cada rodada
-     * 
-     * @var array
-     */
-    public $rodadas_cadastradas;
     
-
     /**
-     * Carrega o Gerencia_model e salva nas variaveis as rodadas cadastradas.
+     * Pega a rodada atual
      * 
-     * @uses Desafios_model                         Carrega o Desafios_model para manipular no banco
-     * @uses Gerencia_model::rodadas_cadastradas()  Tras todas as rodadas cadastradas e salva no Gerencia::rodadas_cadastradas
+     * @var int|bool
+     */
+    public $rodada_atual;
+    
+    /**
+     * Total de mangos em tempo real e da data atual.
+     * 
+     * @var float
+     */
+    public $mangos_total;
+    
+    /**
+     * Carrega o Desafios_model e Adm. Pega a rodada atual.
+     * 
+     * @uses Desafios_model                         Carrega o Desafio_model para utilizar aqui
+     * @uses Adm_lib::total_mangos_usuarios()       Tras a rodada atual e os mangos
      * @return void
      */
     public function __construct() {
         parent::__construct();
+        
         $this->load->model('Desafios_model');
-        $this->load->model('Gerencia_model');
-        $this->rodadas_cadastradas = $this->Gerencia_model->rodadas_cadastradas();
+        $this->load->library('Adm_lib');
+        $this->rodada_atual= $this->adm_lib->rodada_atual();
+        $this->mangos_total= $this->adm_lib->total_mangos_usuario();
     }
-
-    /**
-     * Confere se a rodada é um numero e está entre 1 e 38. Também confere se está no array
-     * 
-     * @uses array $rodadas_cadastradas                 Para consultar se a rodada existe nas rodadas cadastradas.              
-     * @return array
-     */
-    private function confere_rodada($recebe_rodada) {
-        $confere_rodada['existe_rodadas_cadastradas'] = true;
-        if ($recebe_rodada == null || !is_numeric($recebe_rodada) || $recebe_rodada <= 0 || $recebe_rodada > 38) {
-            $confere_rodada['status'] = false;
-            $confere_rodada['rodada'] = 1;
-        } else {
-            $confere_rodada['status'] = true;
-            $confere_rodada['rodada'] = (int) $recebe_rodada;
-        }
-        if (count($this->rodadas_cadastradas) == 0) {
-            $confere_rodada['existe_rodadas_cadastradas'] = false;
-            $confere_rodada['existe'] = false;
-        } else {
-            if (array_key_exists($recebe_rodada, $this->rodadas_cadastradas)) {
-                $confere_rodada['existe'] = true;
-            } else {
-                $confere_rodada['existe'] = false;
+    
+    public function novo_desafio_individual(){
+        $this->form_validation->set_rules("desafiado", "Desafiado", "trim|required|alpha_dash|min_length[2]|max_length[15]");
+        if($this->form_validation->run()){
+            if($this->mangos_total >= 1){
+                $apelido= $this->input->post('desafiado');
+                $verifica= $this->Desafios_model->novo_desafio_individual(1, $apelido);
+                
+                $msg= $verifica['msg'];
+            } else{
+                $erro= true;
+                $msg= "Você não tem mangos suficiente. Diminua suas apostas nos palpites ou está praticamente falido :(";
             }
+        } else{
+            $erro= true;
+            $msg= form_error('desafiado');
         }
-
-        return $confere_rodada;
+        
+        $this->session->set_userdata('control_msg', $msg);
+        redirect(base_url("Portal/opcao/desafio_individual/"));
     }
 }

@@ -138,9 +138,14 @@
                     <div class="row detalhe_rodada">
                         <div class="col-xs-12 col-sm-12 col-md-3">
 <?php
-    if($detalhes_palpites['palpites']){
+    if(!$detalhes_palpites){
 ?>
-                            <p>Você já palpitou nessa rodada :D<br>
+                            <p>Aguarde a rodada ser cadastrada<br>
+                            <button class="btn btn-success disabled">Aguarde</button></p>
+<?php
+    } else if($detalhes_palpites['palpites']){
+?>
+                            <p>Voce já palpitou nessa rodada :D<br>
                             <a href="<?php echo base_url("Palpites/rodada/$rodada_atual");?>"><button class="btn btn-success">Confira >>></button></a></p>
 <?php
     } else{
@@ -193,7 +198,7 @@
             }
         }
     } else{
-        echo "<tr><td>Não existe nenhuma rodada cadastrada no bolão. Memorise seus palpites pois em breve iremos cadastrar :)</td></tr>";
+        echo "<tr><td>Não existe rodada cadastrada no bolão nesse momento. Memorise seus palpites pois em breve iremos cadastrar :)</td></tr>";
     }
 ?>
                                 </table>
@@ -254,9 +259,11 @@
                         <button class="btn btn-success">Aceitar</button> <button class="btn btn-danger">Recusar</button></p>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
-                    <p class="btn_desafio_individual">Desafie um amigo</p>
-                    <p><input type="text" class="form-control"></p>
-                    <p><button class="btn btn-primary">Desafiar</button></p>
+                    <form action="<?php echo base_url("Desafios/novo_desafio_individual");?>" method="Post">
+                        <p class="btn_desafio_individual">Desafie um amigo</p>
+                        <p><input type="text" class="form-control" name="desafiado"></p>
+                        <p><input type="submit" class="btn btn-primary" value="Desafiar"></p>
+                    </form>
                 </div>
             </div>
             <div class="row">

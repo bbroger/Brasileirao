@@ -48,9 +48,14 @@ class Portal extends CI_Controller {
      * @param String $msg                       Uma palavra chave para mostrar a mensagem
      * @return void
      */
-    public function opcao($onde=null, $msg= null){
+    public function opcao($onde=null){
+        $msg= null;
+        if($this->session->has_userdata('control_msg')){
+            $msg= $this->session->control_msg;
+            $this->session->unset_userdata('control_msg');
+        }
         $dados = array(
-            "msg" => null,
+            "msg" => $msg,
             "rodada_atual"=> $this->rodada_atual,
             "detalhes_palpites"=> $this->dados_palpites()
         );

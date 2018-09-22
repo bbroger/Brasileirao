@@ -40,8 +40,10 @@ class Desafios_model extends CI_Model {
         $search['sql_desafiador']= "SELECT COUNT(dei_id_user_desafiador) AS desafiador FROM dei_desafios_individual WHERE dei_id_user_desafiador= :id AND dei_status= :status AND YEAR(dei_created)= :year";
         $search['sql_desafiado']= "SELECT COUNT(dei_id_user_desafiado) AS desafiado FROM dei_desafios_individual WHERE dei_id_user_desafiado= :id AND dei_status= :status AND YEAR(dei_created)= :year";
         $search['sql_venceu']= "SELECT COUNT(dei_vencedor) AS venceu FROM dei_desafios_individual WHERE dei_vencedor= :id AND dei_status= :status AND YEAR(dei_created)= :year";
-        $search['sql_total_aceitos']= "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual WHERE (dei_id_user_desafiador= :id OR dei_id_user_desafiado= :id) AND dei_status= :status AND YEAR(dei_created)= :year ";
-        $search['sql_total_pendentes']= "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual WHERE (dei_id_user_desafiador= :id OR dei_id_user_desafiado= :id) AND dei_status= :status AND YEAR(dei_created)= :year ";
+        $search['sql_total_aceitos']= "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual "
+                . "WHERE (dei_id_user_desafiador= :id OR dei_id_user_desafiado= :id) AND dei_status= :status AND YEAR(dei_created)= :year ";
+        $search['sql_total_pendentes']= "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual "
+                . "WHERE (dei_id_user_desafiador= :id OR dei_id_user_desafiado= :id) AND dei_status= :status AND YEAR(dei_created)= :year ";
         
         foreach($search AS $key=>$value){
             $stmt= $this->con->prepare($value);
@@ -61,6 +63,67 @@ class Desafios_model extends CI_Model {
 
         $stmt = null;
         return $dados_desafio;
+    }
+    
+    public function novo_desafio_individual($id_desafiador, $apelido){
+        $tras_id_desafiado= $this->tras_id_desafiado($apelido);
+        if(!$tras_id_desafiado){
+            $valida['valida']= false;
+            $valida['msg']= "Esse usuário $apelido não foi encontrado :S. Informe corretamente para poder desafia-lo";
+            
+            return $valida;
+        }
+        $id_desafiado= $tras_id_desafiado['use_id_user'];
+        
+        $verifica= $this->verifica_existente_desafio(1, $id_desafiador, $id_desafiado);
+        if($verifica){
+            $valida['valida']= false;
+            $valida['msg']= "Já existe um desafio aceito ou pendente entre você e $apelido ;). É PRA GANHAR HEIN?! X1 É SAGRADO!!";
+            
+            return $valida;
+        }
+        
+        $valida['valida']= true;
+        $valida['msg']= "Você desafiou o $apelido! Representa nesse x1 hein. Outra coisa, foi descontado 1 mango de você. Vença esse desafio e receba 2 de volta.";
+        
+        return $valida;
+    }
+    
+    private function tras_id_desafiado($apelido){
+        $sql= "SELECT use_id_user FROM use_users WHERE use_nickname = ?";
+        $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(1, $apelido);
+        $stmt->execute();
+        
+        $id= $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        $stmt= null;
+        return $id;
+    }
+    
+    private function verifica_existente_desafio($rodada, $id_desafiador, $id_desafiado){
+        $sql= "SELECT dei_id_desafio FROM dei_desafios_individual "
+                . "WHERE dei_rodada= ? "
+                . "AND ((dei_id_user_desafiador = ? AND dei_id_user_desafiado= ?) "
+                . "OR (dei_id_user_desafiador = ? AND dei_id_user_desafiado= ?)) "
+                . "AND (dei_status= 'aceito' OR dei_status= 'pendente') "
+                . "AND YEAR(dei_created)= ?";
+        $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(1, $rodada);
+        $stmt->bindValue(2, $id_desafiador);
+        $stmt->bindValue(3, $id_desafiado);
+        $stmt->bindValue(4, $id_desafiado);
+        $stmt->bindValue(5, $id_desafiador);
+        $stmt->bindValue(6, date('Y'));
+        $stmt->execute();
+        
+        if($stmt->fetch(PDO::FETCH_ASSOC)){
+            $stmt= null;
+            return true;
+        }
+        
+        $stmt= null;
+        return false;
     }
 
 }
