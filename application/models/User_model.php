@@ -43,6 +43,9 @@ class User_model extends CI_Model {
         $stmt->execute();
         
         $dados_user= $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($dados_user) {
+            $dados_user['use_img_perfil']= base_url("assets/images/perfil/".$dados_user['use_img_perfil']);
+        }
         
         $stmt= null;
         return $dados_user;

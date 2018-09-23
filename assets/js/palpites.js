@@ -36,10 +36,14 @@ function consultar_rodada(rodada, form = 0) {
         if (data.existe_rodada === 1) {
             $("#info_rodada").html("Rodada " + rodada + " | Inicio: " + moment(data.inicio).format("ddd DD/MM HH:mm") + " | Fim: " + moment(data.fim).format("ddd DD/MM HH:mm"));
             $("table > tbody > tr").removeClass();
+            
             if (form === 0) {
                 $(".clear_input").val("");
             }
+            
+            $("#form_palpites").prop("action", url_js("Palpites/enviar_palpites/" + rodada));
             var tapostas = 0, tpontos = 0, tlucro = 0;
+            
             $.each(data.detalhes_rodada, function (i, item) {
                 if (data.usuario_palpitou === 1) {
                     insere_input("palpite_mandante", item.cad_partida, data['palpites'][i]['pap_gol_mandante'], item.cad_data, form);
@@ -57,6 +61,7 @@ function consultar_rodada(rodada, form = 0) {
                     $("#pontos_partida_" + item.cad_partida).html(0);
                     $("#lucro_partida_" + item.cad_partida).html("M$ 0");
                 }
+                
                 $("#img_mandante_" + item.cad_partida).html("<img src='" + url_js("assets/images/times/" + item.cad_time_mandante_var + ".png") + "' class='img_palpite'><br><span class='nome_palpite'>" + item.cad_time_mandante + "</span>");
                 $("#gol_mandante_" + item.cad_partida).html(verif_valor(item.cad_time_mandante_gol));
                 $("#gol_visitante_" + item.cad_partida).html(verif_valor(item.cad_time_visitante_gol));
@@ -81,6 +86,7 @@ function consultar_rodada(rodada, form = 0) {
             } else{
                 $("#total_mangos_palpites").html("M$ " + tapostas);
             }
+            
             $("#total_pontos_palpites").html(" " + tpontos);
             $("#total_lucro_palpites").html("M$ " + tlucro);
             $("#clear_table").show();
@@ -89,6 +95,7 @@ function consultar_rodada(rodada, form = 0) {
             $("#info_rodada").html(data.msg);
             $("#clear_table").hide();
         }
+        
         $("#rodadas_cadastradas").val(rodada);
         var anterior = (rodada > 1 && rodada <= 38) ? rodada - 1 : rodada;
         var proximo = (rodada > 0 && rodada <= 37) ? parseInt(rodada) + 1 : rodada;

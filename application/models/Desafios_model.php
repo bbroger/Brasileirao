@@ -28,7 +28,7 @@ class Desafios_model extends CI_Model {
         $this->load->library('ConnectionFactory');
         $this->con = $this->connectionfactory->getConnection();
     }
-    
+
     /**
      * Vai trazer os dados do desafio do usuario
      * 
@@ -36,25 +36,25 @@ class Desafios_model extends CI_Model {
      * @param int $id
      * @return array
      */
-    public function total_dados_desafio_user($id){
-        $search['sql_desafiador']= "SELECT COUNT(dei_id_user_desafiador) AS desafiador FROM dei_desafios_individual WHERE dei_id_user_desafiador= :id AND dei_status= :status AND YEAR(dei_created)= :year";
-        $search['sql_desafiado']= "SELECT COUNT(dei_id_user_desafiado) AS desafiado FROM dei_desafios_individual WHERE dei_id_user_desafiado= :id AND dei_status= :status AND YEAR(dei_created)= :year";
-        $search['sql_venceu']= "SELECT COUNT(dei_vencedor) AS venceu FROM dei_desafios_individual WHERE dei_vencedor= :id AND dei_status= :status AND YEAR(dei_created)= :year";
-        $search['sql_total_aceitos']= "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual "
+    public function total_dados_desafio_user($id) {
+        $search['sql_desafiador'] = "SELECT COUNT(dei_id_user_desafiador) AS desafiador FROM dei_desafios_individual WHERE dei_id_user_desafiador= :id AND dei_status= :status AND YEAR(dei_created)= :year";
+        $search['sql_desafiado'] = "SELECT COUNT(dei_id_user_desafiado) AS desafiado FROM dei_desafios_individual WHERE dei_id_user_desafiado= :id AND dei_status= :status AND YEAR(dei_created)= :year";
+        $search['sql_venceu'] = "SELECT COUNT(dei_vencedor) AS venceu FROM dei_desafios_individual WHERE dei_vencedor= :id AND dei_status= :status AND YEAR(dei_created)= :year";
+        $search['sql_total_aceitos'] = "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual "
                 . "WHERE (dei_id_user_desafiador= :id OR dei_id_user_desafiado= :id) AND dei_status= :status AND YEAR(dei_created)= :year ";
-        $search['sql_total_pendentes']= "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual "
-                . "WHERE (dei_id_user_desafiador= :id OR dei_id_user_desafiado= :id) AND dei_status= :status AND YEAR(dei_created)= :year ";
-        
-        foreach($search AS $key=>$value){
-            $stmt= $this->con->prepare($value);
+        $search['sql_total_pendentes'] = "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual "
+                . "WHERE dei_id_user_desafiador= :id AND dei_status= :status AND YEAR(dei_created)= :year ";
+
+        foreach ($search AS $key => $value) {
+            $stmt = $this->con->prepare($value);
             $stmt->bindValue(':id', $id);
             $stmt->bindValue(':status', ($key == 'sql_total_pendentes') ? 'pendente' : 'aceito');
             $stmt->bindValue(':year', date('Y'));
             $stmt->execute();
 
-            $prov[$key]= $stmt->fetch(PDO::FETCH_ASSOC);
+            $prov[$key] = $stmt->fetch(PDO::FETCH_ASSOC);
         }
-        
+
         $dados_desafio['desafiador'] = $prov['sql_desafiador']['desafiador'];
         $dados_desafio['desafiado'] = $prov['sql_desafiado']['desafiado'];
         $dados_desafio['venceu'] = $prov['sql_venceu']['venceu'];
@@ -64,51 +64,78 @@ class Desafios_model extends CI_Model {
         $stmt = null;
         return $dados_desafio;
     }
-    
-    public function novo_desafio_individual($id_desafiador, $apelido){
-        $tras_id_desafiado= $this->tras_id_desafiado($apelido);
-        if(!$tras_id_desafiado){
-            $valida['valida']= false;
-            $valida['msg']= "Esse usuário $apelido não foi encontrado :S. Informe corretamente para poder desafia-lo";
-            
-            return $valida;
-        }
-        $id_desafiado= $tras_id_desafiado['use_id_user'];
-        
-        $verifica= $this->verifica_existente_desafio(1, $id_desafiador, $id_desafiado);
-        if($verifica){
-            $valida['valida']= false;
-            $valida['msg']= "Já existe um desafio aceito ou pendente entre você e $apelido ;). É PRA GANHAR HEIN?! X1 É SAGRADO!!";
-            
-            return $valida;
-        }
-        
-        $valida['valida']= true;
-        $valida['msg']= "Você desafiou o $apelido! Representa nesse x1 hein. Outra coisa, foi descontado 1 mango de você. Vença esse desafio e receba 2 de volta.";
-        
-        return $valida;
+
+    /**
+     * Irá receber a decisao. Irá atualizar no banco se aceitou ou recusou ou até mesmo se cancelou
+     * 
+     * @used-by Desafios::decisao_desafio()           Irá enviar os dados dos desafiantes e a decisao para gravar.
+     * @used-by Desafios::cancelar_desafio()          Irá cancelar o desafio e mostrar que foi cancelado sem problemas
+     * @param int    $rodada
+     * @param int    $id_desafiado
+     * @param String $id_desafiador
+     * @param String $decisao                               aceito, recusado ou cancelado
+     * @return String
+     */
+    public function decisao_desafio($rodada, $id_desafiado, $id_desafiador, $decisao) {        
+        $sql = "UPDATE dei_desafios_individual SET dei_status= ? "
+                . "WHERE dei_rodada= ? "
+                . "AND ((dei_id_user_desafiador = ? AND dei_id_user_desafiado= ?) "
+                . "OR (dei_id_user_desafiador = ? AND dei_id_user_desafiado= ?)) "
+                . "AND dei_status= 'pendente' "
+                . "AND YEAR(dei_created)= ?";
+        $stmt = $this->con->prepare($sql);
+        $stmt->bindValue(1, $decisao);
+        $stmt->bindValue(2, $rodada);
+        $stmt->bindValue(3, $id_desafiador);
+        $stmt->bindValue(4, $id_desafiado);
+        $stmt->bindValue(5, $id_desafiado);
+        $stmt->bindValue(6, $id_desafiador);
+        $stmt->bindValue(7, date('Y'));
+        $stmt->execute();
+
+        $stmt = null;
+
+        $msg = "O desafio foi $decisao com sucesso!";
+
+        return $msg;
     }
-    
-    private function tras_id_desafiado($apelido){
-        $sql= "SELECT use_id_user FROM use_users WHERE use_nickname = ?";
-        $stmt= $this->con->prepare($sql);
+
+    /**
+     * Confere se o apelido existe.
+     * 
+     * @used-by Desafios::decisao_desafio()                         Irá verificar se existe o adversário. Se sim, retorna o ID
+     * @param String $apelido
+     * @return int|bool
+     */
+    public function tras_id_adversario($apelido) {
+        $sql = "SELECT use_id_user FROM use_users WHERE use_nickname = ?";
+        $stmt = $this->con->prepare($sql);
         $stmt->bindValue(1, $apelido);
         $stmt->execute();
-        
-        $id= $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        $stmt= null;
+
+        $id = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt = null;
         return $id;
     }
-    
-    private function verifica_existente_desafio($rodada, $id_desafiador, $id_desafiado){
-        $sql= "SELECT dei_id_desafio FROM dei_desafios_individual "
+
+    /**
+     * Confere se já existe o desafio pendente ou aceito.
+     * 
+     * @used-by Desafios::decisao_desafio()                         Irá verificar se existe o desafio pendente. Se nao existir, não tem o que decidir.
+     * @param int $rodada                                           Rodada atual
+     * @param int $id_desafiador                                    ID do usuario logado
+     * @param int $id_desafiado                                     ID do desafiado
+     * @return bool
+     */
+    public function verifica_existencia_desafio($rodada, $id_desafiador, $id_desafiado) {
+        $sql = "SELECT dei_id_user_desafiador AS desafiador, dei_id_user_desafiado AS desafiado FROM dei_desafios_individual "
                 . "WHERE dei_rodada= ? "
                 . "AND ((dei_id_user_desafiador = ? AND dei_id_user_desafiado= ?) "
                 . "OR (dei_id_user_desafiador = ? AND dei_id_user_desafiado= ?)) "
                 . "AND (dei_status= 'aceito' OR dei_status= 'pendente') "
                 . "AND YEAR(dei_created)= ?";
-        $stmt= $this->con->prepare($sql);
+        $stmt = $this->con->prepare($sql);
         $stmt->bindValue(1, $rodada);
         $stmt->bindValue(2, $id_desafiador);
         $stmt->bindValue(3, $id_desafiado);
@@ -117,13 +144,78 @@ class Desafios_model extends CI_Model {
         $stmt->bindValue(6, date('Y'));
         $stmt->execute();
         
-        if($stmt->fetch(PDO::FETCH_ASSOC)){
-            $stmt= null;
-            return true;
+        $dados= $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = null;
+        
+        if ($dados) {
+            return $dados;
         }
         
-        $stmt= null;
         return false;
+    }
+
+    /**
+     * Quando todas as validaçoes der TRUE, cadastra o novo desafio.
+     * 
+     * @used-by Desafios::decisao_desafio()                         Depois que validou tudo, registra um novo desafio
+     * @param int $rodada                                           Rodada atual para cadastrar o desafio
+     * @param int $id_desafiador                                    ID do usuario logado
+     * @param int $id_desafiado                                     ID do desafiado
+     * @return void
+     */
+    public function registra_novo_desafio($rodada, $id_desafiador, $adversario) {
+        $sql = "INSERT INTO dei_desafios_individual (dei_rodada, dei_id_user_desafiador, dei_id_user_desafiado) VALUES (?, ?, ?)";
+        $stmt = $this->con->prepare($sql);
+        $stmt->bindValue(1, $rodada);
+        $stmt->bindValue(2, $id_desafiador);
+        $stmt->bindValue(3, $adversario);
+        $stmt->execute();
+
+        $stmt = null;
+    }
+
+    public function todos_desafios_rodada($rodada, $id_usuario) {
+        $sql = "SELECT dei_id_user_desafiador AS desafiador, dei_id_user_desafiado AS desafiado, dei_status FROM dei_desafios_individual "
+                . "WHERE dei_rodada= ? "
+                . "AND (dei_id_user_desafiador = ? OR dei_id_user_desafiado= ?) "
+                . "AND (dei_status= 'pendente' OR dei_status= 'aceito') "
+                . "AND YEAR(dei_created)= ?";
+        $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(1, $rodada);
+        $stmt->bindValue(2, $id_usuario);
+        $stmt->bindValue(3, $id_usuario);
+        $stmt->bindValue(4, date('Y'));
+        $stmt->execute();
+
+        $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt = null;
+        
+        if (!$dados) {
+            return false;
+        }
+        
+        return $this->pega_adversarios($id_usuario, $dados);
+    }
+
+    private function pega_adversarios($id_usuario, $dados) {
+        $this->load->library('Adm_lib');
+        
+        $desafio[0]= $this->adm_lib->todos_dados_usuarios($id_usuario);
+        foreach ($dados as $key => $value) {
+            if ($id_usuario != $value['desafiador']) {
+                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiador'])['usuario'];
+                $desafio[$key+1]['status']= $value['dei_status'];
+                $desafio[$key+1]['desafiador']= true;
+                $desafio[$key+1]['desafiado']= false;
+            } else{
+                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiado'])['usuario'];
+                $desafio[$key+1]['status']= $value['dei_status'];
+                $desafio[$key+1]['desafiador']= false;
+                $desafio[$key+1]['desafiado']= true;
+            }
+        }
+        
+        return $desafio;
     }
 
 }

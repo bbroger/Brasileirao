@@ -17,6 +17,13 @@ class Palpites extends CI_Controller {
     public $rodadas_cadastradas;
     
     /**
+     * O ID do usuario logado
+     * 
+     * @var int
+     */
+    private $usuario_logado;
+    
+    /**
      * Total de mangos em tempo real e da data atual.
      * 
      * @var float
@@ -31,7 +38,7 @@ class Palpites extends CI_Controller {
     public $rodada_palpitada;
     
     /**
-     * Carrega o Palpites_model e Gerencia_model. Também salva na variavel as rodadas cadastradas.
+     * Carrega o Palpites_model, Adm_lib e Gerencia_model. Também salva na variavel as rodadas cadastradas, mangos total e usuario logado.
      * 
      * @uses Palpites_model                         Carrega o Palpites_model para utilizar na aplicação
      * @uses Gerencia_model::rodadas_cadastradas()  Tras todas as rodadas cadastradas e salva no Palpites::rodadas_cadastradas
@@ -44,7 +51,8 @@ class Palpites extends CI_Controller {
         $this->load->model("Gerencia_model");
         $this->load->library('Adm_lib');
         
-        $this->mangos_total= $this->adm_lib->total_mangos_usuario();
+        $this->usuario_logado= $this->adm_lib->usuario_logado;
+        $this->mangos_total= $this->adm_lib->total_mangos_usuario($this->usuario_logado['id']);
         $this->rodadas_cadastradas = $this->Gerencia_model->rodadas_cadastradas();
     }
     
@@ -81,6 +89,7 @@ class Palpites extends CI_Controller {
         }
 
         $dados = array(
+            "usuario_logado"=> $this->usuario_logado,
             "rodada" => $confere_rodada['rodada'],
             "rodadas_cadastradas" => $this->rodadas_cadastradas,
             "mangos"=> $this->mangos_total,
@@ -109,7 +118,7 @@ class Palpites extends CI_Controller {
         
         if ($confere_rodada['status']) {
             if($confere_rodada['existe']){
-                $tras_palpites = $this->Palpites_model->palpites_usuario(1, $confere_rodada['rodada']);
+                $tras_palpites = $this->Palpites_model->palpites_usuario($this->usuario_logado['id'], $confere_rodada['rodada']);
                 $usuario_palpitou= ($tras_palpites) ? 1 : 0;
                 $tras_detalhes_rodada= $this->Gerencia_model->consultar_rodada($confere_rodada['rodada']);
                 $tras_detalhes_times= $this->Gerencia_model->todos_times();
@@ -130,7 +139,7 @@ class Palpites extends CI_Controller {
                 $dados_palpites= array(
                     'existe_rodada'=> 0,
                     'rodada'=> $confere_rodada['rodada'],
-                    'msg'=> 'Rodada '.$confere_rodada['rodada'].' não existe ainda para ser palpitado. Aguarde o bolão adiciona-lá'
+                    'msg'=> 'Rodada '.$confere_rodada['rodada'].' não existe ainda para ser palpitado. Aguarde o bolão adiciona-la'
                 );
             }
         } else{
@@ -155,6 +164,10 @@ class Palpites extends CI_Controller {
      * @param type $recebe_rodada
      */
     public function enviar_palpites($recebe_rodada = null) {
+        if(!$this->usuario_logado['logado']){
+            redirect(base_url("Palpites/"));
+        }
+        
         $confere_rodada = $this->adm_lib->confere_rodada($recebe_rodada);
         
         if (!$confere_rodada['status'] || !$confere_rodada['existe']) {
@@ -165,7 +178,7 @@ class Palpites extends CI_Controller {
 
             if (in_array('sim', $palpites_autorizados)) {
                 $this->rodada_palpitada= $confere_rodada['rodada'];
-                $palpites_existentes = $this->Palpites_model->palpites_usuario(1, $confere_rodada['rodada']);
+                $palpites_existentes = $this->Palpites_model->palpites_usuario($this->usuario_logado['id'], $confere_rodada['rodada']);
                 $this->salvar_palpites($palpites_existentes, $palpites_autorizados, $confere_rodada['rodada']);
             } else {
                 $msg = "Palpite não enviado. Todas as partidas da rodada ".$confere_rodada['rodada']." foram iniciadas :(";
@@ -242,7 +255,7 @@ class Palpites extends CI_Controller {
                 }
             }
             
-            $this->Palpites_model->salvar_palpites(1, $rodada, $palpites);
+            $this->Palpites_model->salvar_palpites($this->usuario_logado['id'], $rodada, $palpites);
             redirect(base_url("Palpites/rodada/$rodada/$completo"));
         } else{
             $form= (validation_errors()) ? 1: 0;
@@ -260,7 +273,7 @@ class Palpites extends CI_Controller {
      * @return boolean
      */
     public function aposta_check(){
-        $palpites_existentes = $this->Palpites_model->palpites_usuario(1, $this->rodada_palpitada);
+        $palpites_existentes = $this->Palpites_model->palpites_usuario($this->usuario_logado['id'], $this->rodada_palpitada);
         
         $total_aposta_atual= 0;
         for($i= 1; $i<=10; $i++) {

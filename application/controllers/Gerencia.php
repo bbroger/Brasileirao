@@ -246,21 +246,31 @@ class Gerencia extends CI_Controller {
         if ($confere_rodada['existe_rodadas_cadastradas']) {
             $data_partida = new DateTime($data);
             if (array_key_exists($rodada - 1, $this->rodadas_cadastradas)) {
-                $data_inicio_rodada_passada = new DateTime($this->rodadas_cadastradas[$rodada - 1]['inicio']);
-            } else if(array_key_exists($rodada + 1, $this->rodadas_cadastradas)){
-                $data_inicio_rodada_seguinte = new DateTime($this->rodadas_cadastradas[$rodada + 1]['inicio']);
+                $data_fim_rodada_passada = new DateTime($this->rodadas_cadastradas[$rodada - 1]['fim']);
+                $rodada_passada= true;
             } else{
+                $rodada_passada= false;
+            }   
+            
+            if(array_key_exists($rodada + 1, $this->rodadas_cadastradas)){
+                $data_inicio_rodada_seguinte = new DateTime($this->rodadas_cadastradas[$rodada + 1]['inicio']);
+                $rodada_seguinte= true;
+            } else{
+                $rodada_seguinte= false;
+            }
+            
+            if(!$rodada_passada && !$rodada_seguinte){
                 return 'nao';
             }
         } else {
             return 'nao';
         }
         
-        if (isset($data_inicio_rodada_passada) && $data_partida <= $data_inicio_rodada_passada) {
+        if ($rodada_passada && $data_partida <= $data_fim_rodada_passada) {
             return 'sim';
         }
         
-        if (isset($data_inicio_rodada_seguinte) && $data_partida >= $data_inicio_rodada_seguinte) {
+        if ($rodada_seguinte && $data_partida >= $data_inicio_rodada_seguinte) {
             return 'sim';
         }
 

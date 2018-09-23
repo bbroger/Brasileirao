@@ -102,7 +102,7 @@
                 <div class="col-md-12">
                     <div class="row perfil">
                         <div class="col-xs-12 col-sm-12 col-md-3">
-                            <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img-responsive img_perfil">
+                            <img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img-responsive img_perfil">
                             <p><i>Coloque uma foto em configurações</i></p>
                             <p>Goodnato<p>
                         </div>
@@ -141,17 +141,20 @@
     if(!$detalhes_palpites){
 ?>
                             <p>Aguarde a rodada ser cadastrada<br>
-                            <button class="btn btn-success disabled">Aguarde</button></p>
+                                <button class="btn btn-success disabled">Aguarde</button>
+                            </p>
 <?php
     } else if($detalhes_palpites['palpites']){
 ?>
                             <p>Voce já palpitou nessa rodada :D<br>
-                            <a href="<?php echo base_url("Palpites/rodada/$rodada_atual");?>"><button class="btn btn-success">Confira >>></button></a></p>
+                                <a href="<?php echo base_url("Palpites/rodada/$rodada_atual");?>"><button class="btn btn-success">Confira >>></button></a>
+                            </p>
 <?php
     } else{
 ?>
                             <p>Voce ainda não palpitou<br>
-                            <a href="<?php echo base_url("Palpites/rodada/$rodada_atual");?>"><button class="btn btn-danger">Palpitar >>></button></a></p>
+                                <a href="<?php echo base_url("Palpites/rodada/$rodada_atual");?>"><button class="btn btn-danger">Palpitar >>></button></a>
+                            </p>
 <?php
     }
 ?>
@@ -198,7 +201,7 @@
             }
         }
     } else{
-        echo "<tr><td>Não existe rodada cadastrada no bolão nesse momento. Memorise seus palpites pois em breve iremos cadastrar :)</td></tr>";
+        echo "<p><b>Não existe rodada cadastrada no bolão nesse momento. Memorise seus palpites pois em breve iremos cadastrar :)</b></p>";
     }
 ?>
                                 </table>
@@ -218,21 +221,60 @@
                 </div>
             </div>
             <div class="row desafios">
+<?php
+    for($i=1; $i<5; $i++){
+        if(!isset($desafios[$i])){
+?>
+                <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
+                    <form action="<?php echo base_url("Desafios/decisao_desafio");?>" method="Post">
+                        <p class="btn_desafio_individual">Desafie um amigo</p>
+                        <p><input type="text" class="form-control" name="adversario"></p>
+                        <p><button type="submit" class="btn btn-success" name="decisao" value="novo">Desafiar</button> </p>
+                    </form>
+                </div>
+<?php
+        } else if(isset ($desafios[$i]) && $desafios[$i]['status'] == 'pendente' && $desafios[$i]['desafiador']){
+?>
+                <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
+                    <form action="<?php echo base_url("Desafios/decisao_desafio");?>" method="Post">
+                        <input type="hidden" name="adversario" value="<?php echo $desafios[$i]['usuario']['use_nickname'];?>">
+                        <img src="<?php echo $desafios[$i]['usuario']['use_img_perfil'];?>" class="img_desafio">
+                        <p><?php echo $desafios[$i]['usuario']['use_nickname'];?> te desafiou!<br>
+                            <button type="submit" class="btn btn-success" name="decisao" value="aceito">Aceitar</button> 
+                            <button type="submit" class="btn btn-danger" name="decisao" value="recusado">Recusar</button>
+                        </p>
+                    </form>
+                </div>
+<?php
+        } else if(isset ($desafios[$i]) && $desafios[$i]['status'] == 'pendente' && $desafios[$i]['desafiado']){
+?>
+                <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
+                    <form action="<?php echo base_url("Desafios/decisao_desafio");?>" method="Post">
+                        <input type="hidden" name="adversario" value="<?php echo $desafios[$i]['usuario']['use_nickname'];?>">
+                        <img src="<?php echo $desafios[$i]['usuario']['use_img_perfil'];?>" class="img_desafio">
+                        <p>Você desafiou <?php echo $desafios[$i]['usuario']['use_nickname'];?><br>
+                            <button type="submit" class="btn btn-warning" name="decisao" value="cancelado">Cancelar</button>
+                        </p>
+                    </form>
+                </div>
+<?php
+        } else if(isset ($desafios[$i]) && $desafios[$i]['status'] == 'aceito'){
+?>
                 <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
                     <div class="row">
                         <div class="col-xs-5 col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_desafio">
+                            <img src="<?php echo $desafios[0]['usuario']['use_img_perfil'];?>" class="img_desafio">
                         </div>
                         <div class="col-xs-2 col-md-2">
                             <p class="vs_desafio">VS</p>
                         </div>
                         <div class="col-xs-5 col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_desafio">
+                            <img src="<?php echo $desafios[$i]['usuario']['use_img_perfil'];?>" class="img_desafio">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-5 col-md-5">
-                            <p class="dados_desafio">DDDDDDJIMA100SANTISTA</p>
+                            <p class="dados_desafio"><?php echo $desafios[0]['usuario']['use_nickname'];?></p>
                             <p class="dados_desafio">32 pontos</p>
                             <p class="dados_desafio">M$ 100</p>
                         </div>
@@ -240,31 +282,16 @@
                             |
                         </div>
                         <div class="col-xs-5 col-md-5">
-                            <p class="dados_desafio">DDDDDDJIMA100SANTISTA</p>
+                            <p class="dados_desafio"><?php echo $desafios[$i]['usuario']['use_nickname'];?></p>
                             <p class="dados_desafio">32 pontos</p>
                             <p class="dados_desafio">M$ 100</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
-                    <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_desafio">
-                    <p>Você desafiou DDDDDDJIMA100SANTISTA<br>
-                        <button class="btn btn-warning">Cancelar</button></p>
-                </div>
-            </div>
-            <div class="row desafios">
-                <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
-                    <img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_desafio">
-                    <p>DDDDDDJIMA100SANTISTA te desafiou!<br>
-                        <button class="btn btn-success">Aceitar</button> <button class="btn btn-danger">Recusar</button></p>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
-                    <form action="<?php echo base_url("Desafios/novo_desafio_individual");?>" method="Post">
-                        <p class="btn_desafio_individual">Desafie um amigo</p>
-                        <p><input type="text" class="form-control" name="desafiado"></p>
-                        <p><input type="submit" class="btn btn-primary" value="Desafiar"></p>
-                    </form>
-                </div>
+<?php
+        }
+    }
+?>
             </div>
             <div class="row">
                 <div class="col-md-12 titulo_conteudo">
@@ -275,13 +302,13 @@
                 <div class="col-xs-12 col-sm-6 col-md-6 desafio_dupla">
                     <div class="row">
                         <div class="col-xs-5 col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_desafio">
+                            <img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_desafio">
                         </div>
                         <div class="col-xs-2 col-md-2">
                             <p class="vs_desafio">|</p>
                         </div>
                         <div class="col-xs-5 col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_desafio">
+                            <img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_desafio">
                         </div>
                     </div>
                     <div class="row">

@@ -12,6 +12,13 @@ class Adm_lib {
     private $CI;
     
     /**
+     * ID do visitante será um ou seja, nao terá ninguém logado
+     * 
+     * @var int
+     */
+    public $usuario_logado;
+    
+    /**
      * Todas as rodadas cadastradas
      * 
      * @var array
@@ -19,12 +26,22 @@ class Adm_lib {
     private $rodadas_cadastradas;
     
     /**
-     * Carrega as funçoes do Codeigniter e o Gerencia_model para pegar rodadas cadastradas
+     * Carrega as funçoes do Codeigniter e o Gerencia_model para pegar rodadas cadastradas.
+     * Também verifica se existe usuario logado ou nao. Caso for visitante ou seja, nao exista logado, o ID será um e nao poderá fazer nada no bolao, apenas visualizar.
      * 
      * @return void
      */
     public function __construct() {
         $this->CI = & get_instance();
+        if($this->CI->session->has_userdata('id_usuario')){
+            $user['id']= $this->CI->session->id_usuario;
+            $user['logado']= true;
+            $this->usuario_logado= $user;
+        } else{
+            $user['id']= 1;
+            $user['logado']= false;
+            $this->usuario_logado= $user;
+        }
         $this->CI->load->model('Gerencia_model');
         $this->rodadas_cadastradas = $this->CI->Gerencia_model->rodadas_cadastradas();
     }
@@ -39,20 +56,26 @@ class Adm_lib {
      */
     public function rodada_atual(){
         if(!$this->rodadas_cadastradas){
-            return false;
+            $rodada['rodada']= false;
+            return $rodada;
         }
         
         $hoje= new DateTime();
         foreach($this->rodadas_cadastradas AS $key=>$value){
+            $data_inicio= new DateTime($value['inicio']);
             $data_fim= new DateTime($value['fim']);
             if($hoje <= $data_fim){
-                return $key;
+                $rodada['rodada']= $key;
+                $rodada['inicio']= $data_inicio->format("Y-m-d H:i:s");
+                $rodada['fim']= $data_fim->format("Y-m-d H:i:s");
+                return $rodada;
             } else if($key == 38){
-                return 38;
+                $rodada['rodada']= 38;
+                $rodada['inicio']= $data_inicio->format("Y-m-d H:i:s");
+                $rodada['fim']= $data_fim->format("Y-m-d H:i:s");
+                return $rodada;
             }
         }
-        
-        return false;
     }
     
     
@@ -94,6 +117,7 @@ class Adm_lib {
      * Inclusive os desafios e as inscriçoes das copas, tudo em tempo real.
      * 
      * @used-by Adm_lib::total_mangos_usuario()                         Irá pegar apenas os lucros e calcular o total de mangos que o usuario possui
+     * @used-by Desafios_model::todos_adversarios()                     Consulta o ID de caad usuario para mostrar os dados no desafio.
      * @uses User_model::dados()                                        Tras os dados do usuario
      * @uses Classificacao_model::total_consulta_classif_user()         Tras em tempo real o saldo do usuario (-aposta + lucro)
      * @uses Desafios_model::total_dados_desafio_user()                 Tras o total de desafios aceitos/pendentes, desafiado/desafiador e quantos venceu.
@@ -101,11 +125,7 @@ class Adm_lib {
      * @param int $id
      * @return array
      */
-    public function todos_dados_usuarios($id= null){
-        if($id == null){
-            $id= 1;
-        }
-        
+    public function todos_dados_usuarios($id= null){        
         $this->CI->load->model('User_model');
         $dados_user= $this->CI->User_model->dados($id);
         
@@ -137,11 +157,7 @@ class Adm_lib {
      * @param int $id
      * @return type
      */
-    public function total_mangos_usuario($id= null){
-        if($id == null){
-            $id= 1;
-        }
-        
+    public function total_mangos_usuario($id){
         $dados= $this->todos_dados_usuarios($id);
         
         $mangos_recebido= $dados['usuario']['use_mangos'];

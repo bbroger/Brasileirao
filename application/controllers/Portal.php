@@ -10,6 +10,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Portal extends CI_Controller {
     
     /**
+     * O ID do usuario logado
+     * 
+     * @var int
+     */
+    private $usuario_logado;
+    
+    /**
      * Pega a rodada atual
      * 
      * @var int|bool
@@ -28,6 +35,7 @@ class Portal extends CI_Controller {
         
         $this->load->library('Adm_lib');
         $this->rodada_atual= $this->adm_lib->rodada_atual();
+        $this->usuario_logado= $this->adm_lib->usuario_logado;
     }
     
     /**
@@ -44,6 +52,8 @@ class Portal extends CI_Controller {
      * Esse metodo irá montar a view passando parametros.
      * 
      * @uses Portal::dados_palpites()           Mostra as partidas e os palpites compactado no portal
+     * @uses Portal::rodada_atual               Rodada atual do bolao
+     * @uses Portal::usuario_logado             Se existe um usuario logado
      * @param String $onde                      Para identificar se retornou da copa ou do desafio
      * @param String $msg                       Uma palavra chave para mostrar a mensagem
      * @return void
@@ -55,9 +65,11 @@ class Portal extends CI_Controller {
             $this->session->unset_userdata('control_msg');
         }
         $dados = array(
+            "usuario_logado"=> $this->usuario_logado,
             "msg" => $msg,
-            "rodada_atual"=> $this->rodada_atual,
-            "detalhes_palpites"=> $this->dados_palpites()
+            "rodada_atual"=> $this->rodada_atual['rodada'],
+            "detalhes_palpites"=> $this->dados_palpites(),
+            "desafios"=> $this->todos_desafos()
         );
         
         $this->load->view('head', $dados);
@@ -74,13 +86,13 @@ class Portal extends CI_Controller {
      * @return boolean
      */
     private function dados_palpites(){
-        if(!$this->rodada_atual){
+        if(!$this->rodada_atual['rodada']){
             return false;
         }
         $this->load->model('Gerencia_model');
-        $tras_detalhes_rodada= $this->Gerencia_model->consultar_rodada($this->rodada_atual);
+        $tras_detalhes_rodada= $this->Gerencia_model->consultar_rodada($this->rodada_atual['rodada']);
         $this->load->model('Palpites_model');
-        $tras_palpites = $this->Palpites_model->palpites_usuario(1, $this->rodada_atual);
+        $tras_palpites = $this->Palpites_model->palpites_usuario($this->usuario_logado['id'], $this->rodada_atual['rodada']);
         
         $dados= array(
             "rodada"=> $tras_detalhes_rodada,
@@ -88,6 +100,13 @@ class Portal extends CI_Controller {
         );
         
         return $dados;
+    }
+    
+    public function todos_desafos(){
+        $this->load->model('Desafios_model');
+        $desafios= $this->Desafios_model->todos_desafios_rodada(1, $this->usuario_logado['id']);
+        
+        return $desafios;
     }
 
 }
