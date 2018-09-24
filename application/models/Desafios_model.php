@@ -173,7 +173,16 @@ class Desafios_model extends CI_Model {
 
         $stmt = null;
     }
-
+    
+    /**
+     * Tras os desafios da rodada atual pro usuario. Se encontrar, pega o adversário e consulta os dados dele no Adm_lib
+     * 
+     * @used-by Portal::todos_desafios()            Irá pegar os desafios e mostrar ao usuario
+     * @uses Desafios_model::pega_adversarios       Depois que achou os adversarios, busca os dados dele.
+     * @param int $rodada
+     * @param int $id_usuario
+     * @return bool|array
+     */
     public function todos_desafios_rodada($rodada, $id_usuario) {
         $sql = "SELECT dei_id_user_desafiador AS desafiador, dei_id_user_desafiado AS desafiado, dei_status FROM dei_desafios_individual "
                 . "WHERE dei_rodada= ? "
@@ -196,7 +205,16 @@ class Desafios_model extends CI_Model {
         
         return $this->pega_adversarios($id_usuario, $dados);
     }
-
+    
+    /**
+     * Consulta os adversários no Adm_lib e mostra quem é o desafiador ou desafiado
+     * 
+     * @used-by Desafios_model::todos_desafios_rodada()         É responsavel de me dar os ids para consultar os dados do usuario
+     * @uses Adm_lib::todos_daos_usuarios()                     Tras os dados do usuario
+     * @param int $id_usuario
+     * @param int $dados
+     * @return array
+     */
     private function pega_adversarios($id_usuario, $dados) {
         $this->load->library('Adm_lib');
         

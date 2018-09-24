@@ -17,6 +17,13 @@ class Palpites extends CI_Controller {
     public $rodadas_cadastradas;
     
     /**
+     * Pega a rodada atual
+     * 
+     * @var int|bool
+     */
+    public $rodada_atual;
+    
+    /**
      * O ID do usuario logado
      * 
      * @var int
@@ -38,7 +45,7 @@ class Palpites extends CI_Controller {
     public $rodada_palpitada;
     
     /**
-     * Carrega o Palpites_model, Adm_lib e Gerencia_model. Também salva na variavel as rodadas cadastradas, mangos total e usuario logado.
+     * Carrega o Palpites_model, Adm_lib e Gerencia_model. Também salva na variavel as rodadas cadastradas, mangos total, usuario logado e rodada atual.
      * 
      * @uses Palpites_model                         Carrega o Palpites_model para utilizar na aplicação
      * @uses Gerencia_model::rodadas_cadastradas()  Tras todas as rodadas cadastradas e salva no Palpites::rodadas_cadastradas
@@ -53,6 +60,7 @@ class Palpites extends CI_Controller {
         
         $this->usuario_logado= $this->adm_lib->usuario_logado;
         $this->mangos_total= $this->adm_lib->total_mangos_usuario($this->usuario_logado['id']);
+        $this->rodada_atual= $this->adm_lib->rodada_atual();
         $this->rodadas_cadastradas = $this->Gerencia_model->rodadas_cadastradas();
     }
     
@@ -76,7 +84,8 @@ class Palpites extends CI_Controller {
      * @return void
      */
     public function rodada($recebe_rodada = null, $msg = null, $form = 0) {
-        $confere_rodada = $this->adm_lib->confere_rodada($recebe_rodada);
+        $rodada= ($recebe_rodada) ? $recebe_rodada: $this->rodada_atual['rodada'];
+        $confere_rodada = $this->adm_lib->confere_rodada($rodada);
         
         switch ($msg) {
             case 'completo':

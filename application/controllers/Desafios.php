@@ -77,7 +77,7 @@ class Desafios extends CI_Controller {
      * @return void
      */
     public function decisao_desafio() {
-        if (!$this->rodada_atual['rodada']) {
+        if (!$this->rodada_atual['existe']) {
 
             $msg = "Não existe rodada cadastrada no momento. Por favor aguarde ser cadastrado.";
             $this->control_msg($msg);

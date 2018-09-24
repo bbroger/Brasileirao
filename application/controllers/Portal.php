@@ -21,7 +21,7 @@ class Portal extends CI_Controller {
      * 
      * @var int|bool
      */
-    public $rodada_atual;
+    private $rodada_atual;
     
     /**
      * Carrega o Portal_model e Adm. Pega a rodada atual.
@@ -68,6 +68,7 @@ class Portal extends CI_Controller {
             "usuario_logado"=> $this->usuario_logado,
             "msg" => $msg,
             "rodada_atual"=> $this->rodada_atual['rodada'],
+            "existe_rodada"=> $this->rodada_atual['existe'],
             "detalhes_palpites"=> $this->dados_palpites(),
             "desafios"=> $this->todos_desafos()
         );
@@ -102,9 +103,18 @@ class Portal extends CI_Controller {
         return $dados;
     }
     
+    /**
+     * Irá trazer todos os desafios do usuário da rodada atual
+     * 
+     * @used-by Portal::opcao()                             Irá carregar os desafios e mostrar na view
+     * @uses Desafios_model::todos_Desafios_rodada()        Busca os desafios da rodada
+     * @uses Portal::rodada_atual               Rodada atual do bolao
+     * @uses Portal::usuario_logado             Se existe um usuario logado
+     * @return bool|array
+     */
     public function todos_desafos(){
         $this->load->model('Desafios_model');
-        $desafios= $this->Desafios_model->todos_desafios_rodada(1, $this->usuario_logado['id']);
+        $desafios= $this->Desafios_model->todos_desafios_rodada($this->rodada_atual['rodada'], $this->usuario_logado['id']);
         
         return $desafios;
     }
