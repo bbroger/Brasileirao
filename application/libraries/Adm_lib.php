@@ -137,13 +137,17 @@ class Adm_lib {
      * @uses Classificacao_model::total_consulta_classif_user()         Tras em tempo real o saldo do usuario (-aposta + lucro)
      * @uses Desafios_model::total_dados_desafio_user()                 Tras o total de desafios aceitos/pendentes, desafiado/desafiador e quantos venceu.
      * @uses Copa_model::total_dados_copa_oficial_user()                Tras o total de partic de copas oficiais, se existir os titulos, a rodada que venceu, o id_copa e o numero de inscritos.          
-     * @param int $id
+     * @param int   $id
+     * @param bool  $somente_usuario                                    Se for TRUE, tras somente o usuario.
      * @return array
      */
-    public function todos_dados_usuarios($id = null) {
+    public function todos_dados_usuarios($id = null, $somente_usuario= false) {
         $this->CI->load->model('User_model');
         $dados_user = $this->CI->User_model->dados($id);
-
+        if($somente_usuario){
+            return $dados_user;
+        }
+        
         $this->CI->load->model('Classificacao_model');
         $dados_classif = $this->CI->Classificacao_model->total_consulta_classif_user($id);
 
@@ -159,7 +163,7 @@ class Adm_lib {
             'desafios' => $dados_desafio,
             'copas' => $dados_copa
         );
-
+        
         return $arr;
     }
 
@@ -177,7 +181,7 @@ class Adm_lib {
 
         $mangos_recebido = $dados['usuario']['use_mangos'];
         $saldo_classif = ($dados['classif']) ? $dados['classif']['total_saldo'] : 0;
-        $saldo_desafios = $dados['desafios']['venceu'] * 2 - ($dados['desafios']['total_aceitos'] + $dados['desafios']['total_pendentes']);
+        $saldo_desafios = $dados['desafios']['saldo'];
         $total_partic_copa = $dados['copas']['total'];
         if ($dados['copas']['venceu']) {
             $total_lucro_copa = 0;
@@ -189,7 +193,7 @@ class Adm_lib {
         }
         $saldo_copa = $total_lucro_copa - $total_partic_copa * 3;
         $total_mangos = $mangos_recebido + $saldo_classif + $saldo_desafios + $saldo_copa;
-
+        
         return $total_mangos;
     }
 

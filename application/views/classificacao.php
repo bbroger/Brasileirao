@@ -8,22 +8,22 @@
             <div class="row white">
                 <div class="col-xs-12 col-sm-3">
                     <p class="titulo_mural">Respeita o líder</p>
-                    <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_acesso_liga">
+                    <img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_acesso_liga">
                     <p class="result_mural">DDDDDDDDJIMA100SANTISTA<br><b>32 pontos</b></p>
                 </div>
                 <div class="col-xs-12 col-sm-3">
                     <p class="titulo_mural">O mais rico</p>
-                    <img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_acesso_liga">
+                    <img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_acesso_liga">
                     <p class="result_mural">DDDDDDDDJIMA100SANTISTA<br><b>M$ 202.02</b></p>
                 </div>
                 <div class="col-xs-12 col-sm-3">
                     <p class="titulo_mural">Estrela do bolão</p>
-                    <img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_acesso_liga">
+                    <img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_acesso_liga">
                     <p class="result_mural">DDDDDDDDJIMA100SANTISTA<br><b>2 destaques</b></p>
                 </div>
                 <div class="col-xs-12 col-sm-3">
                     <p class="titulo_mural">Mestre dos desafios</p>
-                    <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_acesso_liga">
+                    <img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_acesso_liga">
                     <p class="result_mural">DDDDDDDDJIMA100SANTISTA<br><b>5 vitórias</b></p>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <div class="col-xs-12 col-md-5">
                     <div class="row">
                         <div class="col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_final_liga">
+                            <img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_final_liga">
                         </div>
                         <div class="col-md-7">
                             <p class="user_final_copa_liga">DDDDDDDDJIMA100SANTISTA<br>23 pontos | M$ -3.00</p>
@@ -52,7 +52,7 @@
                             <p class="user_final_copa_liga">DDDDDDDDJIMA100SANTISTA<br>23 pontos | M$ -3.00</p>
                         </div>
                         <div class="col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_final_liga">
+                            <img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_final_liga">
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                 <div class="col-xs-12 col-md-5">
                     <div class="row">
                         <div class="col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_final_liga">
+                            <img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_final_liga">
                         </div>
                         <div class="col-md-7">
                             <p class="user_final_copa_liga">DDDDDDDDJIMA100SANTISTA<br>23 pontos | M$ -3.00</p>
@@ -82,7 +82,7 @@
                             <p class="user_final_copa_liga">DDDDDDDDJIMA100SANTISTA<br>23 pontos | M$ -3.00</p>
                         </div>
                         <div class="col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_final_liga">
+                            <img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_final_liga">
                         </div>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
                 <div class="col-xs-12 col-md-5">
                     <div class="row">
                         <div class="col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_final_liga">
+                            <img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_final_liga">
                         </div>
                         <div class="col-md-7">
                             <p class="user_final_copa_liga">DDDDDDDDJIMA100SANTISTA<br>23 pontos | M$ -3.00</p>
@@ -112,7 +112,7 @@
                             <p class="user_final_copa_liga">DDDDDDDDJIMA100SANTISTA<br>23 pontos | M$ -3.00</p>
                         </div>
                         <div class="col-md-5">
-                            <img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_final_liga">
+                            <img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_final_liga">
                         </div>
                     </div>
                 </div>
@@ -125,13 +125,13 @@
             <div class="row destaque">
                 <div class="col-sm-6" style="border-bottom: 1px solid #ccc;">
                     <p class="titulo_destaque">Maior pontuação</p>
-                    <img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_destaque">
+                    <img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_destaque">
                     <p class="user_destaque">DDDDDDDDJIMA100SANTISTA</p>
                     <p class="titulo_destaque">32 pontos</p>
                 </div>
                 <div class="col-sm-6">
                     <p class="titulo_destaque">Maior Lucro</p>
-                    <img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_destaque">
+                    <img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_destaque">
                     <p class="user_destaque">DDDDDDDDJIMA100SANTISTA</p>
                     <p class="titulo_destaque">M$ -2.02</p>
                 </div>
@@ -165,7 +165,7 @@
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                                 <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
                                 <td><p class="valor_classificacao_acesso">4</p></td>
@@ -174,7 +174,7 @@
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                                 <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
                                 <td><p class="valor_classificacao_acesso">4</p></td>
@@ -183,7 +183,7 @@
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                                 <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
                                 <td><p class="valor_classificacao_acesso">4</p></td>
@@ -192,7 +192,7 @@
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfi.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                                 <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
                                 <td><p class="valor_classificacao_acesso">4</p></td>
@@ -201,7 +201,7 @@
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                                 <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
                                 <td><p class="valor_classificacao_acesso">4</p></td>
@@ -222,22 +222,22 @@
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
                             </tr>
                         </table>
@@ -254,27 +254,27 @@
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil2.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfi.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                             </tr>
                             <tr>
                                 <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
+                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
                                 <td><p class="valor_classificacao_acesso">123</p></td>
                             </tr>
                         </table>

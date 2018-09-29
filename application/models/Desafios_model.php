@@ -37,36 +37,52 @@ class Desafios_model extends CI_Model {
      * @return array
      */
     public function total_dados_desafio_user($id) {
-        $search['sql_desafiador'] = "SELECT COUNT(dei_id_user_desafiador) AS desafiador FROM dei_desafios_individual WHERE dei_id_user_desafiador= :id AND dei_status= :status AND YEAR(dei_created)= :year";
-        $search['sql_desafiado'] = "SELECT COUNT(dei_id_user_desafiado) AS desafiado FROM dei_desafios_individual WHERE dei_id_user_desafiado= :id AND dei_status= :status AND YEAR(dei_created)= :year";
-        $search['sql_venceu'] = "SELECT COUNT(dei_vencedor) AS venceu FROM dei_desafios_individual WHERE dei_vencedor= :id AND dei_status= :status AND YEAR(dei_created)= :year";
-        $search['sql_total_aceitos'] = "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual "
-                . "WHERE (dei_id_user_desafiador= :id OR dei_id_user_desafiado= :id) AND dei_status= :status AND YEAR(dei_created)= :year ";
-        $search['sql_total_pendentes'] = "SELECT COUNT(dei_id_desafio) AS total FROM dei_desafios_individual "
-                . "WHERE dei_id_user_desafiador= :id AND dei_status= :status AND YEAR(dei_created)= :year ";
-
-        foreach ($search AS $key => $value) {
-            $stmt = $this->con->prepare($value);
-            $stmt->bindValue(':id', $id);
-            $stmt->bindValue(':status', ($key == 'sql_total_pendentes') ? 'pendente' : 'aceito');
-            $stmt->bindValue(':year', date('Y'));
-            $stmt->execute();
-
-            $prov[$key] = $stmt->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT dei_id_user_desafiador AS id, "
+                . "(SELECT COUNT(dei_id_user_desafiador) FROM dei_desafios_individual WHERE dei_id_user_desafiador= id AND dei_status= 'aceito' AND YEAR(dei_created)= :year) AS defr_ace, "
+                . "NULL AS 'def_ace', "
+                . "(SELECT COUNT(dei_id_user_desafiador) FROM dei_desafios_individual WHERE dei_id_user_desafiador= id AND dei_status= 'pendente' AND YEAR(dei_created)= :year) AS defr_pen, "
+                . "NULL AS 'def_pen', "
+                . "(SELECT COUNT(dei_vencedor) FROM dei_desafios_individual WHERE dei_vencedor= id AND YEAR(dei_created)= :year) AS venceu "
+                . "FROM dei_desafios_individual WHERE dei_id_user_desafiador= :id AND YEAR(dei_created)= :year GROUP BY id "
+                . "UNION ALL "
+                . "SELECT dei_id_user_desafiado AS id, "
+                . "NULL AS 'defr_ace', "
+                . "(SELECT COUNT(dei_id_user_desafiado) FROM dei_desafios_individual WHERE dei_id_user_desafiado= id AND dei_status= 'aceito' AND YEAR(dei_created)= :year) AS def_ace, "
+                . "NULL AS 'defr_pen', "
+                . "(SELECT COUNT(dei_id_user_desafiado) FROM dei_desafios_individual WHERE dei_id_user_desafiado= id AND dei_status= 'pendente' AND YEAR(dei_created)= :year) AS def_pen, "
+                . "(SELECT COUNT(dei_vencedor) FROM dei_desafios_individual WHERE dei_vencedor= id AND YEAR(dei_created)= :year) AS venceu "
+                . "FROM dei_desafios_individual WHERE dei_id_user_desafiado= :id AND YEAR(dei_created)= :year GROUP BY id";
+        $stmt = $this->con->prepare($sql);
+        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':year', date('Y'));
+        $stmt->execute();
+        
+        $dados= $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt= null;
+        
+        foreach ($dados as $key => $value) {
+            if(isset($value['defr_ace'])){
+                $desafios['defr_aceito']= $value['defr_ace'];
+                $desafios['def_aceito']= (isset($desafios['def_aceito'])) ? $desafios['def_aceito']: 0;
+                $desafios['defr_pendente']= $value['defr_pen'];
+                $desafios['def_pendente']= (isset($desafios['def_pendente'])) ? $desafios['def_pendente']: 0;
+                $desafios['venceu']= $value['venceu'];
+                $desafios['saldo']= $value['venceu'] * 2 - ($desafios['defr_pendente'] + $desafios['defr_aceito'] + $desafios['def_aceito']);
+            } else{
+                $desafios['defr_aceito']= (isset($desafios['defr_aceito'])) ? $desafios['defr_aceito']: 0;
+                $desafios['def_aceito']= $value['def_ace'];
+                $desafios['defr_pendente']= (isset($desafios['defr_pendente'])) ? $desafios['defr_pendente']: 0;
+                $desafios['def_pendente']= $value['def_pen'];
+                $desafios['venceu']= $value['venceu'];
+                $desafios['saldo']= $value['venceu'] * 2 - ($desafios['defr_pendente'] + $desafios['defr_aceito'] + $desafios['def_aceito']);
+            }
         }
-
-        $dados_desafio['desafiador'] = $prov['sql_desafiador']['desafiador'];
-        $dados_desafio['desafiado'] = $prov['sql_desafiado']['desafiado'];
-        $dados_desafio['venceu'] = $prov['sql_venceu']['venceu'];
-        $dados_desafio['total_aceitos'] = $prov['sql_total_aceitos']['total'];
-        $dados_desafio['total_pendentes'] = $prov['sql_total_pendentes']['total'];
-
-        $stmt = null;
-        return $dados_desafio;
+        
+        return $desafios;
     }
 
     /**
-     * Irá receber a decisao. Irá atualizar no banco se aceitou ou recusou ou até mesmo se cancelou
+     * Irá receber a decisao. Irá atualizar no banco se aceitou ou recusou, novo ou até mesmo se cancelou
      * 
      * @used-by Desafios::decisao_desafio()           Irá enviar os dados dos desafiantes e a decisao para gravar.
      * @used-by Desafios::cancelar_desafio()          Irá cancelar o desafio e mostrar que foi cancelado sem problemas
@@ -218,15 +234,15 @@ class Desafios_model extends CI_Model {
     private function pega_adversarios($id_usuario, $dados) {
         $this->load->library('Adm_lib');
         
-        $desafio[0]= $this->adm_lib->todos_dados_usuarios($id_usuario);
+        $desafio[0]['usuario']= $this->adm_lib->todos_dados_usuarios($id_usuario, true);
         foreach ($dados as $key => $value) {
             if ($id_usuario != $value['desafiador']) {
-                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiador'])['usuario'];
+                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiador'], true);
                 $desafio[$key+1]['status']= $value['dei_status'];
                 $desafio[$key+1]['desafiador']= true;
                 $desafio[$key+1]['desafiado']= false;
             } else{
-                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiado'])['usuario'];
+                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiado'], true);
                 $desafio[$key+1]['status']= $value['dei_status'];
                 $desafio[$key+1]['desafiador']= false;
                 $desafio[$key+1]['desafiado']= true;
@@ -235,5 +251,53 @@ class Desafios_model extends CI_Model {
         
         return $desafio;
     }
-
+    
+    public function teste($rodada){
+        $sql = "SELECT dei_id_user_desafiador AS id, "
+                . "(SELECT COUNT(dei_id_user_desafiador) FROM dei_desafios_individual WHERE dei_rodada< :rodada AND dei_id_user_desafiador= id AND dei_status= 'aceito' AND YEAR(dei_created)= :year) AS defr_ace, "
+                . "NULL AS 'def_ace', "
+                . "(SELECT COUNT(dei_id_user_desafiador) FROM dei_desafios_individual WHERE dei_rodada< :rodada AND dei_id_user_desafiador= id AND dei_status= 'pendente' AND YEAR(dei_created)= :year) AS defr_pen, "
+                . "NULL AS 'def_pen', "
+                . "(SELECT COUNT(dei_vencedor) FROM dei_desafios_individual WHERE dei_rodada< :rodada AND dei_vencedor= id AND YEAR(dei_created)= :year) AS venceu "
+                . "FROM dei_desafios_individual WHERE dei_rodada< :rodada AND YEAR(dei_created)= :year GROUP BY id "
+                . "UNION ALL "
+                . "SELECT dei_id_user_desafiado AS id, "
+                . "NULL AS 'defr_ace', "
+                . "(SELECT COUNT(dei_id_user_desafiado) FROM dei_desafios_individual WHERE dei_rodada< :rodada AND dei_id_user_desafiado= id AND dei_status= 'aceito' AND YEAR(dei_created)= :year) AS def_ace, "
+                . "NULL AS 'defr_pen', "
+                . "(SELECT COUNT(dei_id_user_desafiado) FROM dei_desafios_individual WHERE dei_rodada< :rodada AND dei_id_user_desafiado= id AND dei_status= 'pendente' AND YEAR(dei_created)= :year) AS def_pen, "
+                . "(SELECT COUNT(dei_vencedor) FROM dei_desafios_individual WHERE dei_rodada< :rodada AND dei_vencedor= id AND YEAR(dei_created)= :year) AS venceu "
+                . "FROM dei_desafios_individual WHERE dei_rodada< :rodada AND YEAR(dei_created)= :year GROUP BY id";
+        $stmt = $this->con->prepare($sql);
+        $stmt->bindValue(':rodada', $rodada);
+        $stmt->bindValue(':year', date('Y'));
+        $stmt->execute();
+        
+        $dados= $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt= null;
+        
+        if(!$dados){
+            return false;
+        }
+        
+        foreach ($dados as $key => $value) {
+            if(isset($value['defr_ace'])){
+                $desafios[$value['id']]['defr_aceito']= $value['defr_ace'];
+                $desafios[$value['id']]['def_aceito']= (isset($desafios[$value['id']]['def_aceito'])) ? $desafios[$value['id']]['def_aceito']: 0;
+                $desafios[$value['id']]['defr_pendente']= $value['defr_pen'];
+                $desafios[$value['id']]['def_pendente']= (isset($desafios[$value['id']]['def_pendente'])) ? $desafios[$value['id']]['def_pendente']: 0;
+                $desafios[$value['id']]['venceu']= $value['venceu'];
+                $desafios[$value['id']]['saldo']= $value['venceu'] * 2 - ($desafios[$value['id']]['defr_aceito'] + $desafios[$value['id']]['def_aceito']);
+            } else{
+                $desafios[$value['id']]['defr_aceito']= (isset($desafios[$value['id']]['defr_aceito'])) ? $desafios[$value['id']]['defr_aceito']: 0;
+                $desafios[$value['id']]['def_aceito']= $value['def_ace'];
+                $desafios[$value['id']]['defr_pendente']= (isset($desafios[$value['id']]['defr_pendente'])) ? $desafios[$value['id']]['defr_pendente']: 0;
+                $desafios[$value['id']]['def_pendente']= $value['def_pen'];
+                $desafios[$value['id']]['venceu']= $value['venceu'];
+                $desafios[$value['id']]['saldo']= $value['venceu'] * 2 - ($desafios[$value['id']]['defr_aceito'] + $desafios[$value['id']]['def_aceito']);
+            }
+        }
+        
+        return $desafios;
+    }
 }
