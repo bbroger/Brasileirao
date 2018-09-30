@@ -148,6 +148,9 @@
                     <option>Rodada 2 20/02 14:00</option>
                     <option>Rodada 3 20/02 14:00</option>
                 </select>
+                <p class="help-block" style="width: 300px; margin: 10px auto;">
+                    Classificação não conta com essa rodada atual.
+                </p>
             </div>
             <div class="row white">
                 <div class="col-xs-12 col-sm-12 col-md-6">
@@ -160,54 +163,24 @@
                                 <th>Pontos</th>
                                 <th>Mangos</th>
                                 <th>CC</th>
-                                <th>AD</th>
-                                <th>AP</th>
+                                <th>CT</th>
+                                <th>CF</th>
                             </tr>
+<?php
+    foreach ($classificacao_geral as $key => $value) {
+?>
                             <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
-                                <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
-                                <td><p class="valor_classificacao_acesso">4</p></td>
-                                <td><p class="valor_classificacao_acesso">2</p></td>
-                                <td><p class="valor_classificacao_acesso">5</p></td>
+                                <td><p class="valor_classificacao_acesso"><?php echo $key+1;?></p></td>
+                                <td><img src="<?php echo $value['img_perfil'];?>" class="img_classificacao_acesso"> <br><?php echo $value['apelido'];?></td>
+                                <td><p class="valor_classificacao_acesso"><?php echo $value['pontos'];?></p></td>
+                                <td><p class="valor_classificacao_acesso">M$ <?php echo $value['mangos'];?></p></td>
+                                <td><p class="valor_classificacao_acesso"><?php echo $value['cc'];?></p></td>
+                                <td><p class="valor_classificacao_acesso"><?php echo $value['ct'];?></p></td>
+                                <td><p class="valor_classificacao_acesso"><?php echo $value['cf'];?></p></td>
                             </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
-                                <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
-                                <td><p class="valor_classificacao_acesso">4</p></td>
-                                <td><p class="valor_classificacao_acesso">2</p></td>
-                                <td><p class="valor_classificacao_acesso">5</p></td>
-                            </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
-                                <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
-                                <td><p class="valor_classificacao_acesso">4</p></td>
-                                <td><p class="valor_classificacao_acesso">2</p></td>
-                                <td><p class="valor_classificacao_acesso">5</p></td>
-                            </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
-                                <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
-                                <td><p class="valor_classificacao_acesso">4</p></td>
-                                <td><p class="valor_classificacao_acesso">2</p></td>
-                                <td><p class="valor_classificacao_acesso">5</p></td>
-                            </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
-                                <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
-                                <td><p class="valor_classificacao_acesso">4</p></td>
-                                <td><p class="valor_classificacao_acesso">2</p></td>
-                                <td><p class="valor_classificacao_acesso">5</p></td>
-                            </tr>
+<?php
+    }
+?>
                         </table>
                     </div>
                 </div>
@@ -220,26 +193,17 @@
                                 <th>Apelido</th>
                                 <th>Mangos</th>
                             </tr>
+<?php
+    foreach ($classificacao_mangos as $key => $value) {
+?>
                             <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
+                                <td><p class="valor_classificacao_acesso"><?php echo $key+1;?></p></td>
+                                <td><img src="<?php echo $value['img_perfil'];?>" class="img_classificacao_acesso"> <br><?php echo $value['apelido'];?></td>
+                                <td><p class="valor_classificacao_acesso">M$ <?php echo $value['mangos'];?></p></td>
                             </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
-                            </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
-                            </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">M$ 200.01</p></td>
-                            </tr>
+<?php
+    }
+?>
                         </table>
                     </div>
                 </div>
@@ -250,33 +214,19 @@
                             <tr>
                                 <th>#</th>
                                 <th>Apelido</th>
-                                <th>Desafios</th>
+                                <th>Venceu</th>
                             </tr>
+<?php
+    foreach ($classificacao_desafios as $key => $value) {
+?>
                             <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
+                                <td><p class="valor_classificacao_acesso"><?php echo $key+1;?></p></td>
+                                <td><img src="<?php echo $value['img_perfil'];?>" class="img_classificacao_acesso"> <br><?php echo $value['apelido'];?></td>
+                                <td><p class="valor_classificacao_acesso"><?php echo $value['venceu'];?></p></td>
                             </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
-                            </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil2.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
-                            </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
-                            </tr>
-                            <tr>
-                                <td><p class="valor_classificacao_acesso">1</p></td>
-                                <td><img src="<?php echo base_url("assets/images/perfil/perfil.jpg");?>" class="img_classificacao_acesso"> <br>DDDDDDDDJIMA100SANTISTA</td>
-                                <td><p class="valor_classificacao_acesso">123</p></td>
-                            </tr>
+<?php
+    }
+?>
                         </table>
                     </div>
                 </div>

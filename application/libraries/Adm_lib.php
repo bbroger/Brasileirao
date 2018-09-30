@@ -135,13 +135,13 @@ class Adm_lib {
      * @used-by Desafios_model::todos_adversarios()                     Consulta o ID de caad usuario para mostrar os dados no desafio.
      * @uses User_model::dados()                                        Tras os dados do usuario
      * @uses Classificacao_model::total_consulta_classif_user()         Tras em tempo real o saldo do usuario (-aposta + lucro)
-     * @uses Desafios_model::total_dados_desafio_user()                 Tras o total de desafios aceitos/pendentes, desafiado/desafiador e quantos venceu.
-     * @uses Copa_model::total_dados_copa_oficial_user()                Tras o total de partic de copas oficiais, se existir os titulos, a rodada que venceu, o id_copa e o numero de inscritos.          
+     * @uses Desafios_model::total_desafios_por_id()                    Tras o total de desafios aceitos/pendentes, desafiado/desafiador e quantos venceu.
+     * @uses Copa_model::total_copas_por_id()                           Tras o total de partic de copas, titulos, a rodada que venceu, o id_copa e o numero de inscritos.          
      * @param int   $id
      * @param bool  $somente_usuario                                    Se for TRUE, tras somente o usuario.
      * @return array
      */
-    public function todos_dados_usuarios($id = null, $somente_usuario= false) {
+    public function todos_dados_usuarios($id, $somente_usuario= false) {
         $this->CI->load->model('User_model');
         $dados_user = $this->CI->User_model->dados($id);
         if($somente_usuario){
@@ -152,10 +152,10 @@ class Adm_lib {
         $dados_classif = $this->CI->Classificacao_model->total_consulta_classif_user($id);
 
         $this->CI->load->model('Desafios_model');
-        $dados_desafio = $this->CI->Desafios_model->total_dados_desafio_user($id);
+        $dados_desafio = $this->CI->Desafios_model->total_desafios_por_id($id);
 
         $this->CI->load->model('Copa_model');
-        $dados_copa = $this->CI->Copa_model->total_dados_copa_oficial_user($id);
+        $dados_copa = $this->CI->Copa_model->total_copas_por_id($id);
 
         $arr = array(
             'usuario' => $dados_user,
@@ -178,23 +178,133 @@ class Adm_lib {
      */
     public function total_mangos_usuario($id) {
         $dados = $this->todos_dados_usuarios($id);
-
+        
         $mangos_recebido = $dados['usuario']['use_mangos'];
         $saldo_classif = ($dados['classif']) ? $dados['classif']['total_saldo'] : 0;
-        $saldo_desafios = $dados['desafios']['saldo'];
-        $total_partic_copa = $dados['copas']['total'];
-        if ($dados['copas']['venceu']) {
-            $total_lucro_copa = 0;
-            foreach ($dados['copas']['venceu'] as $key => $value) {
-                $total_lucro_copa += $value['inscritos'] * 3;
+        $saldo_desafios = ($dados['desafios']) ? $dados['desafios']['saldo'] : 0;
+        $saldo_copa = 0;
+        if ($dados['copas']) {
+            foreach ($dados['copas'] AS $key => $value) {
+                $saldo_copa += $value['saldo'];
             }
-        } else {
-            $total_lucro_copa = 0;
         }
-        $saldo_copa = $total_lucro_copa - $total_partic_copa * 3;
         $total_mangos = $mangos_recebido + $saldo_classif + $saldo_desafios + $saldo_copa;
         
         return $total_mangos;
+    }
+    
+    /**
+     * Aqui pega a classificação do bolao inteiro, soma tudo e ordena conforma solicitado no parametro
+     * 
+     * @used-by Classificacao::classificacao()          Pega a classif geral, mangos e desafios para apresentar na view
+     * @uses User_model::dados()                        Trás todos os usuários do bolao. É OBRIGATORIO TER PELO MENOS UM USUARIO.
+     * @uses Classificacao_model::classif_geral()       Trás todos os dados do palpites do usuario, pontos, mangos, cc, ct, cf...
+     * @uses Desafios_model::total_desafios()           Trás todos os desafios do bolao bem como total, vencidos e saldos.
+     * @uses Copa_model::total_copas()                  Trás todas as copas dos usuarios bem como, total de inscritos, chave e o campeao
+     * @param String $ordena                            Informa qual tipo de ordenaçao deseja, por pontos, mangos etc...
+     * @return array
+     */
+    public function classif_geral($ordena) {
+        $rodada_atual = $this->rodada_atual();
+        $rodada= $rodada_atual['rodada'];
+        
+        $this->CI->load->model('User_model');
+        $usuarios = $this->CI->User_model->dados();
+        
+        $classif = $this->CI->Classificacao_model->classif_geral($rodada);
+
+        $this->CI->load->model('Desafios_model');
+        $desafios = $this->CI->Desafios_model->total_desafios($rodada);
+
+        $this->CI->load->model('Copa_model');
+        $copa = $this->CI->Copa_model->total_copas($rodada);
+
+        foreach ($usuarios AS $key => $value) {
+            $dados[$key + 1]['id'] = $value['use_id_user'];
+            $dados[$key + 1]['apelido'] = $value['use_nickname'];
+            $dados[$key + 1]['nome'] = $value['use_name'];
+            $dados[$key + 1]['img_perfil'] = base_url("assets/images/perfil/" . $value['use_img_perfil']);
+            $dados[$key + 1]['mangos'] = $value['use_mangos'];
+            if (array_key_exists($key + 1, $classif)) {
+                $dados[$key + 1]['cc'] = $classif[$key + 1]['cc'];
+                $dados[$key + 1]['ct'] = $classif[$key + 1]['ct'];
+                $dados[$key + 1]['cf'] = $classif[$key + 1]['cf'];
+                $dados[$key + 1]['pontos'] = $classif[$key + 1]['pontos'];
+                $dados[$key + 1]['mangos'] += $classif[$key + 1]['saldo'];
+            } else {
+                $dados[$key + 1]['cc'] = 0;
+                $dados[$key + 1]['ct'] = 0;
+                $dados[$key + 1]['cf'] = 0;
+                $dados[$key + 1]['pontos'] = 0;
+            }
+            if (array_key_exists($key + 1, $desafios)) {
+                $dados[$key + 1]['defr_aceito'] = $desafios[$key + 1]['defr_aceito'];
+                $dados[$key + 1]['def_aceito'] = $desafios[$key + 1]['def_aceito'];
+                $dados[$key + 1]['venceu'] = $desafios[$key + 1]['venceu'];
+                $dados[$key + 1]['mangos'] += $desafios[$key + 1]['saldo'];
+            } else {
+                $dados[$key + 1]['defr_aceito'] = 0;
+                $dados[$key + 1]['def_aceito'] = 0;
+                $dados[$key + 1]['venceu'] = 0;
+            }
+            if (array_key_exists($key + 1, $copa)) {
+                foreach ($copa[$key + 1] as $chave => $valor) {
+                    $dados[$key + 1]['mangos'] += $valor['saldo'];
+                }
+            }
+        }
+
+        if ($ordena == 'geral') {
+            return $this->ordernar_classif($dados);
+        } else if ($ordena == 'mangos') {
+            return $this->ordernar_mangos($dados);
+        } else{
+            return $this->ordernar_desafios($dados);
+        }
+    }
+
+    private function ordernar_classif($dados) {
+        $pontos = $this->chave_array($dados, 'pontos');
+        $mangos = $this->chave_array($dados, 'mangos');
+        $cc = $this->chave_array($dados, 'cc');
+        $ct = $this->chave_array($dados, 'ct');
+        $cf = $this->chave_array($dados, 'cf');
+        $id = $this->chave_array($dados, 'id');
+        array_multisort($pontos, SORT_DESC, $mangos, SORT_DESC, $cc, SORT_DESC, $ct, SORT_DESC, $cf, SORT_DESC, $id, SORT_ASC, $dados);
+
+        return $dados;
+    }
+
+    private function ordernar_mangos($dados) {
+        $pontos = $this->chave_array($dados, 'pontos');
+        $mangos = $this->chave_array($dados, 'mangos');
+        $cc = $this->chave_array($dados, 'cc');
+        $ct = $this->chave_array($dados, 'ct');
+        $cf = $this->chave_array($dados, 'cf');
+        $id = $this->chave_array($dados, 'id');
+        array_multisort($mangos, SORT_DESC, $pontos, SORT_DESC, $cc, SORT_DESC, $ct, SORT_DESC, $cf, SORT_DESC, $id, SORT_ASC, $dados);
+
+        return $dados;
+    }
+
+    private function ordernar_desafios($dados) {
+        $venceu = $this->chave_array($dados, 'venceu');
+        $defr_aceito = $this->chave_array($dados, 'defr_aceito');
+        $def_aceito = $this->chave_array($dados, 'def_aceito');
+        $pontos = $this->chave_array($dados, 'pontos');
+        $mangos = $this->chave_array($dados, 'mangos');
+        $id = $this->chave_array($dados, 'id');
+        array_multisort($venceu, SORT_DESC, $defr_aceito, SORT_DESC, $def_aceito, SORT_DESC, $pontos, SORT_DESC, $mangos, SORT_DESC, $id, SORT_ASC, $dados);
+
+        return $dados;
+    }
+
+    private function chave_array($arr, $col) {
+        foreach ($arr as $key => $value) {
+            $sort_data[$key] = $value[$col];
+        }
+
+        return $sort_data;
     }
 
 }

@@ -34,9 +34,9 @@ class Desafios_model extends CI_Model {
      * 
      * @used-by Adm_lib::todos_dados_user()         Pega os desafios para calcular os mangos do usuario
      * @param int $id
-     * @return array
+     * @return array|bool
      */
-    public function total_dados_desafio_user($id) {
+    public function total_desafios_por_id($id) {
         $sql = "SELECT dei_id_user_desafiador AS id, "
                 . "(SELECT COUNT(dei_id_user_desafiador) FROM dei_desafios_individual WHERE dei_id_user_desafiador= id AND dei_status= 'aceito' AND YEAR(dei_created)= :year) AS defr_ace, "
                 . "NULL AS 'def_ace', "
@@ -60,22 +60,26 @@ class Desafios_model extends CI_Model {
         $dados= $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt= null;
         
-        foreach ($dados as $key => $value) {
-            if(isset($value['defr_ace'])){
-                $desafios['defr_aceito']= $value['defr_ace'];
-                $desafios['def_aceito']= (isset($desafios['def_aceito'])) ? $desafios['def_aceito']: 0;
-                $desafios['defr_pendente']= $value['defr_pen'];
-                $desafios['def_pendente']= (isset($desafios['def_pendente'])) ? $desafios['def_pendente']: 0;
-                $desafios['venceu']= $value['venceu'];
-                $desafios['saldo']= $value['venceu'] * 2 - ($desafios['defr_pendente'] + $desafios['defr_aceito'] + $desafios['def_aceito']);
-            } else{
-                $desafios['defr_aceito']= (isset($desafios['defr_aceito'])) ? $desafios['defr_aceito']: 0;
-                $desafios['def_aceito']= $value['def_ace'];
-                $desafios['defr_pendente']= (isset($desafios['defr_pendente'])) ? $desafios['defr_pendente']: 0;
-                $desafios['def_pendente']= $value['def_pen'];
-                $desafios['venceu']= $value['venceu'];
-                $desafios['saldo']= $value['venceu'] * 2 - ($desafios['defr_pendente'] + $desafios['defr_aceito'] + $desafios['def_aceito']);
+        if($dados){
+            foreach ($dados as $key => $value) {
+                if(isset($value['defr_ace'])){
+                    $desafios['defr_aceito']= $value['defr_ace'];
+                    $desafios['def_aceito']= (isset($desafios['def_aceito'])) ? $desafios['def_aceito']: 0;
+                    $desafios['defr_pendente']= $value['defr_pen'];
+                    $desafios['def_pendente']= (isset($desafios['def_pendente'])) ? $desafios['def_pendente']: 0;
+                    $desafios['venceu']= $value['venceu'];
+                    $desafios['saldo']= $value['venceu'] * 2 - ($desafios['defr_pendente'] + $desafios['defr_aceito'] + $desafios['def_aceito']);
+                } else{
+                    $desafios['defr_aceito']= (isset($desafios['defr_aceito'])) ? $desafios['defr_aceito']: 0;
+                    $desafios['def_aceito']= $value['def_ace'];
+                    $desafios['defr_pendente']= (isset($desafios['defr_pendente'])) ? $desafios['defr_pendente']: 0;
+                    $desafios['def_pendente']= $value['def_pen'];
+                    $desafios['venceu']= $value['venceu'];
+                    $desafios['saldo']= $value['venceu'] * 2 - ($desafios['defr_pendente'] + $desafios['defr_aceito'] + $desafios['def_aceito']);
+                }
             }
+        } else{
+            return false;
         }
         
         return $desafios;
@@ -252,7 +256,14 @@ class Desafios_model extends CI_Model {
         return $desafio;
     }
     
-    public function teste($rodada){
+    /**
+     * Tras todos os desafios de todos os usuarios. A consulta trará tudo da rodada 1 até a rodada atual -1
+     * 
+     * @used-by Adm_lib::classif_geral()                Pega todos os desafios do usuario para somar com o resto e ter a classificacao
+     * @param int $rodada                               Rodada atual ou a rodada anterior da total. Se nao existir, virá como 0.
+     * @return array
+     */
+    public function total_desafios($rodada){
         $sql = "SELECT dei_id_user_desafiador AS id, "
                 . "(SELECT COUNT(dei_id_user_desafiador) FROM dei_desafios_individual WHERE dei_rodada< :rodada AND dei_id_user_desafiador= id AND dei_status= 'aceito' AND YEAR(dei_created)= :year) AS defr_ace, "
                 . "NULL AS 'def_ace', "
@@ -277,7 +288,7 @@ class Desafios_model extends CI_Model {
         $stmt= null;
         
         if(!$dados){
-            return false;
+            return array();
         }
         
         foreach ($dados as $key => $value) {

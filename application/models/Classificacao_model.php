@@ -34,7 +34,7 @@ class Classificacao_model extends CI_Model {
      * 
      * @used-by Adm_lib()         Irá trazer total dos ganhos na classificaçao e somara com os demais ganhos.
      * @param int $id             ID do usuario para consultar
-     * @return bool|array
+     * @return array
      */
     public function total_consulta_classif_user($id){
         $sql= "SELECT SUM(pap_cc) AS cc, SUM(pap_ct) AS ct, SUM(pap_cf) AS cf, SUM(pap_pontos) AS pontos, SUM(pap_saldo) AS total_saldo FROM pap_palpites "
@@ -50,8 +50,15 @@ class Classificacao_model extends CI_Model {
         return $dados_classif;
     }
     
+    /**
+     * Trás o total dos ganhos nos palpites do bolao como pontos, lucro, cc... A consulta trará tudo da rodada 1 até a rodada atual -1
+     * 
+     * @used-by Adm_lib::classif_geral()                Pega os palpites dos usuarios para somar na classificacao
+     * @param int $rodada                               Rodada atual ou a rodada anterior da total. Se nao existir, virá como 0.
+     * @return array
+     */
     public function classif_geral($rodada){
-        $sql= "SELECT user.use_id_user AS id, user.use_nickname AS apelido, user.use_img_perfil AS img_perfil, user.use_mangos AS mangos, "
+        $sql= "SELECT user.use_id_user AS id, "
                 . "SUM(pap.pap_cc) AS cc, SUM(pap.pap_ct) AS ct, SUM(pap.pap_cf) AS cf, SUM(pap.pap_pontos) AS pontos, SUM(pap.pap_saldo) AS saldo FROM use_users AS user "
                 . "LEFT JOIN pap_palpites AS pap ON user.use_id_user = pap.pap_user_id "
                 . "WHERE pap.pap_rodada < ? AND pap.pap_valida= 'sim' AND YEAR(pap.pap_created)= ? GROUP BY user.use_id_user";
@@ -60,9 +67,21 @@ class Classificacao_model extends CI_Model {
         $stmt->bindValue(2, date('Y'));
         $stmt->execute();
         
-        $dados_classif= $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+        $dados= $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt= null;
+        
+        if(!$dados){
+            return array();
+        }
+        
+        foreach ($dados AS $key => $value) {
+            $dados_classif[$value['id']]['cc']= $value['cc'];
+            $dados_classif[$value['id']]['ct']= $value['ct'];
+            $dados_classif[$value['id']]['cf']= $value['cf'];
+            $dados_classif[$value['id']]['pontos']= $value['pontos'];
+            $dados_classif[$value['id']]['saldo']= $value['saldo'];
+        }
+        
         return $dados_classif;
     }
 }
