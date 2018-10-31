@@ -197,10 +197,14 @@ class Adm_lib {
      * Aqui pega a classificação do bolao inteiro, soma tudo e ordena conforma solicitado no parametro
      * 
      * @used-by Classificacao::classificacao()          Pega a classif geral, mangos e desafios para apresentar na view
+     * @used-by Copa::inscricao_copa()                  Vai pegar as classif para verificar se pode ou nao se cadastrar nas copas
      * @uses User_model::dados()                        Trás todos os usuários do bolao. É OBRIGATORIO TER PELO MENOS UM USUARIO.
      * @uses Classificacao_model::classif_geral()       Trás todos os dados do palpites do usuario, pontos, mangos, cc, ct, cf...
      * @uses Desafios_model::total_desafios()           Trás todos os desafios do bolao bem como total, vencidos e saldos.
      * @uses Copa_model::total_copas()                  Trás todas as copas dos usuarios bem como, total de inscritos, chave e o campeao
+     * @uses Adm_lib::ordena_classif()                  Ordena por pontos
+     * @uses Adm_lib::ordena_mangos()                   Ordena por mangos
+     * @uses Adm_lib::ordena_deesafios()                Ordena por desafios
      * @param String $ordena                            Informa qual tipo de ordenaçao deseja, por pontos, mangos etc...
      * @return array
      */
@@ -262,7 +266,15 @@ class Adm_lib {
             return $this->ordernar_desafios($dados);
         }
     }
-
+    
+    /**
+     * Ordena a classificacao por pontos
+     * 
+     * @used-by Adm_lib::classif_geral()            Recece como paramentro para ordenar por pontos
+     * @uses Adm_lib::chave_array()                 Quando recebe o parametro para ordenar, esse metodo pega toda a coluna para ser ordenado
+     * @param String $dados
+     * @return array
+     */
     private function ordernar_classif($dados) {
         $pontos = $this->chave_array($dados, 'pontos');
         $mangos = $this->chave_array($dados, 'mangos');
@@ -274,7 +286,15 @@ class Adm_lib {
 
         return $dados;
     }
-
+    
+    /**
+     * Ordena a classificacao por mangos
+     * 
+     * @used-by Adm_lib::classif_geral()            Recece como paramentro para ordenar por mangos
+     * @uses Adm_lib::chave_array()                 Quando recebe o parametro para ordenar, esse metodo pega toda a coluna para ser ordenado
+     * @param String $dados
+     * @return array
+     */
     private function ordernar_mangos($dados) {
         $pontos = $this->chave_array($dados, 'pontos');
         $mangos = $this->chave_array($dados, 'mangos');
@@ -286,7 +306,15 @@ class Adm_lib {
 
         return $dados;
     }
-
+    
+    /**
+     * Ordena a classificacao por desafios
+     * 
+     * @used-by Adm_lib::classif_geral()            Recece como paramentro para ordenar por desafios
+     * @uses Adm_lib::chave_array()                 Quando recebe o parametro para ordenar, esse metodo pega toda a coluna para ser ordenado
+     * @param String $dados
+     * @return array
+     */
     private function ordernar_desafios($dados) {
         $venceu = $this->chave_array($dados, 'venceu');
         $defr_aceito = $this->chave_array($dados, 'defr_aceito');

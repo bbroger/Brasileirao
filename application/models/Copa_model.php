@@ -150,5 +150,89 @@ class Copa_model extends CI_Model {
 
         return $copa;
     }
-
+    
+    /**
+     * Vai consultar se o usuário participa da copa que ele está se inscrevendo. Caso exista, retorna true.
+     * 
+     * Copa::rodada_copas           Verifica se o usuário já se inscreveu na copa.
+     * @param type $id_copa         ID da copa
+     * @param type $id_liga         Se houver, ID liga
+     * @param type $rodada_copa     Rodada copa
+     * @param type $id_usuario      Usuario
+     * @return bool
+     */
+    public function verifica_inscrito($id_copa, $id_liga, $rodada_copa, $id_usuario){
+        if(!$id_liga){
+            $sql= "SELECT cac_oitavas FROM cac_cadastrar_copas WHERE cac_id_copa= :id_copa AND cac_rodada= :rodada AND cac_oitavas= :id_usuario AND YEAR(cac_created)= :year";
+        } else{
+            $sql= "SELECT cac_oitavas FROM cac_cadastrar_copas WHERE cac_id_copa= :id_copa AND cac_id_liga= :id_liga AND cac_rodada= :rodada AND cac_oitavas= :id_usuario AND YEAR(cac_created)= :year";
+        }
+        
+        $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(":id_copa", $id_copa);
+        if($id_liga){
+            $stmt->bindValue(":id_liga", $id_liga);
+        }
+        $stmt->bindValue(":rodada", $rodada_copa);
+        $stmt->bindValue(":id_usuario", $id_usuario);
+        $stmt->bindValue(":year", date('Y'));
+        $stmt->execute();
+        
+        $vagas= $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt= null;
+        
+        return $vagas;
+    }
+    
+    /**
+     * Pega a vaga da copa. Se tiver 16 é por que está cheio.
+     * 
+     * @param type $id_copa         ID da copa
+     * @param type $id_liga         Se houver, ID liga
+     * @param type $rodada_copa     Rodada da copa
+     * @return int
+     */
+    public function verifica_vaga($id_copa, $id_liga, $rodada_copa){
+        if(!$id_liga){
+            $sql= "SELECT COUNT(cac_posicao) AS posicao FROM cac_cadastrar_copas WHERE cac_id_copa= :id_copa AND cac_rodada= :rodada AND YEAR(cac_created)= :year";
+        } else{
+            $sql= "SELECT COUNT(cac_posicao) AS posicao FROM cac_cadastrar_copas WHERE cac_id_copa= :id_copa AND cac_id_liga= :id_liga AND cac_rodada= :rodada AND YEAR(cac_created)= :year";
+        }
+        
+        $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(":id_copa", $id_copa);
+        if($id_liga){
+            $stmt->bindValue(":id_liga", $id_liga);
+        }
+        $stmt->bindValue(":rodada", $rodada_copa);
+        $stmt->bindValue(":year", date('Y'));
+        $stmt->execute();
+        
+        $vagas= $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt= null;
+        
+        return $vagas['posicao']+1;
+    }
+    
+    /**
+     * Verifica se o usuário já se inscreveu na copa.
+     * 
+     * @param type $id_copa         ID copa
+     * @param type $id_liga         Se houver, ID liga
+     * @param type $rodada_copa     Rodada da cp[a
+     * @param type $vaga            A posiçao que será cadastrado
+     * @param type $id_usuario      Usuario
+     */
+    public function inscricao_copa($id_copa, $id_liga, $rodada_copa, $vaga, $id_usuario){
+        $sql= "INSERT INTO cac_cadastrar_copas (cac_id_copa, cac_id_liga, cac_rodada, cac_posicao, cac_oitavas) VALUES (?, ?, ?, ?, ?)";
+        $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(1, $id_copa);
+        $stmt->bindValue(2, $id_liga);
+        $stmt->bindValue(3, $rodada_copa);
+        $stmt->bindValue(4, $vaga);
+        $stmt->bindValue(5, $id_usuario);
+        $stmt->execute();
+        
+        $stmt= null;
+    }
 }

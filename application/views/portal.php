@@ -16,7 +16,10 @@
                             320 inscritos<br>
                             Começa em:<br>
                             00d 00h 00m 00s<br>
-                            <button class="btn btn-success btn_copa">Inscreva-se</button>
+                            <form action="<?php echo base_url("Copa/verifica_copas");?>" method="Post">
+                                <input type="hidden" name="copa" value="2">
+                                <input type="submit" class="btn btn-success btn_copa" value="Inscreva-se">
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -30,7 +33,10 @@
                             32 inscritos<br>
                             Começa em:<br>
                             00d 00h 00m 00s<br>
-                            <button class="btn btn-success btn_copa">Inscreva-se</button>
+                            <form action="<?php echo base_url("Copa/verifica_copas");?>" method="Post">
+                                <input type="hidden" name="copa" value="3">
+                                <input type="submit" class="btn btn-success btn_copa" value="Inscreva-se">
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -44,7 +50,10 @@
                             32 inscritos<br>
                             Começa em:<br>
                             00d 00h 00m 00s<br>
-                            <button class="btn btn-success btn_copa">Inscreva-se</button>
+                            <form action="<?php echo base_url("Copa/verifica_copas");?>" method="Post">
+                                <input type="hidden" name="copa" value="4">
+                                <input type="submit" class="btn btn-success btn_copa" value="Inscreva-se">
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -60,7 +69,11 @@
                             32 inscritos<br>
                             Começa em:<br>
                             00d 00h 00m 00s<br>
-                            <button class="btn btn-success btn_copa">Inscreva-se</button>
+                            <form action="<?php echo base_url("Copa/verifica_copas");?>" method="Post">
+                                <input type="hidden" name="copa" value="1">
+                                <input type="hidden" name="liga" value="1">
+                                <input type="submit" class="btn btn-success btn_copa" value="Inscreva-se">
+                            </form>
                         </div>
                     </div>
                 </div>
