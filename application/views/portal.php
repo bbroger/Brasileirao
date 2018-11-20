@@ -250,9 +250,9 @@
 ?>
                 <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
                     <form action="<?php echo base_url("Desafios/decisao_desafio");?>" method="Post">
-                        <input type="hidden" name="adversario" value="<?php echo $desafios[$i]['usuario']['use_nickname'];?>">
-                        <img src="<?php echo $desafios[$i]['usuario']['use_img_perfil'];?>" class="img_desafio">
-                        <p><?php echo $desafios[$i]['usuario']['use_nickname'];?> te desafiou!<br>
+                        <input type="hidden" name="adversario" value="<?php echo $desafios[$i]['apelido'];?>">
+                        <img src="<?php echo $desafios[$i]['img_perfil'];?>" class="img_desafio">
+                        <p><?php echo $desafios[$i]['apelido'];?> te desafiou!<br>
                             <button type="submit" class="btn btn-success" name="decisao" value="aceito">Aceitar</button> 
                             <button type="submit" class="btn btn-danger" name="decisao" value="recusado">Recusar</button>
                         </p>
@@ -263,9 +263,9 @@
 ?>
                 <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
                     <form action="<?php echo base_url("Desafios/decisao_desafio");?>" method="Post">
-                        <input type="hidden" name="adversario" value="<?php echo $desafios[$i]['usuario']['use_nickname'];?>">
-                        <img src="<?php echo $desafios[$i]['usuario']['use_img_perfil'];?>" class="img_desafio">
-                        <p>Você desafiou <?php echo $desafios[$i]['usuario']['use_nickname'];?><br>
+                        <input type="hidden" name="adversario" value="<?php echo $desafios[$i]['apelido'];?>">
+                        <img src="<?php echo $desafios[$i]['img_perfil'];?>" class="img_desafio">
+                        <p>Você desafiou <?php echo $desafios[$i]['apelido'];?><br>
                             <button type="submit" class="btn btn-warning" name="decisao" value="cancelado">Cancelar</button>
                         </p>
                     </form>
@@ -276,28 +276,28 @@
                 <div class="col-xs-12 col-sm-6 col-md-6 desafio_individual">
                     <div class="row">
                         <div class="col-xs-5 col-md-5">
-                            <img src="<?php echo $desafios[0]['usuario']['use_img_perfil'];?>" class="img_desafio">
+                            <img src="<?php echo $desafios[0]['img_perfil'];?>" class="img_desafio">
                         </div>
                         <div class="col-xs-2 col-md-2">
                             <p class="vs_desafio">VS</p>
                         </div>
                         <div class="col-xs-5 col-md-5">
-                            <img src="<?php echo $desafios[$i]['usuario']['use_img_perfil'];?>" class="img_desafio">
+                            <img src="<?php echo $desafios[$i]['img_perfil'];?>" class="img_desafio">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-5 col-md-5">
-                            <p class="dados_desafio"><?php echo $desafios[0]['usuario']['use_nickname'];?></p>
-                            <p class="dados_desafio">32 pontos</p>
-                            <p class="dados_desafio">M$ 100</p>
+                            <p class="dados_desafio"><?php echo $desafios[0]['apelido'];?></p>
+                            <p class="dados_desafio"><?php echo $desafios[0]['pontos']['pontos'];?> pontos</p>
+                            <p class="dados_desafio">M$ <?php echo $desafios[0]['pontos']['saldo'];?></p>
                         </div>
                         <div class="col-xs-2 col-md-2">
                             |
                         </div>
                         <div class="col-xs-5 col-md-5">
-                            <p class="dados_desafio"><?php echo $desafios[$i]['usuario']['use_nickname'];?></p>
-                            <p class="dados_desafio">32 pontos</p>
-                            <p class="dados_desafio">M$ 100</p>
+                            <p class="dados_desafio"><?php echo $desafios[$i]['apelido'];?></p>
+                            <p class="dados_desafio"><?php echo $desafios[$i]['pontos']['pontos'];?> pontos</p>
+                            <p class="dados_desafio">M$ <?php echo $desafios[$i]['pontos']['saldo'];?></p>
                         </div>
                     </div>
                 </div>

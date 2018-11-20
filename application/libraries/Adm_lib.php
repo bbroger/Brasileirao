@@ -198,7 +198,7 @@ class Adm_lib {
     }
 
     /**
-     * Aqui pega a classificação do bolao inteiro, soma tudo e ordena conforma solicitado no parametro
+     * Aqui pega a classificação do bolao inteiro, soma tudo e ordena conforme solicitado no parametro
      * 
      * @used-by Classificacao::classificacao()          Pega a classif geral, mangos e desafios para apresentar na view
      * @used-by Copa::inscricao_copa()                  Vai pegar as classif para verificar se pode ou nao se cadastrar nas copas

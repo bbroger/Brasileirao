@@ -203,7 +203,7 @@ class Desafios_model extends CI_Model {
      * @param int $id_usuario
      * @return bool|array
      */
-    public function todos_desafios_rodada($rodada, $id_usuario) {
+    public function todos_desafios_rodada($rodada, $id_usuario, $classificacao_model) {
         $sql = "SELECT dei_id_user_desafiador AS desafiador, dei_id_user_desafiado AS desafiado, dei_status FROM dei_desafios_individual "
                 . "WHERE dei_rodada= ? "
                 . "AND (dei_id_user_desafiador = ? OR dei_id_user_desafiado= ?) "
@@ -223,30 +223,43 @@ class Desafios_model extends CI_Model {
             return false;
         }
         
-        return $this->pega_adversarios($id_usuario, $dados);
+        return $this->pega_adversarios($rodada, $id_usuario, $dados, $classificacao_model);
     }
     
     /**
      * Consulta os adversários no Adm_lib e mostra quem é o desafiador ou desafiado
      * 
-     * @used-by Desafios_model::todos_desafios_rodada()         É responsavel de me dar os ids para consultar os dados do usuario
-     * @uses Adm_lib::todos_daos_usuarios()                     Tras os dados do usuario
+     * @used-by Desafios_model::todos_desafios_rodada()                 É responsavel de me dar os ids para consultar os dados do usuario
+     * @uses Adm_lib::todos_daos_usuarios()                             Tras os dados do usuario
+     * @uses Classificacao_model::consulta_classif_user_rodada()        Pega a pontuaçao da rodada informado.
+     * @param int $rodada
      * @param int $id_usuario
      * @param int $dados
+     * @param Obj $classificacao_model
      * @return array
      */
-    private function pega_adversarios($id_usuario, $dados) {
+    private function pega_adversarios($rodada, $id_usuario, $dados, $classificacao_model) {
         $this->load->library('Adm_lib');
         
-        $desafio[0]['usuario']= $this->adm_lib->todos_dados_usuarios($id_usuario, true);
+        $dados_usuarios= $dados_usuario= $this->adm_lib->todos_dados_usuarios($id_usuario, array('usuario'));
+        $desafio[0]['apelido']= $dados_usuario['usuario']['use_nickname'];
+        $desafio[0]['img_perfil']= $dados_usuario['usuario']['use_img_perfil'];
+        $desafio[0]['pontos']= $classificacao_model->consulta_classif_user_rodada($id_usuario, $rodada);
+        
         foreach ($dados as $key => $value) {
             if ($id_usuario != $value['desafiador']) {
-                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiador'], array('usuario'));
+                $dados_usuario= $this->adm_lib->todos_dados_usuarios($value['desafiador'], array('usuario'));
+                $desafio[$key+1]['apelido']= $dados_usuario['usuario']['use_nickname'];
+                $desafio[$key+1]['img_perfil']= $dados_usuario['usuario']['use_img_perfil'];
+                $desafio[$key+1]['pontos']= $classificacao_model->consulta_classif_user_rodada($value['desafiador'], $rodada);
                 $desafio[$key+1]['status']= $value['dei_status'];
                 $desafio[$key+1]['desafiador']= true;
                 $desafio[$key+1]['desafiado']= false;
             } else{
-                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiado'], array('usuario'));
+                $dados_usuario= $this->adm_lib->todos_dados_usuarios($value['desafiado'], array('usuario'));
+                $desafio[$key+1]['apelido']= $dados_usuario['usuario']['use_nickname'];
+                $desafio[$key+1]['img_perfil']= $dados_usuario['usuario']['use_img_perfil'];
+                $desafio[$key+1]['pontos']= $classificacao_model->consulta_classif_user_rodada($value['desafiado'], $rodada);
                 $desafio[$key+1]['status']= $value['dei_status'];
                 $desafio[$key+1]['desafiador']= false;
                 $desafio[$key+1]['desafiado']= true;

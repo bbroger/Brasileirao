@@ -108,14 +108,14 @@ class Portal extends CI_Controller {
      * 
      * @used-by Portal::opcao()                             Irá carregar os desafios e mostrar na view
      * @uses Desafios_model::todos_Desafios_rodada()        Busca os desafios da rodada
-     * @uses Portal::rodada_atual               Rodada atual do bolao
-     * @uses Portal::usuario_logado             Se existe um usuario logado
+     * @uses Portal::rodada_atual                           Rodada atual do bolao
+     * @uses Portal::usuario_logado                         Se existe um usuario logado
      * @return bool|array
      */
     public function todos_desafos(){
         $this->load->model('Desafios_model');
-        $desafios= $this->Desafios_model->todos_desafios_rodada($this->rodada_atual['rodada'], $this->usuario_logado['id']);
-        
+        $this->load->model('Classificacao_model');
+        $desafios= $this->Desafios_model->todos_desafios_rodada(1, $this->usuario_logado['id'], $this->Classificacao_model);
         return $desafios;
     }
 

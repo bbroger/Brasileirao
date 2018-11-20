@@ -83,10 +83,11 @@ class Palpites_model extends CI_Model {
      * Irá salvar os palpites dos usuarios. Mesmo se o usuario for atualizar ja existente, irá salvar os novos palpites e desconsiderar os antigos.
      * Obs: Caso o usuario esteja editando os palpites, o pap_valida anterior ficará nao e os novos palpites das 10 partidas ficará sim.
      * 
-     * @used-by Palpites::enviar_palpites()     Depois que validou tudo, salva os palpites.    
-     * @param int   $user_id                    O ID do usuario para salvar na tabela pap_palpites
-     * @param int   $rodada                     Rodada para gravar a rodada que está palpitando
-     * @param array $palpites                   Esse array irá conter todos os palpites da rodada
+     * @used-by Palpites::enviar_palpites()                         Depois que validou tudo, salva os palpites.  
+     * @uses Palpites_model::invalidar_palpites_anttigos()          Sempre manda invalidar mesmo que nao exista para salvar novos palpites.  
+     * @param int   $user_id                                        O ID do usuario para salvar na tabela pap_palpites
+     * @param int   $rodada                                         Rodada para gravar a rodada que está palpitando
+     * @param array $palpites                                       Esse array irá conter todos os palpites da rodada
      * @return void
      */
     public function salvar_palpites($user_id, $rodada, $palpites) {
@@ -110,6 +111,14 @@ class Palpites_model extends CI_Model {
         $stmt= null;
     }
     
+    /**
+     * Quando um usuário edita os palpites, essa funçao serve para invalidar o palpite antigo para que o novo palpite seja válido.
+     * 
+     * @used-by Palpites_model::salvar_palpites()           Salva os novos ou os palpites editados como válidos.
+     * @param type $user_id
+     * @param type $rodada
+     * @return void
+     */
     private function invalidar_palpites_antigos($user_id, $rodada){
         $sql= "UPDATE pap_palpites SET pap_valida = 'nao' WHERE pap_user_id = ? AND pap_rodada= ? AND YEAR(pap_created) = ?";
         $stmt= $this->con->prepare($sql);

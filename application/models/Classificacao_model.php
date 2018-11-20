@@ -89,6 +89,7 @@ class Classificacao_model extends CI_Model {
      * Irá pegar a solicitaçao da rodada desejado. Somentes partidas validas e que nao foram adiados
      * 
      * @used-by Copa_model::tras_partic()           Depois que consultou os participantes, pega a pontuaçao de todos
+     * @used-by Desafios_model::pega_adversarios()  Pega a pontuaçao da rodada informado para mostrar nos desafios
      * @param type $id_usuario
      * @param type $rodada
      * @return array
