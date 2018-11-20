@@ -32,7 +32,8 @@ class Liga_model extends CI_Model {
     /**
      * Verifica se o ID da liga informado existe
      * 
-     * @param type $id_liga         ID da liga
+     * @used-by Copa::verifica_copas()            Verifica se a liga que recebeu existe no bolao.
+     * @param type $id_liga                       ID da liga
      * @return bool
      */
     public function verifica_liga($id_liga){
@@ -51,8 +52,9 @@ class Liga_model extends CI_Model {
     /**
      * Verifica se um usuario participa de uma liga
      * 
-     * @param type $id_liga         ID liga
-     * @param type $id_usuario      Usuario
+     * @used-by Copa::verifica_copas()            Verifica se o usuario pertence a essa liga
+     * @param type $id_liga                       ID liga
+     * @param type $id_usuario                    Usuario
      * @return type
      */
     public function verifica_user_liga($id_liga, $id_usuario){

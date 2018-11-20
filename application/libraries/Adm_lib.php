@@ -52,6 +52,7 @@ class Adm_lib {
      * @used-by Portal                       Atraves da rodada atual, tras os dados do palpite
      * @used-by Desafios                     Precisa para manipular os desafios da rodada atual
      * @used-by Palpites                     A rodada atual faz com que toda vez que usuario entrar na tela palpites, ja cai na rodada atual os palpites.
+     * @used-by Copa                         Se nao existe rodada atual nao pode cadastrar em copas.
      * @uses array $rodadas_cadastradas      Para consultar se a rodada existe nas rodadas cadastradas.
      * @return bool|array
      */
@@ -100,6 +101,7 @@ class Adm_lib {
      *
      * @used-by Gerencia
      * @used-by Palpites
+     * @used-by Copa::rodada                            Pega a rodada para consultar os inscritos da copa.
      * @uses array $rodadas_cadastradas                 Para consultar se a rodada existe nas rodadas cadastradas.
      * @param int $recebe_rodada                        Recebe um numero para verificar se é rodada do bolao                 
      * @return array
@@ -133,37 +135,36 @@ class Adm_lib {
      * 
      * @used-by Adm_lib::total_mangos_usuario()                         Irá pegar apenas os lucros e calcular o total de mangos que o usuario possui
      * @used-by Desafios_model::todos_adversarios()                     Consulta o ID de caad usuario para mostrar os dados no desafio.
+     * @used-by Copa::monta_copa()                                      Irá pegar apelido, imagem do perfil e os titulos de cada participante.
      * @uses User_model::dados()                                        Tras os dados do usuario
      * @uses Classificacao_model::total_consulta_classif_user()         Tras em tempo real o saldo do usuario (-aposta + lucro)
      * @uses Desafios_model::total_desafios_por_id()                    Tras o total de desafios aceitos/pendentes, desafiado/desafiador e quantos venceu.
      * @uses Copa_model::total_copas_por_id()                           Tras o total de partic de copas, titulos, a rodada que venceu, o id_copa e o numero de inscritos.          
      * @param int   $id
-     * @param bool  $somente_usuario                                    Se for TRUE, tras somente o usuario.
+     * @param bool  $filtro                                             Recebe um array com o filtro das informaçoes que deseja
      * @return array
      */
-    public function todos_dados_usuarios($id, $somente_usuario= false) {
-        $this->CI->load->model('User_model');
-        $dados_user = $this->CI->User_model->dados($id);
-        if($somente_usuario){
-            return $dados_user;
+    public function todos_dados_usuarios($id, $filtro) {
+        if (in_array('usuario', $filtro)) {
+            $this->CI->load->model('User_model');
+            $arr['usuario'] = $this->CI->User_model->dados($id);
         }
-        
-        $this->CI->load->model('Classificacao_model');
-        $dados_classif = $this->CI->Classificacao_model->total_consulta_classif_user($id);
 
-        $this->CI->load->model('Desafios_model');
-        $dados_desafio = $this->CI->Desafios_model->total_desafios_por_id($id);
+        if (in_array('classificacao', $filtro)) {
+            $this->CI->load->model('Classificacao_model');
+            $arr['classificacao'] = $this->CI->Classificacao_model->total_consulta_classif_user($id);
+        }
 
-        $this->CI->load->model('Copa_model');
-        $dados_copa = $this->CI->Copa_model->total_copas_por_id($id);
+        if (in_array('desafios', $filtro)) {
+            $this->CI->load->model('Desafios_model');
+            $arr['desafios'] = $this->CI->Desafios_model->total_desafios_por_id($id);
+        }
 
-        $arr = array(
-            'usuario' => $dados_user,
-            'classif' => $dados_classif,
-            'desafios' => $dados_desafio,
-            'copas' => $dados_copa
-        );
-        
+        if (in_array('copas', $filtro)) {
+            $this->CI->load->model('Copa_model');
+            $arr['copas'] = $this->CI->Copa_model->total_copas_por_id($id);
+        }
+
         return $arr;
     }
 
@@ -172,27 +173,30 @@ class Adm_lib {
      * 
      * @used-by Palpites                            No _construct, salva no atributo e será usado para validar novas apostas nos palpites
      * @used-by Desafios                            No _construct, pega o mango para caso ele desafiar ou aceitar, verificar se tem mangos suficiente
+     * @used-by Copa                                No _construct, pega o mango para se cadastrar na copa
      * @uses Adm_lib::todos_dados_usuario()         Irá pegar o lucro para somar.
      * @param int $id
      * @return type
      */
     public function total_mangos_usuario($id) {
-        $dados = $this->todos_dados_usuarios($id);
-        
+        $dados = $this->todos_dados_usuarios($id, array('usuario', 'classificacao', 'desafios', 'copas'));
+
         $mangos_recebido = $dados['usuario']['use_mangos'];
-        $saldo_classif = ($dados['classif']) ? $dados['classif']['total_saldo'] : 0;
+        $saldo_classif = ($dados['classificacao']) ? $dados['classificacao']['total_saldo'] : 0;
         $saldo_desafios = ($dados['desafios']) ? $dados['desafios']['saldo'] : 0;
         $saldo_copa = 0;
         if ($dados['copas']) {
             foreach ($dados['copas'] AS $key => $value) {
-                $saldo_copa += $value['saldo'];
+                if (is_numeric($key)) {
+                    $saldo_copa += $value['saldo'];
+                }
             }
         }
         $total_mangos = $mangos_recebido + $saldo_classif + $saldo_desafios + $saldo_copa;
-        
+
         return $total_mangos;
     }
-    
+
     /**
      * Aqui pega a classificação do bolao inteiro, soma tudo e ordena conforma solicitado no parametro
      * 
@@ -210,11 +214,11 @@ class Adm_lib {
      */
     public function classif_geral($ordena) {
         $rodada_atual = $this->rodada_atual();
-        $rodada= $rodada_atual['rodada'];
-        
+        $rodada = $rodada_atual['rodada'];
+
         $this->CI->load->model('User_model');
         $usuarios = $this->CI->User_model->dados();
-        
+
         $classif = $this->CI->Classificacao_model->classif_geral($rodada);
 
         $this->CI->load->model('Desafios_model');
@@ -262,11 +266,11 @@ class Adm_lib {
             return $this->ordernar_classif($dados);
         } else if ($ordena == 'mangos') {
             return $this->ordernar_mangos($dados);
-        } else{
+        } else {
             return $this->ordernar_desafios($dados);
         }
     }
-    
+
     /**
      * Ordena a classificacao por pontos
      * 
@@ -286,7 +290,7 @@ class Adm_lib {
 
         return $dados;
     }
-    
+
     /**
      * Ordena a classificacao por mangos
      * 
@@ -306,7 +310,7 @@ class Adm_lib {
 
         return $dados;
     }
-    
+
     /**
      * Ordena a classificacao por desafios
      * 
@@ -333,6 +337,24 @@ class Adm_lib {
         }
 
         return $sort_data;
+    }
+
+    /**
+     * As copas do bolão. Pode cadastrar mais sem problemas.
+     * 
+     * @used-by Copa            No __construct, envia para variavel global $copas
+     * @used-by Copa_model      No __construct, envia para variavel global $copas
+     * @return array
+     */
+    public function copas() {
+        $copas = array(
+            1 => array('nome' => 'Copa da Liga', 'primeiro' => 1, 'ultimo' => 33, 'entrada' => 3),
+            2 => array('nome' => 'Copa Capitalista', 'primeiro' => 4, 'ultimo' => 32, 'entrada' => 5),
+            3 => array('nome' => 'Copa Desafiante', 'primeiro' => 4, 'ultimo' => 32, 'entrada' => 5),
+            4 => array('nome' => 'Copa Lendários', 'primeiro' => 4, 'ultimo' => 32, 'entrada' => 5)
+        );
+        
+        return $copas;
     }
 
 }

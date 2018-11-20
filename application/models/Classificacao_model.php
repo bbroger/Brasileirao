@@ -32,8 +32,8 @@ class Classificacao_model extends CI_Model {
     /**
      * Vai trazer o total dos ganhos na classificaçao do bolao como pontos lucro, cc, ct e cf.
      * 
-     * @used-by Adm_lib()         Irá trazer total dos ganhos na classificaçao e somara com os demais ganhos.
-     * @param int $id             ID do usuario para consultar
+     * @used-by Adm_lib::todos_dados_usuarios         Irá trazer total dos ganhos na classificaçao e somara com os demais ganhos.
+     * @param int $id                                 ID do usuario para consultar
      * @return array
      */
     public function total_consulta_classif_user($id){
@@ -83,5 +83,37 @@ class Classificacao_model extends CI_Model {
         }
         
         return $dados_classif;
+    }
+    
+    /**
+     * Irá pegar a solicitaçao da rodada desejado. Somentes partidas validas e que nao foram adiados
+     * 
+     * @used-by Copa_model::tras_partic()           Depois que consultou os participantes, pega a pontuaçao de todos
+     * @param type $id_usuario
+     * @param type $rodada
+     * @return array
+     */
+    public function consulta_classif_user_rodada($id_usuario, $rodada){
+        $sql= "SELECT SUM(pap_cc) AS cc, SUM(pap_ct) AS ct, SUM(pap_cf) AS cf, SUM(pap_pontos) AS pontos, SUM(pap_saldo) AS saldo FROM pap_palpites "
+                . "WHERE pap_user_id= ? AND pap_rodada= ? AND pap_adiou= ? AND pap_palpitou= ? AND pap_valida= ? AND YEAR(pap_created)= ?";
+        $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(1, $id_usuario);
+        $stmt->bindValue(2, $rodada);
+        $stmt->bindValue(3, 'nao');
+        $stmt->bindValue(4, 'sim');
+        $stmt->bindValue(5, 'sim');
+        $stmt->bindValue(6, date('Y'));
+        $stmt->execute();
+        
+        $pega= $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt= null;
+        
+        $pega['cc']+=0;
+        $pega['ct']+=0;
+        $pega['cf']+=0;
+        $pega['pontos']+=0;
+        $pega['saldo']+=0;
+        
+        return $pega;
     }
 }

@@ -81,6 +81,7 @@ class Palpites_model extends CI_Model {
     
     /**
      * Irá salvar os palpites dos usuarios. Mesmo se o usuario for atualizar ja existente, irá salvar os novos palpites e desconsiderar os antigos.
+     * Obs: Caso o usuario esteja editando os palpites, o pap_valida anterior ficará nao e os novos palpites das 10 partidas ficará sim.
      * 
      * @used-by Palpites::enviar_palpites()     Depois que validou tudo, salva os palpites.    
      * @param int   $user_id                    O ID do usuario para salvar na tabela pap_palpites

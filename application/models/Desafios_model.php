@@ -241,12 +241,12 @@ class Desafios_model extends CI_Model {
         $desafio[0]['usuario']= $this->adm_lib->todos_dados_usuarios($id_usuario, true);
         foreach ($dados as $key => $value) {
             if ($id_usuario != $value['desafiador']) {
-                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiador'], true);
+                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiador'], array('usuario'));
                 $desafio[$key+1]['status']= $value['dei_status'];
                 $desafio[$key+1]['desafiador']= true;
                 $desafio[$key+1]['desafiado']= false;
             } else{
-                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiado'], true);
+                $desafio[$key+1]['usuario']= $this->adm_lib->todos_dados_usuarios($value['desafiado'], array('usuario'));
                 $desafio[$key+1]['status']= $value['dei_status'];
                 $desafio[$key+1]['desafiador']= false;
                 $desafio[$key+1]['desafiado']= true;

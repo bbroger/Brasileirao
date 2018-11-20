@@ -199,8 +199,8 @@ class Palpites extends CI_Controller {
     /**
      * Esse método verificará partida por partida para ver se alguma data é menor que hoje para poder palpitar.
      * 
-     * @uses Gerencia_model::consultar_rodada()         Tras todas as partidas da rodada para verificar sua data.
      * @used-by Palpites::enviar_palpites()             Irá retornar as datas autorizadas para ver se pode ou nao palpitar.
+     * @uses Gerencia_model::consultar_rodada()         Tras todas as partidas da rodada para verificar sua data.
      * @param int $rodada                               Irá trazer todas as partidas dessa rodada e do ano atual
      * @return array
      */

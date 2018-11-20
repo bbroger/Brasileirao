@@ -106,17 +106,17 @@
                             <th class="oitavas">Oitavas</th>
                         </tr>
                         <tr>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas"><b>-</b></td>
                             <td></td>
                             <td></td>
                             <td class="final"><p class="descricao_copa"><b>Copa Lendários</b><br>Rodada 1 - 20/02 14:00<br><br><b>Campeão:</b></p></td>
                             <td></td>
                             <td></td>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas"><p class="user_copa"></p></td>
                         </tr>
                         <tr>
                             <td class="oitavas"></td>
-                            <td class="quartas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="quartas"><img class='img_perfil_copa' src=''><p class='user_copa'>DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
                             <td></td>
                             <td class="final"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA</td>
                             <td></td>
@@ -124,13 +124,13 @@
                             <td class="oitavas"></td> 
                         </tr>
                         <tr>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas"></td>
                             <td class="quartas"></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td class="quartas"></td>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas"><b>-</b></td>
                         </tr>
                         <tr>
                             <td></td>
