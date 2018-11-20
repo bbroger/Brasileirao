@@ -87,6 +87,7 @@ class Classificacao_model extends CI_Model {
     
     /**
      * Irá pegar a solicitaçao da rodada desejado. Somentes partidas validas e que nao foram adiados
+     * Obs: Consulta a tabela de cadastro rodadas para ver se a partida adiou.
      * 
      * @used-by Copa_model::tras_partic()           Depois que consultou os participantes, pega a pontuaçao de todos
      * @used-by Desafios_model::pega_adversarios()  Pega a pontuaçao da rodada informado para mostrar nos desafios
@@ -95,15 +96,17 @@ class Classificacao_model extends CI_Model {
      * @return array
      */
     public function consulta_classif_user_rodada($id_usuario, $rodada){
-        $sql= "SELECT SUM(pap_cc) AS cc, SUM(pap_ct) AS ct, SUM(pap_cf) AS cf, SUM(pap_pontos) AS pontos, SUM(pap_saldo) AS saldo FROM pap_palpites "
-                . "WHERE pap_user_id= ? AND pap_rodada= ? AND pap_adiou= ? AND pap_palpitou= ? AND pap_valida= ? AND YEAR(pap_created)= ?";
+        $sql= "SELECT SUM(pap.pap_cc) AS cc, SUM(pap.pap_ct) AS ct, SUM(pap.pap_cf) AS cf, SUM(pap.pap_pontos) AS pontos, SUM(pap.pap_lucro) AS lucro FROM pap_palpites AS pap "
+                . "INNER JOIN cad_cadastrar_rodadas AS cad ON pap.pap_rodada = cad.cad_rodada AND pap.pap_partida = cad.cad_partida "
+                . "WHERE pap.pap_user_id= ? AND pap.pap_rodada= ? AND pap.pap_palpitou= ? AND pap.pap_valida= ? AND YEAR(pap_created)= ? AND cad.cad_adiou= ? AND YEAR(cad.cad_created)= ?";
         $stmt= $this->con->prepare($sql);
         $stmt->bindValue(1, $id_usuario);
         $stmt->bindValue(2, $rodada);
-        $stmt->bindValue(3, 'nao');
+        $stmt->bindValue(3, 'sim');
         $stmt->bindValue(4, 'sim');
-        $stmt->bindValue(5, 'sim');
-        $stmt->bindValue(6, date('Y'));
+        $stmt->bindValue(5, date('Y'));
+        $stmt->bindValue(6, 'nao');
+        $stmt->bindValue(7, date('Y'));
         $stmt->execute();
         
         $pega= $stmt->fetch(PDO::FETCH_ASSOC);
@@ -113,7 +116,7 @@ class Classificacao_model extends CI_Model {
         $pega['ct']+=0;
         $pega['cf']+=0;
         $pega['pontos']+=0;
-        $pega['saldo']+=0;
+        $pega['lucro']+=0;
         
         return $pega;
     }

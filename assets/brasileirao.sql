@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 20-Nov-2018 às 12:38
+-- Generation Time: 20-Nov-2018 às 15:13
 -- Versão do servidor: 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -169,7 +169,6 @@ CREATE TABLE `pap_palpites` (
   `pap_pontos` int(4) NOT NULL DEFAULT '0',
   `pap_lucro` float(5,2) NOT NULL DEFAULT '0.00',
   `pap_saldo` float(5,2) NOT NULL DEFAULT '0.00',
-  `pap_adiou` varchar(3) NOT NULL DEFAULT 'nao',
   `pap_palpitou` varchar(3) NOT NULL,
   `pap_valida` varchar(3) NOT NULL DEFAULT 'sim',
   `pap_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP

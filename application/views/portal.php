@@ -289,7 +289,7 @@
                         <div class="col-xs-5 col-md-5">
                             <p class="dados_desafio"><?php echo $desafios[0]['apelido'];?></p>
                             <p class="dados_desafio"><?php echo $desafios[0]['pontos']['pontos'];?> pontos</p>
-                            <p class="dados_desafio">M$ <?php echo $desafios[0]['pontos']['saldo'];?></p>
+                            <p class="dados_desafio">M$ <?php echo $desafios[0]['pontos']['lucro'];?></p>
                         </div>
                         <div class="col-xs-2 col-md-2">
                             |
@@ -297,7 +297,7 @@
                         <div class="col-xs-5 col-md-5">
                             <p class="dados_desafio"><?php echo $desafios[$i]['apelido'];?></p>
                             <p class="dados_desafio"><?php echo $desafios[$i]['pontos']['pontos'];?> pontos</p>
-                            <p class="dados_desafio">M$ <?php echo $desafios[$i]['pontos']['saldo'];?></p>
+                            <p class="dados_desafio">M$ <?php echo $desafios[$i]['pontos']['lucro'];?></p>
                         </div>
                     </div>
                 </div>

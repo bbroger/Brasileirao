@@ -362,31 +362,31 @@ class Copa extends CI_Controller {
         
         for($i= 1; $i <= 16; $i++){
             if(isset($oitavas[$i])){
-                $participantes['oitavas'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$i]['img_perfil']."'><p class='user_copa'>".$oitavas[$i]['apelido']." ".$oitavas[$i]['pontos']['pontos']." pontos | M$ ".$oitavas[$i]['pontos']['saldo']."</p>";
+                $participantes['oitavas'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$i]['img_perfil']."'><p class='user_copa'>".$oitavas[$i]['apelido']." ".$oitavas[$i]['pontos']['pontos']." pontos | M$ ".$oitavas[$i]['pontos']['lucro']."</p>";
             } else{
                 $participantes['oitavas'][$i]['mostra']= '<b>-</b>';
             }
             
             if(isset($quartas[$i])){
-                $participantes['quartas'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$quartas[$i]['cac_posicao']]['img_perfil']."'><p class='user_copa'>".$oitavas[$quartas[$i]['cac_posicao']]['apelido']." ".$quartas[$i]['pontos']['pontos']." pontos | M$ ".$quartas[$i]['pontos']['saldo']."</p>";
+                $participantes['quartas'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$quartas[$i]['cac_posicao']]['img_perfil']."'><p class='user_copa'>".$oitavas[$quartas[$i]['cac_posicao']]['apelido']." ".$quartas[$i]['pontos']['pontos']." pontos | M$ ".$quartas[$i]['pontos']['lucro']."</p>";
             } else if($i <= 8){
                 $participantes['quartas'][$i]['mostra']= '-';
             }
             
             if(isset($semi[$i])){
-                $participantes['semi'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$semi[$i]['cac_posicao']]['img_perfil']."'><p class='user_copa'>".$oitavas[$semi[$i]['cac_posicao']]['apelido']." ".$semi[$i]['pontos']['pontos']." pontos | M$ ".$semi[$i]['pontos']['saldo']."</p>";;
+                $participantes['semi'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$semi[$i]['cac_posicao']]['img_perfil']."'><p class='user_copa'>".$oitavas[$semi[$i]['cac_posicao']]['apelido']." ".$semi[$i]['pontos']['pontos']." pontos | M$ ".$semi[$i]['pontos']['lucro']."</p>";;
             } else if($i <= 4){
                 $participantes['semi'][$i]['mostra']= '-';
             }
             
             if(isset($final[$i])){
-                $participantes['final'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$final[$i]['cac_posicao']]['img_perfil']."'><p class='user_copa'>".$oitavas[$final[$i]['cac_posicao']]['apelido']." ".$final[$i]['pontos']['pontos']." pontos | M$ ".$final[$i]['pontos']['saldo']."</p>";;
+                $participantes['final'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$final[$i]['cac_posicao']]['img_perfil']."'><p class='user_copa'>".$oitavas[$final[$i]['cac_posicao']]['apelido']." ".$final[$i]['pontos']['pontos']." pontos | M$ ".$final[$i]['pontos']['lucro']."</p>";;
             } else if($i <= 2){
                 $participantes['final'][$i]['mostra']= '-';
             }
             
             if(isset($campeao[$i])){
-                $participantes['campeao'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$campeao[$i]['cac_posicao']]['img_perfil']."'><p class='user_copa'>".$oitavas[$campeao[$i]['cac_posicao']]['apelido']." ".$campeao[$i]['pontos']['pontos']." pontos | M$ ".$campeao[$i]['pontos']['saldo']."</p>";;
+                $participantes['campeao'][$i]['mostra']= "<img class='img_perfil_copa' src='".$oitavas[$campeao[$i]['cac_posicao']]['img_perfil']."'><p class='user_copa'>".$oitavas[$campeao[$i]['cac_posicao']]['apelido']." ".$campeao[$i]['pontos']['pontos']." pontos | M$ ".$campeao[$i]['pontos']['lucro']."</p>";;
             } else if($i <= 1){
                 $participantes['campeao'][$i]['mostra']= '-';
             }

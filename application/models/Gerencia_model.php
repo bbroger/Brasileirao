@@ -74,7 +74,7 @@ class Gerencia_model extends CI_Model {
     }
     
     /**
-     * Vai consultar o inicio e fim de cada rodada e também se alguma partida dessa rodada foi adiada.
+     * Vai consultar o inicio e fim de cada rodada.
      * 
      * @used-by Gerencia    Usando no __construct para carregar todas as rodadas cadastradas
      * @used-by Palpites
@@ -82,11 +82,9 @@ class Gerencia_model extends CI_Model {
      * @return array
      */
     public function rodadas_cadastradas(){
-        $sql= "SELECT cad_rodada AS rodada, min(cad_data) AS inicio, max(cad_data) AS fim, "
-                . "(SELECT COUNT(cad_adiou) FROM cad_cadastrar_rodadas WHERE cad_rodada = rodada AND cad_adiou= 'sim' AND YEAR(cad_created)= :year) AS adiou FROM cad_cadastrar_rodadas "
-                . "WHERE cad_adiou = 'nao' AND YEAR(cad_created)= :year GROUP BY cad_rodada";
+        $sql= "SELECT cad_rodada, min(cad_data) AS inicio, max(cad_data) AS fim FROM cad_cadastrar_rodadas WHERE cad_adiou = 'nao' AND YEAR(cad_created)= ? GROUP BY cad_rodada";
         $stmt= $this->con->prepare($sql);
-        $stmt->bindValue(':year', date('Y'));
+        $stmt->bindValue(1, date('Y'));
         $stmt->execute();
         
         $tras_rodadas= $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -95,13 +93,12 @@ class Gerencia_model extends CI_Model {
         
         if($tras_rodadas){
             foreach ($tras_rodadas AS $key=>$value){
-                $rodadas[$value["rodada"]]["inicio"]= $value["inicio"];
+                $rodadas[$value["cad_rodada"]]["inicio"]= $value["inicio"];
                 $data_fim= new DateTime($value['fim']);
                 $data_fim->add(new DateInterval("PT2H"));
-                $rodadas[$value["rodada"]]["fim"]= $data_fim->format("Y-m-d H:i:s");
+                $rodadas[$value["cad_rodada"]]["fim"]= $data_fim->format("Y-m-d H:i:s");
                 $data_string= new DateTime($value["inicio"]);
-                $rodadas[$value["rodada"]]["inicio_string"]= $data_string->format("d/m H:i");
-                $rodadas[$value['rodada']]['adiou']= ($value['adiou'] > 0) ? true: false;
+                $rodadas[$value["cad_rodada"]]["inicio_string"]= $data_string->format("d/m H:i");
             }
         }
         
@@ -165,32 +162,6 @@ class Gerencia_model extends CI_Model {
             $stmt->execute();
         }
         $stmt= null;
-    }
-    
-    /**
-     * Essa funçao irá atualizar a tabela dos palpites as partidas que foram adiadas.
-     * 
-     * @used-by Gerencia::acao_rodada() Depois que recebeu a atualizaçao da rodada, se adiou alguma partida chamará essa funçao
-     * @param type $rodada
-     * @param type $partidas_adiadas
-     */
-    public function adiar_partidas_palpites($rodada, $partidas_adiadas, $adiou){
-        if($adiou== 'sim'){
-            $sql= "UPDATE pap_palpites SET pap_adiou= :adiou WHERE pap_rodada= :rodada AND pap_partida= :partida AND YEAR(pap_created)= :year";
-        } else{
-            $sql= "UPDATE pap_palpites SET pap_adiou= :adiou WHERE pap_rodada= :rodada AND YEAR(pap_created)= :year";
-        }
-        
-        $stmt= $this->con->prepare($sql);
-        foreach($partidas_adiadas AS $key=>$value){
-            $stmt->bindValue('adiou', $adiou);
-            $stmt->bindValue(':rodada', $rodada);
-            if($adiou== 'sim'){
-                $stmt->bindValue(':partida', $key);
-            }
-            $stmt->bindValue(':year', date('Y'));
-            $stmt->execute();
-        }
     }
     
     /**

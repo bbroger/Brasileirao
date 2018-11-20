@@ -239,14 +239,7 @@ class Gerencia extends CI_Controller {
             $this->Gerencia_model->salvar_nova_rodada($rodada, $dados_rodada, $this->usuario_logado['id']);
             redirect(base_url("Gerencia/rodada/$rodada/new"));
         } else {
-            if(isset($partidas_adiadas)){
-                $this->Gerencia_model->adiar_partidas_palpites($rodada, $partidas_adiadas, 'sim');
-            } else if($this->rodadas_cadastradas[$rodada]['adiou']){
-                $this->Gerencia_model->adiar_partidas_palpites($rodada, array(1=>1), 'nao');
-            }
-            
             $this->Gerencia_model->atualizar_rodada($rodada, $dados_rodada);
-            
             redirect(base_url("Gerencia/rodada/$rodada/update"));
         }
     }
