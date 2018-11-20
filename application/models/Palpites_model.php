@@ -106,7 +106,6 @@ class Palpites_model extends CI_Model {
             $stmt->bindValue(8, $value["saldo"]);
             $stmt->bindValue(9, $value["palpitou"]);
             $stmt->execute();
-            $stmt= null;
         }
         $stmt= null;
     }

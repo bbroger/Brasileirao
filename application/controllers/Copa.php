@@ -63,7 +63,6 @@ class Copa extends CI_Controller {
         $this->copas= $this->adm_lib->copas();
         $this->usuario_logado = $this->adm_lib->usuario_logado;
         $this->mangos_total = $this->adm_lib->total_mangos_usuario($this->usuario_logado['id']);
-        $this->rodada();
     }
 
     /**
@@ -77,7 +76,7 @@ class Copa extends CI_Controller {
      */
     private function control_msg($msg) {
         $this->session->set_userdata('control_msg', $msg);
-        redirect(base_url("Copa/opcao/copa/"));
+        redirect(base_url("Portal/opcao/copa/"));
     }
 
     /**
@@ -128,7 +127,7 @@ class Copa extends CI_Controller {
             $msg = "Não existe rodada cadastrada no momento. Por favor aguarde ser cadastrado para se inscrever na copa.";
             $this->control_msg($msg);
         }
-
+        
         $this->form_validation->set_rules("copa", "<strong>Copa</strong>", "trim|required|integer|in_list[1,2,3,4]");
 
         if (!$this->form_validation->run()) {
@@ -138,7 +137,7 @@ class Copa extends CI_Controller {
 
         $id_copa = $this->input->post('copa');
         $id_liga = null;
-
+        
         if ($this->mangos_total < $this->copas[$id_copa]['entrada']) {
             $msg = "Você não tem mangos suficientes para entrar na Copa. A entrada custa " . $this->copas[$id_copa]['entrada'] . " e você possiu $this->mangos_total";
             $this->control_msg($msg);
@@ -167,7 +166,7 @@ class Copa extends CI_Controller {
                 $this->control_msg($msg);
             }
         }
-
+        
         $this->rodada_copas($id_copa, $id_liga);
     }
 
@@ -220,7 +219,7 @@ class Copa extends CI_Controller {
             $msg = "Você já está participando dessa Copa. Boa sorte!";
             $this->control_msg($msg);
         }
-
+        
         $this->inscricao_copa($id_copa, $id_liga, $rodada_copa);
     }
 

@@ -10,6 +10,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Gerencia extends CI_Controller {
 
     /**
+     *  Usuário logado no bolão.
+     * 
+     * @var array
+     */
+    public $usuario_logado;
+    
+    /**
      * Carregará todos os times da serie A do ano atual
      * 
      * @var array
@@ -43,6 +50,7 @@ class Gerencia extends CI_Controller {
         $this->load->model('Gerencia_model');
         $this->load->library('Adm_lib');
         
+        $this->usuario_logado = $this->adm_lib->usuario_logado;
         $times = $this->Gerencia_model->todos_times();
         foreach ($times as $key => $value) {
             $novo[$key]= $value['nome'];
@@ -204,12 +212,13 @@ class Gerencia extends CI_Controller {
     /**
      * Depois que validou os dados da rodada, aqui salvará no banco
      * 
-     * @used-by Gerencia::valida_detalhes_rodada()  Depois que validar, usa esse metodo para salvar
-     * @uses Gerencia::verifica_adiou_rodada()      Verifica se a data atual nao é maior que a data inicio da proxima rodada.
-     * @uses Gerencia_model::salvar_nova_rodada()   Conecta e salva nova rodada no banco
-     * @uses Gerencia_model::atualizar_rodada()     Conecta e atualiza rodada no banco
-     * @param int $rodada                           Recebe uma rodada
-     * @param string $acao                          Uma string para ver se é uma nova rodada ou é para atualizar
+     * @used-by Gerencia::valida_detalhes_rodada()      Depois que validar, usa esse metodo para salvar
+     * @uses Gerencia::verifica_adiou_rodada()          Verifica se a data atual nao é maior que a data inicio da proxima rodada.
+     * @uses Gerencia_model::salvar_nova_rodada()       Conecta e salva nova rodada no banco
+     * @uses Gerencia_model::atualizar_rodada()         Conecta e atualiza rodada no banco
+     * @uses Gerencia_model::adiar_partidas_palpites()  Depois que receber a atualizaçao, se existir alguma rodada adiada atualizará a tabela de palpites
+     * @param int $rodada                               Recebe uma rodada
+     * @param string $acao                              Uma string para ver se é uma nova rodada ou é para atualizar
      * @return void
      */
     private function acao_rodada($rodada, $acao) {
@@ -221,13 +230,23 @@ class Gerencia extends CI_Controller {
             $dados_rodada[$i]["local_partida"] = ($this->input->post("local_partida_" . $i)) ? strtoupper($this->input->post("local_partida_" . $i)) : "SEM INFORMAÇÃO";
             $dados_rodada[$i]["data_partida"] = $this->input->post("data_partida_" . $i);
             $dados_rodada[$i]["adiou_partida"] = $this->verifica_adiou_rodada($rodada, $this->input->post("data_partida_" . $i));
+            if($dados_rodada[$i]["adiou_partida"] == 'sim'){
+                $partidas_adiadas[$i]= $i;
+            }
         }
 
         if ($acao == "cadastrar") {
-            $this->Gerencia_model->salvar_nova_rodada($rodada, $dados_rodada);
+            $this->Gerencia_model->salvar_nova_rodada($rodada, $dados_rodada, $this->usuario_logado['id']);
             redirect(base_url("Gerencia/rodada/$rodada/new"));
         } else {
+            if(isset($partidas_adiadas)){
+                $this->Gerencia_model->adiar_partidas_palpites($rodada, $partidas_adiadas, 'sim');
+            } else if($this->rodadas_cadastradas[$rodada]['adiou']){
+                $this->Gerencia_model->adiar_partidas_palpites($rodada, array(1=>1), 'nao');
+            }
+            
             $this->Gerencia_model->atualizar_rodada($rodada, $dados_rodada);
+            
             redirect(base_url("Gerencia/rodada/$rodada/update"));
         }
     }
