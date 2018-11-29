@@ -106,67 +106,67 @@
                             <th class="oitavas">Oitavas</th>
                         </tr>
                         <tr>
-                            <td class="oitavas"><b>-</b></td>
+                            <td class="oitavas" id="oitavas_1"></td>
                             <td></td>
                             <td></td>
-                            <td class="final"><p class="descricao_copa"><b>Copa Lendários</b><br>Rodada 1 - 20/02 14:00<br><br><b>Campeão:</b></p></td>
+                            <td class="final"><p class="descricao_copa"><b><span id="nome_copa"></span></b><br>Rodada <span id="rodada_copa"></span> - <span id="data_copa"></span><br><b>Campeão:</b></p></td>
                             <td></td>
                             <td></td>
-                            <td class="oitavas"><p class="user_copa"></p></td>
+                            <td class="oitavas" id="oitavas_9"></td>
                         </tr>
                         <tr>
                             <td class="oitavas"></td>
-                            <td class="quartas"><img class='img_perfil_copa' src=''><p class='user_copa'>DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="quartas" id="quartas_1"></td>
                             <td></td>
-                            <td class="final"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA</td>
+                            <td class="final" id="campeao"></td>
                             <td></td>
-                            <td class="quartas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="quartas" id="quartas_5"></td>
                             <td class="oitavas"></td> 
                         </tr>
                         <tr>
-                            <td class="oitavas"></td>
+                            <td class="oitavas" id="oitavas_2"></td>
                             <td class="quartas"></td>
                             <td></td>
-                            <td></td>
+                            <td class="final"><p class="descricao_copa"><b>Inscritos:</b> <span id="inscritos"></span><br><b>Premiação:</b> M$ <span id="premiacao"></span></p></td>
                             <td></td>
                             <td class="quartas"></td>
-                            <td class="oitavas"><b>-</b></td>
+                            <td class="oitavas" id="oitavas_10"></td>
                         </tr>
                         <tr>
                             <td></td>
                             <td class="quartas"></td>
-                            <td class="semi"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="semi" id="semi_1"></td>
                             <td></td>
-                            <td class="semi"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="semi" id="semi_3"></td>
                             <td class="quartas"></td>
                             <td></td> 
                         </tr>
                         <tr>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_3"></td>
                             <td class="quartas"></td>
                             <td class="semi"></td>
                             <td></td>
                             <td class="semi"></td>
                             <td class="quartas"></td>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_11"></td>
                         </tr>
                         <tr>
                             <td class="oitavas"></td>
-                            <td class="quartas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="quartas" id="quartas_2"></td>
                             <td class="semi"></td>
                             <td></td>
                             <td class="semi"></td>
-                            <td class="quartas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="quartas" id="quartas_7"></td>
                             <td class="oitavas"></td> 
                         </tr>
                         <tr>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_4"></td>
                             <td></td>
                             <td class="semi"></td>
-                            <td class="final"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="final" id="final_1"></td>
                             <td class="semi"></td>
                             <td></td>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_12"></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -178,67 +178,67 @@
                             <td></td> 
                         </tr>
                         <tr>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_5"></td>
                             <td></td>
                             <td class="semi"></td>
-                            <td class="final"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="final" id="final_2"></td>
                             <td class="semi"></td>
                             <td></td>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_13"></td>
                         </tr>
                         <tr>
                             <td class="oitavas"></td>
-                            <td class="quartas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="quartas" id="quartas_3"></td>
                             <td class="semi"></td>
                             <td></td>
                             <td class="semi"></td>
-                            <td class="quartas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="quartas" id="quartas_7"></td>
                             <td class="oitavas"></td> 
                         </tr>
                         <tr>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_6"></td>
                             <td class="quartas"></td>
                             <td class="semi"></td>
                             <td></td>
                             <td class="semi"></td>
                             <td class="quartas"></td>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_14"></td>
                         </tr>
                         <tr>
                             <td></td>
                             <td class="quartas"></td>
-                            <td class="semi"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="semi" id="semi_2"></td>
                             <td></td>
-                            <td class="semi"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="semi" id="semi_4"></td>
                             <td class="quartas"></td>
                             <td></td> 
                         </tr>
                         <tr>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_7"></td>
                             <td class="quartas"></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td class="quartas"></td>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_15"></td>
                         </tr>
                         <tr>
                             <td class="oitavas"></td>
-                            <td class="quartas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="quartas" id="quartas_4"></td>
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td class="quartas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="quartas" id="quartas_8"></td>
                             <td class="oitavas"></td> 
                         </tr>
                         <tr>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_8"></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td class="oitavas"><img class="img_perfil_copa" src="<?php echo base_url("assets/images/perfil2.jpg");?>"><p class="user_copa">DDDDDDDDJIMA100SANTISTA<br>13 pontos | M$ -5.01</p></td>
+                            <td class="oitavas" id="oitavas_16"></td>
                         </tr>
                         <tr>
                             <th class="oitavas">Oitavas</th>
@@ -254,5 +254,8 @@
             </div>
         </div>
         <script src="<?php echo base_url("assets/js/copa.js");?>"></script>
+        <script>
+            consultar_copa(<?php echo $rodada.", ".$copa.", ".$liga;?>);
+        </script>
     </body>
 </html>

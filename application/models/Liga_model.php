@@ -37,7 +37,7 @@ class Liga_model extends CI_Model {
      * @return bool
      */
     public function verifica_liga($id_liga){
-        $sql= "SELECT lig_id_liga FROM lig_ligas WHERE lig_id_liga = ? AND lig_status= ?";
+        $sql= "SELECT * FROM lig_ligas WHERE lig_id_liga = ? AND lig_status= ?";
         $stmt= $this->con->prepare($sql);
         $stmt->bindValue(1, $id_liga);
         $stmt->bindValue(2, "ativo");

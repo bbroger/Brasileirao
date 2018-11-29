@@ -101,7 +101,7 @@ class Adm_lib {
      *
      * @used-by Gerencia
      * @used-by Palpites
-     * @used-by Copa::rodada                            Pega a rodada para consultar os inscritos da copa.
+     * @used-by Copa                                    Pega a rodada para consultar os inscritos da copa.
      * @uses array $rodadas_cadastradas                 Para consultar se a rodada existe nas rodadas cadastradas.
      * @param int $recebe_rodada                        Recebe um numero para verificar se é rodada do bolao                 
      * @return array
