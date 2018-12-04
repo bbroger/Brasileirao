@@ -68,7 +68,9 @@ class Copa_model extends CI_Model {
         $dados_copa = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt = null;
         
+        $total_participacao= array(1=>0, 2=>0, 3=>0, 4=>0, 'total'=>0);
         $total_titulos= array(1=>0, 2=>0, 3=>0, 4=>0, 'total'=>0);
+        
         if ($dados_copa) {
             foreach ($dados_copa AS $key => $value) {
                 $copa[$key]['id'] = $value['id'];
@@ -76,6 +78,7 @@ class Copa_model extends CI_Model {
                 $copa[$key]['liga'] = $value['liga'];
                 $copa[$key]['rodada'] = $value['rodada'];
                 if ($value['liga']) {
+                    $copa[$key]['oitavas'] = $value['id'];
                     $copa[$key]['quartas'] = $value['quartas_liga'];
                     $copa[$key]['semi'] = $value['semi_liga'];
                     $copa[$key]['final'] = $value['final_liga'];
@@ -84,11 +87,14 @@ class Copa_model extends CI_Model {
                     $copa[$key]['inscritos'] = $value['inscritos_liga'];
                     $copa[$key]['premiacao'] = $value['inscritos_liga'] * $this->copas[$value['copa']]['entrada'];
                     $copa[$key]['saldo'] = ($value['campeao_copa_liga']) ? $value['inscritos_liga'] * $this->copas[$value['copa']]['entrada'] - $this->copas[$value['copa']]['entrada'] : -$this->copas[$value['copa']]['entrada'];
+                    $total_participacao[$value['copa']]++;
+                    $total_participacao['total']++;
                     if($value['campeao_liga']){
                         $total_titulos[$value['copa']]++;
                         $total_titulos['total']++;
                     }
                 } else {
+                    $copa[$key]['oitavas'] = $value['id'];
                     $copa[$key]['quartas'] = $value['quartas'];
                     $copa[$key]['semi'] = $value['semi'];
                     $copa[$key]['final'] = $value['final'];
@@ -97,12 +103,15 @@ class Copa_model extends CI_Model {
                     $copa[$key]['inscritos'] = $value['inscritos'];
                     $copa[$key]['premiacao'] = $value['inscritos'] * $this->copas[$value['copa']]['entrada'];
                     $copa[$key]['saldo'] = ($value['campeao']) ? $value['inscritos'] * $this->copas[$value['copa']]['entrada'] - $this->copas[$value['copa']]['entrada'] : -$this->copas[$value['copa']]['entrada'];
+                    $total_participacao[$value['copa']]++;
+                    $total_participacao['total']++;
                     if($value['campeao']){
                         $total_titulos[$value['copa']]++;
                         $total_titulos['total']++;
                     }
                 }
             }
+            $copa['total_participacao']= $total_participacao;
             $copa['total_titulos']= $total_titulos;
         } else {
             return false;

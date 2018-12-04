@@ -5,30 +5,31 @@
                     Suas copas
                 </div>
             </div>
+            <?php var_dump($copas);?>
             <div class="row">
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_liga">
                     <p class="titulo_user_copa">Copa das ligas</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa">10/2</p>
+                    <p class="valor_part_copa"><?php echo $copas['total_participacao'][1]." / ".$copas['total_titulos'][1]; ?></p>
                 </div>
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_bronze">
                     <p class="titulo_user_copa">Copa Capitalista</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa">10/2</p>
+                    <p class="valor_part_copa"><?php echo $copas['total_participacao'][2]." / ".$copas['total_titulos'][2]; ?></p>
                 </div>
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_prata">
                     <p class="titulo_user_copa">Copa Desafiante</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa">10/2</p>
+                    <p class="valor_part_copa"><?php echo $copas['total_participacao'][3]." / ".$copas['total_titulos'][3]; ?></p>
                 </div>
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_ouro">
                     <p class="titulo_user_copa">Copa Lendários</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa">10/2</p>
+                    <p class="valor_part_copa"><?php echo $copas['total_participacao'][4]." / ".$copas['total_titulos'][4]; ?></p>
                 </div>
             </div>
             <div class="row">
@@ -63,11 +64,12 @@
                                 <th>#</th>
                                 <th>Data</th>
                                 <th>Copa</th>
+                                <th>Status</th>
                             </tr>
                             <tr>
                                 <td>1</td>
                                 <td>12/02 14:00</td>
-                                    <td>Copa ASDASDASDASDASD</td>
+                                <td>Copa ASDASDASDASDASD</td>
                             </tr>
                             <tr>
                                 <td>1</td>

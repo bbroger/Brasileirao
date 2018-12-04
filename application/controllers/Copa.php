@@ -12,9 +12,16 @@ class Copa extends CI_Controller {
     /**
      * O ID do usuario logado
      * 
-     * @var int
+     * @var array
      */
     private $usuario_logado;
+    
+    /**
+     * Copas do usuário vindo do Adm_lib.
+     * 
+     * @var array
+     */
+    private $todas_copas_usuario;
 
     /**
      * Total de mangos em tempo real e da data atual.
@@ -32,6 +39,7 @@ class Copa extends CI_Controller {
 
     /**
      * As 4 copas estao aqui e é recebida pelo Adm_lib.
+     * 
      * @var array 
      */
     private $copas;
@@ -49,6 +57,7 @@ class Copa extends CI_Controller {
      * @uses Copa_model                           Carrega o Copa_model para utilizar na aplicação
      * @uses Adm_lib::total_mangos_usuarios()     Tras total de mangos do usuario para ver se pode inscrever na copa
      * @uses Adm_lib::rodada_atual()              Nao pode cadastrar em copas se nao tiver rodada.
+     * @uses Adm_lib::todos_dados_usuarios()      Recebe todas as copas do usuário
      * @return void
      */
     public function __construct() {
@@ -63,6 +72,7 @@ class Copa extends CI_Controller {
         $this->rodada_atual = $this->adm_lib->rodada_atual();
         $this->copas = $this->adm_lib->copas();
         $this->usuario_logado = $this->adm_lib->usuario_logado;
+        $this->todas_copas_usuario= $this->adm_lib->todos_dados_usuarios($this->usuario_logado['id'], array('copas'));
         $this->mangos_total = $this->adm_lib->total_mangos_usuario($this->usuario_logado['id']);
         //$this->teste();
     }
@@ -106,7 +116,8 @@ class Copa extends CI_Controller {
             "liga" => $recebe_liga,
             "usuario_logado" => $this->usuario_logado,
             "msg" => $msg,
-            "rodada_atual" => $this->rodada_atual['rodada']
+            "rodada_atual" => $this->rodada_atual['rodada'],
+            "copas"=> $this->todas_copas_usuario['copas']
         );
 
         $this->load->view('head', $dados);

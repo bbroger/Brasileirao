@@ -135,6 +135,7 @@ class Adm_lib {
      * 
      * @used-by Adm_lib::total_mangos_usuario()                         Irá pegar apenas os lucros e calcular o total de mangos que o usuario possui
      * @used-by Desafios_model::todos_adversarios()                     Consulta o ID de caad usuario para mostrar os dados no desafio.
+     * @used-by Copa                                                    No __construct, pega as copas do usuario
      * @used-by Copa::monta_copa()                                      Irá pegar apelido, imagem do perfil e os titulos de cada participante.
      * @uses User_model::dados()                                        Tras os dados do usuario
      * @uses Classificacao_model::total_consulta_classif_user()         Tras em tempo real o saldo do usuario (-aposta + lucro)

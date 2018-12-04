@@ -215,13 +215,19 @@ function confere_form_palpite() {
     if ($("#btn_palpitar").val() === "Palpitar") {
         for (var i = 1; i <= 10; i++) {
             if ($("#palpite_mandante_" + i).val() != "") {
-                return 1;
+                if ($("#palpite_mandante_" + i).val() != "X"){
+                    return 1;
+                }
             }
             if ($("#palpite_visitante_" + i).val() != "") {
-                return 1;
+                if ($("#palpite_visitante_" + i).val() != "X") {
+                    return 1;
+                }
             }
             if ($("#aposta_partida_" + i).val() != "") {
-                return 1;
+                if ($("#aposta_partida_" + i).val() != "X") {
+                    return 1;
+                }
             }
         }
     }
