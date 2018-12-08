@@ -67,14 +67,13 @@ class Copa extends CI_Controller {
         $this->load->library('Adm_lib');
         $this->load->model('Gerencia_model');
         $this->load->model('Liga_model');
-
+        
         $this->rodadas_cadastradas = $this->Gerencia_model->rodadas_cadastradas();
         $this->rodada_atual = $this->adm_lib->rodada_atual();
         $this->copas = $this->adm_lib->copas();
         $this->usuario_logado = $this->adm_lib->usuario_logado;
-        $this->todas_copas_usuario= $this->adm_lib->todos_dados_usuarios($this->usuario_logado['id'], array('copas'));
+        $this->todas_copas_usuario= $this->adm_lib->todos_dados_usuarios($this->usuario_logado['id'], array('copas', 'ligas'));
         $this->mangos_total = $this->adm_lib->total_mangos_usuario($this->usuario_logado['id']);
-        //$this->teste();
     }
 
     /**
@@ -117,7 +116,10 @@ class Copa extends CI_Controller {
             "usuario_logado" => $this->usuario_logado,
             "msg" => $msg,
             "rodada_atual" => $this->rodada_atual['rodada'],
-            "copas"=> $this->todas_copas_usuario['copas']
+            "copas"=> $this->todas_copas_usuario['copas'],
+            "rodadas_cadastradas"=> $this->rodadas_cadastradas,
+            "id_copa"=> $this->copas,
+            "ligas"=> $this->todas_copas_usuario['ligas']
         );
 
         $this->load->view('head', $dados);

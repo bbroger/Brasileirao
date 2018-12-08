@@ -70,4 +70,30 @@ class Liga_model extends CI_Model {
         
         return $valida;
     }
+    
+    /**
+     * Pega todas as ligas do usuário
+     * 
+     * @used-by Adm_lib::todos_dados_usuarios()         Caso seja requerido as ligas do usuário, puxará todas.
+     * @param int $id_usuario
+     * @return bool|array
+     */
+    public function todas_ligas_user($id_usuario){
+        $sql= "SELECT liga.* FROM lig_ligas AS liga INNER JOIN mel_membros_ligas AS membro ON liga.lig_id_liga = membro.mel_id_liga "
+                . "WHERE liga.lig_status= ? AND membro.mel_status= ? AND membro.mel_id_user= ?";
+        $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(1, "ativo");
+        $stmt->bindValue(2, "ativo");
+        $stmt->bindValue(3, $id_usuario);
+        $stmt->execute();
+        
+        $ligas= $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt= null;
+        
+        if(!$ligas){
+            return false;
+        }
+        
+        return $ligas;
+    }
 }

@@ -5,31 +5,30 @@
                     Suas copas
                 </div>
             </div>
-            <?php var_dump($copas);?>
             <div class="row">
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_liga">
                     <p class="titulo_user_copa">Copa das ligas</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa"><?php echo $copas['total_participacao'][1]." / ".$copas['total_titulos'][1]; ?></p>
+                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao'][1]." / ".$copas['total_titulos'][1];} else{ echo "0 / 0";} ?></p>
                 </div>
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_bronze">
                     <p class="titulo_user_copa">Copa Capitalista</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa"><?php echo $copas['total_participacao'][2]." / ".$copas['total_titulos'][2]; ?></p>
+                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao'][2]." / ".$copas['total_titulos'][2];} else{ echo "0 / 0";} ?></p>
                 </div>
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_prata">
                     <p class="titulo_user_copa">Copa Desafiante</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa"><?php echo $copas['total_participacao'][3]." / ".$copas['total_titulos'][3]; ?></p>
+                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao'][3]." / ".$copas['total_titulos'][3];} else{ echo "0 / 0";} ?></p>
                 </div>
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_ouro">
                     <p class="titulo_user_copa">Copa Lendários</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa"><?php echo $copas['total_participacao'][4]." / ".$copas['total_titulos'][4]; ?></p>
+                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao'][4]." / ".$copas['total_titulos'][4];} else{ echo "0 / 0";} ?></p>
                 </div>
             </div>
             <div class="row">
@@ -40,21 +39,37 @@
             <div class="row white" style="padding-bottom: 10px;">
                 <div class="col-xs-12 col-sm-6 col-md-6">
                     <p class="titulo_procura_copa">Procure uma copa</p>
-                    <form>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Selecione a rodada</label>
-                            <select class="form-control">
-                                <option>Rodada 1 - 20/02 14:00</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Selecione a copa</label>
-                            <select class="form-control">
-                                <option>Copa da liga</option>
-                            </select>
-                        </div>
-                        <button class="btn btn-success btn_pesquisa_copa">Pesquisar</button>
-                    </form>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Selecione a copa</label>
+                        <select class="form-control" id="id_copa">
+                            <option value="2">Selecione</option>
+<?php
+    foreach($id_copa AS $key=>$value){
+        if($key == 1){
+            if($ligas){
+                foreach ($ligas as $chave => $valor) {
+?>
+                            <option value="<?php echo $valor['lig_id_liga'];?>">Copa <?php echo $valor['lig_nome'];?></option>
+<?php
+                }
+            }
+        } else{
+                
+?>
+                            <option value="<?php echo $key;?>"><?php echo $value['nome'];?></option>
+<?php
+        }
+    }
+?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Selecione a rodada</label>
+                        <select class="form-control" id="rodada_id_copa">
+                            <option>Selecione primeiro a copa</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success btn_pesquisa_copa" id="pesquisa_id_copa">Pesquisar</button>
                 </div>
                 <div class="col-xs-12 col-sm-6 col-md-6">
                     <p class="titulo_procura_copa">Últimas copas disputadas</p>
@@ -66,31 +81,44 @@
                                 <th>Copa</th>
                                 <th>Status</th>
                             </tr>
+<?php
+    $total_copas= ( $copas && count($copas)-2 >= 5) ? count($copas)-2 : 5;
+    for($i= $total_copas; $i >0; $i--){
+        if($copas && array_key_exists($i-1, $copas)){
+?>
                             <tr>
-                                <td>1</td>
-                                <td>12/02 14:00</td>
-                                <td>Copa ASDASDASDASDASD</td>
+                                <td><?php echo $i;?></td>
+                                <td><?php echo $rodadas_cadastradas[$copas[$i-1]['rodada']]['inicio_string'];?></td>
+                                <td><?php echo $copas[$i-1]['nome_copa'];?></td>
+                                <td>
+<?php 
+    if($copas[$i-1]['campeao'] != null){
+        echo "Campeão";
+    } else if($copas[$i-1]['final'] != null){
+        echo "Final";
+    } else if($copas[$i-1]['semi'] != null){
+        echo "Semi final";
+    } else if($copas[$i-1]['quartas'] != null){
+        echo "Quartas";
+    } else if($copas[$i-1]['oitavas'] != null){
+        echo "Oitavas";
+    }
+?>
+                                </td>
                             </tr>
+<?php
+    } else{    
+?>
                             <tr>
-                                <td>1</td>
-                                <td>12/02 14:00</td>
-                                <td>Copa Lendário</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
                             </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>12/02 14:00</td>
-                                <td>Copa Lendário</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>12/02 14:00</td>
-                                <td>Copa Lendário</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>12/02 14:00</td>
-                                <td>Copa Lendário</td>
-                            </tr>
+<?php
+    }
+}    
+?>
                         </table>
                     </div>
                 </div>
@@ -174,7 +202,7 @@
                             <td></td>
                             <td></td>
                             <td class="semi"></td>
-                            <td class="final"><p style="margin: 0; font-weight: bold; font-size: 20px">Grande final</p></td>
+                            <td class="final"><p style="margin: 0; font-weight: bold; font-size: 20px"><a href="#" id="focus_copa"> </a>Grande final</p></td>
                             <td class="semi"></td>
                             <td></td>
                             <td></td> 

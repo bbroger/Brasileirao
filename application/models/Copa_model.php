@@ -47,12 +47,14 @@ class Copa_model extends CI_Model {
      */
     public function total_copas_por_id($id) {
         $sql = "SELECT DISTINCT cac_oitavas AS id, cac_id_copa AS copa, cac_id_liga AS liga, cac_rodada AS rodada, "
+                . "NULL AS nome, "
                 . "(SELECT DISTINCT cac_quartas FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga IS NULL AND cac_rodada= rodada AND cac_quartas= id) AS quartas, "
                 . "(SELECT DISTINCT cac_semi FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga IS NULL AND cac_rodada= rodada AND cac_semi= id) AS semi, "
                 . "(SELECT DISTINCT cac_final FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga IS NULL AND cac_rodada= rodada AND cac_final= id) AS final, "
                 . "(SELECT DISTINCT cac_campeao FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga IS NULL AND cac_rodada= rodada AND cac_campeao= id) AS campeao, "
                 . "(SELECT DISTINCT cac_campeao FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga IS NULL AND cac_rodada= rodada AND cac_campeao IS NOT NULL) AS campeao_copa, "
                 . "(SELECT COUNT(DISTINCT cac_oitavas) FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga IS NULL AND cac_rodada= rodada) AS inscritos, "
+                . "(SELECT lig_nome FROM lig_ligas WHERE lig_id_liga = liga) AS nome_liga, "
                 . "(SELECT DISTINCT cac_quartas FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga= liga AND cac_rodada= rodada AND cac_quartas= id) AS quartas_liga, "
                 . "(SELECT DISTINCT cac_semi FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga= liga AND cac_rodada= rodada AND cac_semi= id) AS semi_liga, "
                 . "(SELECT DISTINCT cac_final FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga= liga AND cac_rodada= rodada AND cac_final= id) AS final_liga, "
@@ -76,6 +78,7 @@ class Copa_model extends CI_Model {
                 $copa[$key]['id'] = $value['id'];
                 $copa[$key]['copa'] = $value['copa'];
                 $copa[$key]['liga'] = $value['liga'];
+                $copa[$key]['nome_copa']= ($value['liga']) ? $value['nome_liga'] : $this->copas[$value['copa']]['nome'];
                 $copa[$key]['rodada'] = $value['rodada'];
                 if ($value['liga']) {
                     $copa[$key]['oitavas'] = $value['id'];
@@ -116,7 +119,7 @@ class Copa_model extends CI_Model {
         } else {
             return false;
         }
-
+        
         return $copa;
     }
 

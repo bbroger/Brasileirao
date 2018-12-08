@@ -138,6 +138,7 @@ class Adm_lib {
      * @used-by Copa                                                    No __construct, pega as copas do usuario
      * @used-by Copa::monta_copa()                                      Irá pegar apelido, imagem do perfil e os titulos de cada participante.
      * @uses User_model::dados()                                        Tras os dados do usuario
+     * @uses Liga_model::todas_ligas_user()                             Trás todas as ligas do usuário
      * @uses Classificacao_model::total_consulta_classif_user()         Tras em tempo real o saldo do usuario (-aposta + lucro)
      * @uses Desafios_model::total_desafios_por_id()                    Tras o total de desafios aceitos/pendentes, desafiado/desafiador e quantos venceu.
      * @uses Copa_model::total_copas_por_id()                           Tras o total de partic de copas, titulos, a rodada que venceu, o id_copa e o numero de inscritos.          
@@ -149,6 +150,11 @@ class Adm_lib {
         if (in_array('usuario', $filtro)) {
             $this->CI->load->model('User_model');
             $arr['usuario'] = $this->CI->User_model->dados($id);
+        }
+        
+        if (in_array('ligas', $filtro)) {
+            $this->CI->load->model('Liga_model');
+            $arr['ligas'] = $this->CI->Liga_model->todas_ligas_user($id);
         }
 
         if (in_array('classificacao', $filtro)) {
