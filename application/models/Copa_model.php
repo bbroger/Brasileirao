@@ -42,10 +42,10 @@ class Copa_model extends CI_Model {
      * Pega todas as participaçoes das copas oficiais, total inscritos e todos titulos se houver.
      * 
      * @used-by Adm_lib::todos_dados_usuarios()           Pega o saldo da copa e somará com os mangos.
-     * @param int $id
+     * @param int $id_usuario
      * @return array|bool
      */
-    public function total_copas_por_id($id) {
+    public function total_copas_por_id($id_usuario) {
         $sql = "SELECT DISTINCT cac_oitavas AS id, cac_id_copa AS copa, cac_id_liga AS liga, cac_rodada AS rodada, "
                 . "NULL AS nome, "
                 . "(SELECT DISTINCT cac_quartas FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga IS NULL AND cac_rodada= rodada AND cac_quartas= id) AS quartas, "
@@ -63,15 +63,19 @@ class Copa_model extends CI_Model {
                 . "(SELECT COUNT(DISTINCT cac_oitavas) FROM cac_cadastrar_copas WHERE cac_id_copa= copa AND cac_id_liga= liga AND cac_rodada= rodada) AS inscritos_liga "
                 . "FROM cac_cadastrar_copas WHERE cac_oitavas= :id AND YEAR(cac_created)= :year";
         $stmt = $this->con->prepare($sql);
-        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':id', $id_usuario);
         $stmt->bindValue(':year', date('Y'));
         $stmt->execute();
 
         $dados_copa = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt = null;
         
-        $total_participacao= array(1=>0, 2=>0, 3=>0, 4=>0, 'total'=>0);
-        $total_titulos= array(1=>0, 2=>0, 3=>0, 4=>0, 'total'=>0);
+        foreach ($this->copas as $key => $value) {
+            $total_participacao[$key]= 0;
+            $total_titulos[$key]= 0;
+        }
+        $total_participacao['total']= 0;
+        $total_titulos['total']= 0;
         
         if ($dados_copa) {
             foreach ($dados_copa AS $key => $value) {

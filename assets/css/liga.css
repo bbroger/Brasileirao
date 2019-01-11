@@ -42,8 +42,8 @@
 
 @media(min-width: 1366px){
     .img_liga{
-        max-height: 200px;
-        max-width: 200px;
+        max-height: 120px;
+        max-width: 120px;
     }
 
     .nome_liga{

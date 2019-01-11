@@ -1,11 +1,11 @@
 $("#id_copa").change(function () {
     var id_copa= $(this).val();
-    if(!$.isNumeric(id_copa) || Math.floor(id_copa) != id_copa || id_copa < 1 || id_copa > 4){
-        id_copa= 2;
+    if($.isNumeric(id_copa)){
+        id_copa= 'copaliga';
     }
     
     var text= "";
-    if(id_copa == 1){
+    if(id_copa == 'copaliga'){
         for(var i= 1; i <= 33; i+=4){
             text+= "<option value='"+i+"'>Rodada "+i+"</option>";
         }
@@ -20,18 +20,11 @@ $("#id_copa").change(function () {
 $("#pesquisa_id_copa").click(function (){
     var id_copa= $("#id_copa").val();
     var rodada= $("#rodada_id_copa").val();
+    var liga= null;
     
-    if($.isNumeric(id_copa) && Math.floor(id_copa) == id_copa && $.isNumeric(rodada) && Math.floor(rodada) == rodada){
-        if(id_copa == 2 || id_copa == 3 || id_copa == 4){
-            var liga= null;
-        } else{
-            var liga= id_copa;
-            var id_copa= 1;
-        }
-    } else{
-        id_copa= 2;
-        rodada= 4;
-        liga= null;
+    if($.isNumeric(id_copa)){
+        liga= id_copa;
+        id_copa= 'copaliga';
     }
     
     consultar_copa(rodada, id_copa, liga);

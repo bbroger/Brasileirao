@@ -162,7 +162,7 @@ class Gerencia extends CI_Controller {
      * 
      * @used-by Gerencia::valida_detalhes_rodada()           Usado para validar os times.
      * @uses array $times                                    Lista dos 20 times
-     * @paren string $time                                   Recebe o time para validar
+     * @param string $time                                   Recebe o time para validar
      * @return bool                                          Se o time existir na lista retorna true
      */
     public function time_check($time) {
@@ -178,7 +178,7 @@ class Gerencia extends CI_Controller {
      * 
      * @used-by Gerencia::valida_detalhes_rodada()          Vai verificar a data da partida
      * @uses Gerencia::manipular_rodada_solicitada          Se a rodada ja existir, nao tem problema a data ser menor que hoje.
-     * @paren string $horario                               Pode receber formato BR ou do banco.
+     * @param string $horario                               Pode receber formato BR ou do banco.
      * @return bool                                         Se conseguiu converter a data do banco, retorna true
      */
     public function data_check($horario) {

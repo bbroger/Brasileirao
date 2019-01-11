@@ -136,7 +136,7 @@ class Adm_lib {
      * @used-by Adm_lib::total_mangos_usuario()                         Irá pegar apenas os lucros e calcular o total de mangos que o usuario possui
      * @used-by Desafios_model::todos_adversarios()                     Consulta o ID de caad usuario para mostrar os dados no desafio.
      * @used-by Copa                                                    No __construct, pega as copas do usuario
-     * @used-by Copa::monta_copa()                                      Irá pegar apelido, imagem do perfil e os titulos de cada participante.
+     * @used-by Copa::monta_copa()                                      Irá pegar apelido, imagem do perfil e os titulos de cada participante da copa.
      * @uses User_model::dados()                                        Tras os dados do usuario
      * @uses Liga_model::todas_ligas_user()                             Trás todas as ligas do usuário
      * @uses Classificacao_model::total_consulta_classif_user()         Tras em tempo real o saldo do usuario (-aposta + lucro)
@@ -215,7 +215,7 @@ class Adm_lib {
      * @uses Copa_model::total_copas()                  Trás todas as copas dos usuarios bem como, total de inscritos, chave e o campeao
      * @uses Adm_lib::ordena_classif()                  Ordena por pontos
      * @uses Adm_lib::ordena_mangos()                   Ordena por mangos
-     * @uses Adm_lib::ordena_deesafios()                Ordena por desafios
+     * @uses Adm_lib::ordena_desafios()                 Ordena por desafios
      * @param String $ordena                            Informa qual tipo de ordenaçao deseja, por pontos, mangos etc...
      * @return array
      */
@@ -355,10 +355,10 @@ class Adm_lib {
      */
     public function copas() {
         $copas = array(
-            1 => array('nome' => 'Copa da Liga', 'primeiro' => 1, 'ultimo' => 33, 'entrada' => 3),
-            2 => array('nome' => 'Copa Capitalista', 'primeiro' => 4, 'ultimo' => 32, 'entrada' => 5),
-            3 => array('nome' => 'Copa Desafiante', 'primeiro' => 4, 'ultimo' => 32, 'entrada' => 5),
-            4 => array('nome' => 'Copa Lendários', 'primeiro' => 4, 'ultimo' => 32, 'entrada' => 5)
+            'copaliga' => array('nome' => 'Copa da Liga', 'primeiro' => 1, 'ultimo' => 33, 'entrada' => 3),
+            'copacapi' => array('nome' => 'Copa Capitalista', 'primeiro' => 4, 'ultimo' => 32, 'entrada' => 5),
+            'copadesa' => array('nome' => 'Copa Desafiante', 'primeiro' => 4, 'ultimo' => 32, 'entrada' => 5),
+            'copalend' => array('nome' => 'Copa Lendários', 'primeiro' => 4, 'ultimo' => 32, 'entrada' => 5)
         );
         
         return $copas;

@@ -10,25 +10,25 @@
                     <p class="titulo_user_copa">Copa das ligas</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao'][1]." / ".$copas['total_titulos'][1];} else{ echo "0 / 0";} ?></p>
+                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao']['copaliga']." / ".$copas['total_titulos']['copaliga'];} else{ echo "0 / 0";} ?></p>
                 </div>
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_bronze">
                     <p class="titulo_user_copa">Copa Capitalista</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao'][2]." / ".$copas['total_titulos'][2];} else{ echo "0 / 0";} ?></p>
+                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao']['copacapi']." / ".$copas['total_titulos']['copacapi'];} else{ echo "0 / 0";} ?></p>
                 </div>
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_prata">
                     <p class="titulo_user_copa">Copa Desafiante</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao'][3]." / ".$copas['total_titulos'][3];} else{ echo "0 / 0";} ?></p>
+                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao']['copadesa']." / ".$copas['total_titulos']['copadesa'];} else{ echo "0 / 0";} ?></p>
                 </div>
                 <div class="col-xs-12 col-sm-3 col-md-3 copa_ouro">
                     <p class="titulo_user_copa">Copa Lendários</p>
                     <img src="<?php echo base_url("assets/images/trofeu.png");?>" class="img_user_copa">
                     <p class="part_copa">Participações/Títulos</p>
-                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao'][4]." / ".$copas['total_titulos'][4];} else{ echo "0 / 0";} ?></p>
+                    <p class="valor_part_copa"><?php if($copas){echo $copas['total_participacao']['copalend']." / ".$copas['total_titulos']['copalend'];} else{ echo "0 / 0";} ?></p>
                 </div>
             </div>
             <div class="row">
@@ -42,10 +42,10 @@
                     <div class="form-group">
                         <label for="exampleInputEmail1">Selecione a copa</label>
                         <select class="form-control" id="id_copa">
-                            <option value="2">Selecione</option>
+                            <option>Selecione</option>
 <?php
     foreach($id_copa AS $key=>$value){
-        if($key == 1){
+        if($key == 'copaliga'){
             if($ligas){
                 foreach ($ligas as $chave => $valor) {
 ?>

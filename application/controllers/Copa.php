@@ -17,11 +17,11 @@ class Copa extends CI_Controller {
     private $usuario_logado;
     
     /**
-     * Copas do usuário vindo do Adm_lib.
+     * Todos dados do usuario do Adm_lib.
      * 
      * @var array
      */
-    private $todas_copas_usuario;
+    private $dados_usuario;
 
     /**
      * Total de mangos em tempo real e da data atual.
@@ -57,7 +57,8 @@ class Copa extends CI_Controller {
      * @uses Copa_model                           Carrega o Copa_model para utilizar na aplicação
      * @uses Adm_lib::total_mangos_usuarios()     Tras total de mangos do usuario para ver se pode inscrever na copa
      * @uses Adm_lib::rodada_atual()              Nao pode cadastrar em copas se nao tiver rodada.
-     * @uses Adm_lib::todos_dados_usuarios()      Recebe todas as copas do usuário
+     * @uses Adm_lib::copas()                     Tras todas as copas cadastradas no bolao
+     * @uses Adm_lib::todos_dados_usuarios()      Recebe todas os dados do usuário
      * @return void
      */
     public function __construct() {
@@ -72,7 +73,7 @@ class Copa extends CI_Controller {
         $this->rodada_atual = $this->adm_lib->rodada_atual();
         $this->copas = $this->adm_lib->copas();
         $this->usuario_logado = $this->adm_lib->usuario_logado;
-        $this->todas_copas_usuario= $this->adm_lib->todos_dados_usuarios($this->usuario_logado['id'], array('copas', 'ligas'));
+        $this->dados_usuario= $this->adm_lib->todos_dados_usuarios($this->usuario_logado['id'], array('usuario', 'copas', 'ligas'));
         $this->mangos_total = $this->adm_lib->total_mangos_usuario($this->usuario_logado['id']);
     }
 
@@ -103,8 +104,13 @@ class Copa extends CI_Controller {
     /**
      * Esse metodo irá montar a view passando parametros.
      * 
-     * @uses Copa::rodada_atual               Rodada atual do bolao
      * @uses Copa::usuario_logado             Se existe um usuario logado
+     * @uses Copa::rodadas_cadastradas        Pega as rodadas cadastradas para mostrar a data no histórico de copas
+     * @uses Copa::copas                      Pega as copas para mostrar no SELECT das copas
+     * @uses Copa::dados_usuario              Pega as ligas e as copas do usuario para mostrar no histórico de copas e no SELECT das copas
+     * @param int $recebe_rodada
+     * @param int $recebe_copa
+     * @param int $recebe_liga
      * @param String $msg                     Uma palavra chave para mostrar a mensagem
      * @return void
      */
@@ -115,11 +121,10 @@ class Copa extends CI_Controller {
             "liga" => $recebe_liga,
             "usuario_logado" => $this->usuario_logado,
             "msg" => $msg,
-            "rodada_atual" => $this->rodada_atual['rodada'],
-            "copas"=> $this->todas_copas_usuario['copas'],
+            "copas"=> $this->dados_usuario['copas'],
             "rodadas_cadastradas"=> $this->rodadas_cadastradas,
             "id_copa"=> $this->copas,
-            "ligas"=> $this->todas_copas_usuario['ligas']
+            "ligas"=> $this->dados_usuario['ligas']
         );
 
         $this->load->view('head', $dados);
@@ -130,7 +135,7 @@ class Copa extends CI_Controller {
      * Quando o usuário for se inscrever na copa, esse metodo confere qual é a copa e qual a liga.
      * 
      * @uses Copa::rodada_atual               Rodada atual do bolao para se inscrever nas copas
-     * @uses Adm_lib::copas()                 Tem as copas, ids, preços entre outros....
+     * @uses Copa::copas                      Tem as copas, ids, preços entre outros....
      * @uses Copa::mangos_total               Para entrar na copa tem preço, por isso confere os mangos para se inscrever.
      * @uses Liga_model::verifica_liga()      Consulta o ID da liga para ver se existe ou se está ativo.
      * @uses Liga_model::verifica_user_liga() Verifica se o usuário realmente está na liga que foi submetido.
@@ -145,8 +150,14 @@ class Copa extends CI_Controller {
             $msg = "Não existe rodada cadastrada no momento. Por favor aguarde ser cadastrado para se inscrever na copa.";
             $this->control_msg($msg);
         }
-
-        $this->form_validation->set_rules("copa", "<strong>Copa</strong>", "trim|required|integer|in_list[1,2,3,4]");
+        
+        $monta_list= null;
+        foreach ($this->copas as $key => $value) {
+            $monta_list.= $key.",";
+        }
+        $list= substr($monta_list, 0, strlen($monta_list)-1);
+        
+        $this->form_validation->set_rules("copa", "<strong>Copa</strong>", "trim|required|in_list[$list]");
 
         if (!$this->form_validation->run()) {
             $msg = "Copa inválida. Não existe essa copa informado.";
@@ -161,7 +172,7 @@ class Copa extends CI_Controller {
             $this->control_msg($msg);
         }
 
-        if ($id_copa == 1) {
+        if ($id_copa == 'copaliga') {
             $this->form_validation->set_rules("liga", "<b>Liga</b>", "trim|required|integer");
             if (!$this->form_validation->run()) {
                 $msg = validation_errors();
@@ -192,7 +203,7 @@ class Copa extends CI_Controller {
      * 
      * @used-by Copa::verifica_copas()          Recebe o ID copa e liga para validar.
      * @uses Copa::rodada_atual                 Rodada atual para calcular e pegar a rodada das copas.
-     * @uses Adm_lib::copas()                   Pega o inicio e termino da copa submetida
+     * @uses Copa::copas                        Pega o inicio e termino da copa submetida
      * @uses Copa::rodadas_cadastradas          Pega as rodadas cadastradas para ver se a rodada da copa existe e pega a data inicio.
      * @uses Copa_model::verifica_inscrito()    Verifica se o usuário já se inscreveu na copa.
      * @uses Copa::inscricao_copa()             Depois que pegou a copa e a rodada, na proxima etapa pegará a vaga e se está apto para inscrever.
@@ -266,7 +277,7 @@ class Copa extends CI_Controller {
             $this->control_msg($msg);
         }
 
-        if ($id_copa == 4) {
+        if ($id_copa == 'copalend') {
             $classif = $this->adm_lib->classif_geral("geral");
             $posicao = array_search($this->usuario_logado['id'], array_column($classif, 'id'));
             if ($posicao && $posicao < 32) {
@@ -275,7 +286,7 @@ class Copa extends CI_Controller {
             } else {
                 $msg = "Sua posição na classificaçao é " . ($posicao + 1) . ". Apenas os 32 primeiros do bolão podem participar.";
             }
-        } else if ($id_copa == 3) {
+        } else if ($id_copa == 'copadesa') {
             $classif = $this->adm_lib->classif_geral("desafios");
             $posicao = array_search($this->usuario_logado['id'], array_column($classif, 'id'));
             if ($posicao && $posicao < 32) {
@@ -284,7 +295,7 @@ class Copa extends CI_Controller {
             } else {
                 $msg = "Sua posição na classificaçao de desafios é " . ($posicao + 1) . ". Apenas os 32 primeiros podem participar.";
             }
-        } else if ($id_copa == 2) {
+        } else if ($id_copa == 'copacapi') {
             $classif = $this->adm_lib->classif_geral("mangos");
             $posicao = array_search($this->usuario_logado['id'], array_column($classif, 'id'));
             if ($posicao && $posicao < 32) {
@@ -318,19 +329,19 @@ class Copa extends CI_Controller {
     public function recebe_dados_copa($rodada = null, $id_copa = null, $id_liga = null) {
         $confere_rodada = $this->adm_lib->confere_rodada($rodada);
 
-        if (!is_numeric($id_copa) || $id_copa < 1 || $id_copa > 4) {
-            $id_copa = 2;
+        if (!array_key_exists($id_copa, $this->copas)) {
+            $id_copa = 'copacapi';
         }
         
         $liga= null;
-        if ($id_copa == 1) {
+        if ($id_copa == 'copaliga') {
             if ($id_liga == null || !is_numeric($id_liga) || $id_liga < 1) {
-                $id_copa = 2;
+                $id_copa = 'copacapi';
                 $id_liga = null;
             }
             $liga= $this->Liga_model->verifica_liga($id_liga);
             if(!$liga){
-                $id_copa = 2;
+                $id_copa = 'copacapi';
                 $id_liga = null;
             }
         }
@@ -347,7 +358,7 @@ class Copa extends CI_Controller {
         }
 
         if (!$rodada_copa) {
-            $id_copa= 2;
+            $id_copa= 'copacapi';
             $confere_rodada['rodada'] = 4;
             $id_liga= null;
         }
@@ -424,7 +435,7 @@ class Copa extends CI_Controller {
 
         $participantes['inscritos'] = $this->Copa_model->verifica_vaga($id_copa, $id_liga, $rodada) - 1;
         $participantes['premiacao'] = $participantes['inscritos'] * $this->copas[$id_copa]['entrada'];
-        $participantes['nome'] = ($id_copa == 1) ? "Copa ".$liga['lig_nome'] : $this->copas[$id_copa]['nome'];
+        $participantes['nome'] = ($id_copa == 'copaliga') ? "Copa ".$liga['lig_nome'] : $this->copas[$id_copa]['nome'];
         $participantes['rodada'] = $rodada;
         $confere_rodada = $this->adm_lib->confere_rodada($rodada);
         if($confere_rodada['existe']){
