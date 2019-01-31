@@ -82,11 +82,11 @@
                     <form action="<?php echo base_url("Liga/cadastrar_ligas");?>" method="Post">
                         <div class="form-group">
                             <label for="nome" id="label-nome">Nome</label>
-                            <input type="text" class="form-control" id="nome" name="nome" placeholder="Até 15 caracteres">
+                            <input type="text" class="form-control" id="nome" name="nome" value="<?php echo set_value("nome");?>" placeholder="Até 15 caracteres">
                         </div>
                         <div class="form-group">
                             <label for="descricao" id="label-descricao">Descrição</label>
-                            <textarea class="form-control" id="descricao" name="descricao"></textarea>
+                            <textarea class="form-control" id="descricao" name="descricao" value="<?php echo set_value("descricao");?>"></textarea>
                             <p class="help-block">15 caracteres</p>
                         </div>
                         <div class="form-group">
@@ -96,13 +96,23 @@
                         </div>
                         <div class="radio">
                             <label>
-                                <input type="radio" name="opcaoliga" id="opcaoliga1" value="ligaberto" checked>
+                                <input type="radio" name="opcaoliga" id="opcaoliga1" value="ligaberto"
+                                <?php
+                                    if (set_value('opcaoliga') != "ligafechado") {
+                                        echo "checked";
+                                    }
+                                ?>>
                                 Liga aberta para todos entrarem
                             </label>
                         </div>
                         <div class="radio">
                             <label>
-                                <input type="radio" name="opcaoliga" id="opcaoliga2" value="ligafechado">
+                                <input type="radio" name="opcaoliga" id="opcaoliga2" value="ligafechado"
+                                <?php
+                                    if (set_value('opcaoliga') == "ligafechado") {
+                                        echo "checked";
+                                    }
+                                ?>>
                                 Liga fechado sendo necessário mandar convite para entrar
                             </label>
                         </div>

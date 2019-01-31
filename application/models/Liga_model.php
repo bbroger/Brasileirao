@@ -48,6 +48,25 @@ class Liga_model extends CI_Model {
         
         return $valida;
     }
+
+    /**
+     * Verifica se o nome da liga informado existe
+     * 
+     * @used-by Liga::verifica_copas()            Verifica se a liga que recebeu já existe para fazer um novo cadastro.
+     * @param type $nome_liga                     Nome da liga
+     * @return bool
+     */
+    public function verifica_nome_liga($nome_liga){
+        $sql= "SELECT * FROM lig_ligas WHERE lig_nome = ?";
+        $stmt= $this->con->prepare($sql);
+        $stmt->bindValue(1, $nome_liga);
+        $stmt->execute();
+        
+        $valida= $stmt->fetch();
+        $stmt= null;
+        
+        return $valida;
+    }
     
     /**
      * Verifica se um usuario participa de uma liga

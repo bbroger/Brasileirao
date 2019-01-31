@@ -66,7 +66,7 @@ class Liga extends CI_Controller {
     }
     
     public function cadastrar_ligas(){
-        $this->form_validation->set_rules("nome", "<strong>Nome</strong>", "trim|required|min_length[4]|max_length[15]|callback_verifica_nome");
+        $this->form_validation->set_rules("nome", "<strong>Nome</strong>", "callback_verifica_nome");
         
         if(!$this->form_validation->run()){
             $this->index();
@@ -75,6 +75,30 @@ class Liga extends CI_Controller {
     }
     
     public function verifica_nome($nome){
+        trim($nome);
+
+        if(!$nome){
+            $this->form_validation->set_message("verifica_nome", "O campo <b>Nome</b> é obrigatório.");
+            return false;
+        }
+
+        if(strlen($nome) < 4){
+            $this->form_validation->set_message("verifica_nome", "O campo <b>Nome</b> deve conter no mínimo 4 caracteres.");
+            return false;
+        }
+
+        if(strlen($nome) > 15){
+            $this->form_validation->set_message("verifica_nome", "O campo <b>Nome</b> deve conter no máximo 15 caracteres.");
+            return false;
+        }
+
+        $valida_nome= $this->Liga_model->verifica_nome_liga($nome);
+        var_dump($valida_nome);exit;
+        if($valida_nome){
+            $this->form_validation->set_message("verifica_nome", "A liga $nome já existe.");
+            return false;
+        }
+
         $this->form_validation->set_message("verifica_nome", "O campo <b>CPF</b> é obrigatório.");
         return true;
     }
